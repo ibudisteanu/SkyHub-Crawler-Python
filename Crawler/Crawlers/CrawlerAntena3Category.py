@@ -1,5 +1,4 @@
-import dateparser
-from CrawlerBasic import CrawlerBasic
+from Crawler.CrawlerBasic import CrawlerBasic
 
 class CrawlerAntena3Category(CrawlerBasic):
 

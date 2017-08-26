@@ -1,11 +1,10 @@
-import scrapy
-import dateparser
-import lxml
-from lxml.html.clean import Cleaner
-from LinksHelper import  LinksHelper
-
-from AttrDict import AttrDict
 from urllib.parse import urlparse
+
+import scrapy
+from LinksHelper import LinksHelper
+
+from Crawler.Helpers.AttrDict import AttrDict
+
 
 class CrawlerBasic(scrapy.Spider):
 
