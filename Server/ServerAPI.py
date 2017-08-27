@@ -43,7 +43,7 @@ class ServerAPI:
         return None
 
     @staticmethod
-    def postAddTopic(user, parentId, title, description, shortDescription='',  arrKeywords=[], arrAttachments=[], country='', city='', language='', latitude=-666, longitude=-666 ):
+    def postAddTopic(user, parentId, title, description, shortDescription='',  arrKeywords=[], arrAttachments=[],  dtOriginalDate = None, country='', city='', language='', latitude=-666, longitude=-666 ):
         user = ServerAPI.loginUser(user)
 
         if user is None:
@@ -52,6 +52,13 @@ class ServerAPI:
         rez = ServerAPI.processLocation(country, city, language, latitude, longitude)
         latitude = rez[0]
         longitude = rez[1]
+
+        arrAdditionalInfo = {
+            'scrapped': True,
+        }
+
+        if dtOriginalDate is not None:
+            arrAdditionalInfo['dtOriginal'] = dtOriginalDate
 
         data = {
             'id': user['id'],
@@ -67,7 +74,9 @@ class ServerAPI:
             'city': city,
             'language': language,
             'latitude': latitude,
-            'longitude': longitude
+            'longitude': longitude,
+            'additionalInfo.scraped': 1,
+            'additionalInfo.dtOriginal': dtOriginalDate,
         }
 
         headers = { }
@@ -79,7 +88,7 @@ class ServerAPI:
         return None
 
     @staticmethod
-    def postAddForum(user, parentId, name, title, description, iconPic, coverPic, arrKeywords = [], country='', city='', language='',  latitude=-666, longitude=-666):
+    def postAddForum(user, parentId, name, title, description, iconPic, coverPic, arrKeywords = [],  dtOriginalDate = None, country='', city='', language='',  latitude=-666, longitude=-666):
 
         user = ServerAPI.loginUser(user)
 
@@ -89,6 +98,13 @@ class ServerAPI:
         rez = ServerAPI.processLocation(country, city, language, latitude, longitude)
         latitude = rez[0]
         longitude = rez[1]
+
+        arrAdditionalInfo = {
+            'scrapped': True,
+        }
+
+        if dtOriginalDate is not None:
+            arrAdditionalInfo['dtOriginal'] = dtOriginalDate
 
         data = {
             'id': user['id'],
@@ -105,7 +121,9 @@ class ServerAPI:
             'city': city,
             'language': language,
             'latitude': latitude,
-            'longitude': longitude
+            'longitude': longitude,
+            'additionalInfo.scraped': 1,
+            'additionalInfo.dtOriginal': dtOriginalDate,
         }
 
         headers = {}
@@ -118,7 +136,7 @@ class ServerAPI:
 
 
     @staticmethod
-    def postAddReply(user, parentId, parentReplyId, title, description, arrKeywords = [], arrAttachments=[], country='', city='', language='',  latitude=-666, longitude=-666):
+    def postAddReply(user, parentId, parentReplyId, title, description, arrKeywords = [], arrAttachments=[], dtOriginalDate = None, country='', city='', language='',  latitude=-666, longitude=-666):
 
         user = ServerAPI.loginUser(user)
 
@@ -132,6 +150,13 @@ class ServerAPI:
         rez = ServerAPI.processLocation(country, city, language, latitude, longitude)
         latitude = rez[0]
         longitude = rez[1]
+
+        arrAdditionalInfo = {
+            'scrapped':True,
+        }
+
+        if dtOriginalDate is not None:
+            arrAdditionalInfo['dtOriginal'] = dtOriginalDate
 
         data = {
             'id': user['id'],
@@ -147,7 +172,9 @@ class ServerAPI:
             'city': city,
             'language': language,
             'latitude': latitude,
-            'longitude': longitude
+            'longitude': longitude,
+            'additionalInfo.scraped': 1,
+            'additionalInfo.dtOriginal': dtOriginalDate,
         }
 
         headers = {}

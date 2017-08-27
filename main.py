@@ -14,9 +14,9 @@ print(ServerAPI.getAddress("Ferdinand Street, No 28", "Romania"))
 ServerAPI.loginUser("admin")
 ServerAPI.loginUser("admin")
 ServerAPI.loginUser("admin")
-topic = ServerAPI.postAddTopic("admin","","TITLU TEST","DESCRIERE","",["misto","coool","awesome"],[],"Romania","City","Romanian",-666,-666)
-#forum = ServerAPI.postAddForum("admin","","NAME - FORUM","NAME - FORUM TITLE","DESCRIERE","https://cdn4.iconfinder.com/data/icons/ionicons/512/icon-image-128.png","http://colorfully.eu/wp-content/uploads/2012/10/empty-road-highway-with-fog-facebook-cover.jpg",["misto","coool","awesome"],"Romania","City","Romanian",-666,-666)
-reply = ServerAPI.postAddReply("admin",topic,"","NAME - FORUM TITLE","DESCRIERE",["misto","coool","awesome"],[],"Romania","City","Romanian",-666,-666)
+topic = ServerAPI.postAddTopic("admin","","TITLU TEST5","DESCRIERE","",["misto","coool","awesome"],[],"2017-08-27T13:55:54+00:00","Romania","City","Romanian",-666,-666)
+#forum = ServerAPI.postAddForum("admin","","NAME - FORUM","NAME - FORUM TITLE","DESCRIERE","https://cdn4.iconfinder.com/data/icons/ionicons/512/icon-image-128.png","http://colorfully.eu/wp-content/uploads/2012/10/empty-road-highway-with-fog-facebook-cover.jpg",["misto","coool","awesome"]."2017-08-27T13:55:54+00:00","Romania","City","Romanian",-666,-666)
+reply = ServerAPI.postAddReply("admin",topic,"","Reply5","DESCRIERE",["misto","coool","awesome"],[],"2017-08-27T13:55:54+00:00","Romania","City","Romanian",-666,-666)
 
 
 from scrapy.crawler import CrawlerProcess
