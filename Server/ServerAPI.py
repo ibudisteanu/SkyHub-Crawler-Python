@@ -4,8 +4,8 @@ from Server.UsersTable import getUser
 
 session = requests.Session()
 userLoggedIn = None
-url = "http://skyhub.me:4000/api/"
-#url = "http://127.0.0.1:4000/api/"
+#url = "http://skyhub.me:4000/api/"
+url = "http://127.0.0.1:4000/api/"
 
 class ServerAPI:
     def __init__(self):
@@ -20,14 +20,17 @@ class ServerAPI:
 
         global userLoggedIn
         if (userLoggedIn is not None) and ((userLoggedIn['username'] == user['username'])or(userLoggedIn['id'] == user['id'])):
+            print("User Already logged in")
             return userLoggedIn
+        print("Loggin user")
 
         data = {
             'emailUsername': user['username'],
             'password': user['password']
         }
 
-        headers = {}
+        headers = {
+        }
 
         result = session.get(url+"auth/login", data=data, headers=headers)
         result = result.json()
@@ -35,6 +38,7 @@ class ServerAPI:
         if result['result'] == True:
             print("User Logged In ", result['user']['id'])
             user['id'] = result['user']['id']
+            user['sessionId'] = result['sessionId']
             userLoggedIn = user
             return user
         return None
@@ -51,7 +55,9 @@ class ServerAPI:
         longitude = rez[1]
 
         data = {
-            'authorId': user['id'],
+            'id': user['id'],
+            'sessionId': user['sessionId'],
+
             'parentId': parentId,
             'title': title,
             'description': description,
@@ -65,9 +71,11 @@ class ServerAPI:
             'longitude': longitude
         }
 
-        headers = {}
+        headers = {
 
-        result = session.get(url + "auth/login", data=data, headers=headers)
+        }
+
+        result = session.get(url + "topics/add-topic", data=data, headers=headers).json()
         print(result)
         return result
 
@@ -84,11 +92,15 @@ class ServerAPI:
         longitude = rez[1]
 
         data = {
-            'authorId': user['id'],
+            'id': user['id'],
+            'sessionId': user['sessionId'],
+
             'parentId': parentId,
             'title': title,
             'name': name,
             'description': description,
+            'iconPic': iconPic,
+            'coverPic': coverPic,
             'keywords': ','.join(str(e) for e in arrKeywords),
             'country': country,
             'city': city,
@@ -97,9 +109,10 @@ class ServerAPI:
             'longitude': longitude
         }
 
-        headers = {}
+        headers = {
+        }
 
-        result = session.get(url + "forums/add-forum", data=data, headers=headers)
+        result = session.get(url + "forums/add-forum", data=data, headers=headers).json()
         print(result)
         return result
 
