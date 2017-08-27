@@ -43,7 +43,7 @@ class LinksHelper():
         url = LinksHelper.fix_url(url)
 
         global arrLinksProcessed, arrLinksVisited
-        if arrLinksProcessed.index(url) < 0:
+        if url in arrLinksProcessed:
             return True
         return False
 
@@ -52,7 +52,7 @@ class LinksHelper():
         url = LinksHelper.fix_url(url)
 
         global arrLinksProcessed, arrLinksVisited
-        if arrLinksProcessed.index(url) < 0:
+        if url in arrLinksProcessed:
             return True
         return False
 

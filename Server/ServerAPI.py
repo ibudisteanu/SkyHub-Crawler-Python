@@ -11,6 +11,7 @@ class ServerAPI:
     def __init__(self):
         pass
 
+    @staticmethod
     def loginUser(user):
 
         user = getUser(user)
@@ -38,8 +39,8 @@ class ServerAPI:
             return user
         return None
 
-
-    def postAddTopic(user, title, description, shortDescription,):
+    @staticmethod
+    def postAddTopic(user, parentId, title, description, shortDescription='',  arrKeywords=[], arrAttachments=[], country='', city='', language='' ):
         user = ServerAPI.loginUser(user)
 
         if user == None:
@@ -47,8 +48,15 @@ class ServerAPI:
 
         data = {
             'authorId': user['id'],
+            'parentId': parentId,
             'title': title,
-            'description': description
+            'description': description,
+            'shortDescription': shortDescription,
+            'keywords': arrKeywords,
+            'attachments': arrAttachments,
+            'country': country,
+            'city': city,
+            'language': language
         }
 
         headers = {}
@@ -57,7 +65,9 @@ class ServerAPI:
         print(result)
         return result
 
-    def postAddForum(user, name, title, description):
+    @staticmethod
+    def postAddForum(user, parentId, name, title, description, iconPic, coverPic, arrKeywords = [], country='', city='', language=''):
+
         user = ServerAPI.loginUser(user)
 
         if user == None:
@@ -65,27 +75,14 @@ class ServerAPI:
 
         data = {
             'authorId': user['id'],
+            'parentId': parentId,
             'title': title,
             'name' : name,
             'description': description,
-            'shortDescription' : shortDescription,
-            'keywords': keywords,
+            'keywords': arrKeywords,
             'country': country,
             'city': city,
-            'latitude':
-            'longtitude':
-
-        dbLatitude = req.body.latitude | | -666;
-        dbLongitude = req.body.longitude | | -666;
-
-        sLanguage = req.body.language | | sCountry;
-
-        sIconPic = req.body.iconPic | | '';
-        sCoverPic = req.body.coverPic | | '';
-        sCoverColor = req.body.coverColor | | '';
-        parent = req.body.parent | | '';
-            'title': title,
-            'description': description
+            'language': language,
         }
 
         headers = {}
@@ -94,9 +91,16 @@ class ServerAPI:
         print(result)
         return result
 
+    @staticmethod
     def getAddress(city, country):
         address = city + ' ' + country
         address = address.replace(' ', '+')
 
         session = requests.Session()
         result = session.get('https://maps.google.com/maps/api/geocode/json?address='+address+'&sensor=false')
+        result = result.json()
+        if len(result['results']) > 0:
+            result =result['results'][0]['geometry']['location']
+        else:
+            result = None
+        return result

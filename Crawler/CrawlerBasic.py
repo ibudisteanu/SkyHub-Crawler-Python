@@ -1,7 +1,7 @@
 from urllib.parse import urlparse
 
 import scrapy
-from LinksHelper import LinksHelper
+from Crawler.Helpers.LinksHelper import LinksHelper
 
 from Crawler.Helpers.AttrDict import AttrDict
 

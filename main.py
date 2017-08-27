@@ -6,8 +6,19 @@ sys.path.insert(0, 'Crawler/Crawlers')
 sys.path.insert(0, 'Crawler/Helpers')
 sys.path.insert(0, 'Server')
 
+
+from Server.ServerAPI import ServerAPI
+
+print(ServerAPI.getAddress("Ferdinand Street, No 28", "Romania"))
+
+ServerAPI.loginUser("admin")
+ServerAPI.loginUser("admin")
+ServerAPI.loginUser("admin")
+#ServerAPI.postAddTopic("admin")
+
+
 from scrapy.crawler import CrawlerProcess
-from Crawler.Helpers.LinksHelper import  LinksHelper
+from Crawler.Helpers.LinksHelper import LinksHelper
 
 LinksHelper.readLinksFiles()
 LinksHelper.appendLinksFiles()
@@ -22,11 +33,3 @@ process = CrawlerProcess({
 process.crawl(CrawlerAntena3)
 process.crawl(CrawlerAntena3Category)
 process.start() # the script will block here until the crawling is finished
-
-
-from Server import ServerAPI
-
-ServerAPI.loginUser("admin")
-ServerAPI.loginUser("admin")
-ServerAPI.loginUser("admin")
-#serverAPI.addTopic("admin")
