@@ -29,6 +29,7 @@ class CrawlerBasic(scrapy.Spider):
     ogType = ''
 
     url = ''
+    onlyOnePage = False
 
     def __init__(self):
         pass
@@ -38,7 +39,7 @@ class CrawlerBasic(scrapy.Spider):
         return returnValue
 
 
-    def basicProcess(self, response):
+    def basicProcess(self, response, url):
         self.title = self.extractFirstElement(response.xpath('//title/text()'))
         self.keywords = self.extractFirstElement(response.xpath("//meta[@name='keywords']/@content"))
         self.shortDescription = self.extractFirstElement(response.xpath("//meta[@name='description']/@content"))
@@ -52,7 +53,7 @@ class CrawlerBasic(scrapy.Spider):
         self.ogSiteName = self.extractFirstElement(response.xpath('//meta[@property="og:site_name"]/@content'))
         self.ogType = self.extractFirstElement(response.xpath('//meta[@property="og:type"]/@content'))
 
-        self.currentPageURL = response.url
+        self.currentPageURL = url
 
         if self.ogTitle != '': self.title = self.ogTitle
         if self.ogDescription != '': self.shortDescription = self.ogDescription
@@ -60,8 +61,11 @@ class CrawlerBasic(scrapy.Spider):
             self.images = AttrDict(img=self.ogImage, title=self.title, description=self.shortDescription)
 
 
-    def crawlerProcess(self, response):
+    def crawlerProcess(self, response, url):
         pass
+
+    def test(self, response):
+        print("CRAWLER BASIC IS WORKING")
 
     def start_requests(self):
         for url in self.start_urls:
@@ -70,10 +74,45 @@ class CrawlerBasic(scrapy.Spider):
 
     def parse(self, response):
 
-        LinksHelper.addLinkVisited(response.url)
 
-        self.basicProcess(response)
-        self.crawlerProcess(response)
+        self.parseResponse(response,response.url)
+
+
+        if self.onlyOnePage == False:
+            for next_page in response.css('a'):
+
+                next_page = self.extractFirstElement(next_page.xpath('@href'))
+
+                sharpIndex = next_page.find('#')
+                if sharpIndex >= 0:
+                    next_page = next_page[0: sharpIndex]
+
+                parsed_url = urlparse(next_page)
+
+                if bool(parsed_url.scheme) == False:
+                    newUrl = self.url
+                    if newUrl[:-1] == '/': newUrl = newUrl + '/'
+                    next_page = newUrl + next_page
+
+                #print(next_page)
+
+                try:
+
+                    yield scrapy.Request(url = next_page, callback=self.parse)
+
+                except ValueError:
+                    pass
+
+
+
+
+    def parseResponse(self, response, url):
+        print("prase function", url)
+
+        LinksHelper.addLinkVisited(url)
+
+        self.basicProcess(response, url)
+        self.crawlerProcess(response, url)
 
         self.title = self.cleanText(self.title)
         self.fullDescription = self.cleanText(self.fullDescription)
@@ -83,39 +122,15 @@ class CrawlerBasic(scrapy.Spider):
         self.toString()
 
         if self.validate() != '':
-            if LinksHelper.checkLinkProcessedAlready(response.url) == False:
+            if LinksHelper.checkLinkProcessedAlready(url) == False:
                 if self.validate() == 'news':
                     pass
-                elif self.validate() == 'category':
+                elif self.validate() in ['category', 'forum']:
                     pass
                 else:
                     pass
             else:
-                print("Already processed ", response.url)
-
-        for next_page in response.css('a'):
-
-            next_page = self.extractFirstElement(next_page.xpath('@href'))
-
-            sharpIndex = next_page.find('#')
-            if sharpIndex >= 0:
-                next_page = next_page[0: sharpIndex]
-
-            parsed_url = urlparse(next_page)
-
-            if bool(parsed_url.scheme) == False:
-                newUrl = self.url
-                if newUrl[:-1] == '/': newUrl = newUrl + '/'
-                next_page = newUrl + next_page
-
-            #print(next_page)
-
-            try:
-
-                yield scrapy.Request(url = next_page, callback=self.parse)
-
-            except ValueError:
-                pass
+                print("Already processed ", url)
 
 
 

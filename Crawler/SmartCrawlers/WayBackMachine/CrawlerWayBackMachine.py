@@ -3,26 +3,28 @@ import requests  # Tutorial based on http://docs.python-requests.org/en/master/u
 
 from scrapy.crawler import CrawlerProcess
 from Crawler.Helpers.LinksHelper import LinksHelper
+from parsel import Selector
 
 class CrawlerWayBackMachine:
 
     session = None
     process = None
 
+    crawler = None
+
     def __init__(self):
 
         self.session = requests.Session()
 
-        self.scrapyProcess = CrawlerProcess({
-            'USER_AGENT': 'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)'
-        })
-
         pass
 
-    def start(self, scrapyCrawlerSettings, url):
+    def start(self, crawler, url):
 
-        scrapyCrawlerSettings.
-        self.scrapyProcess.crawl(scrapyCrawlerSettings)
+        crawler = crawler()
+        crawler.onlyOnePage = True
+        self.crawler = crawler
+        #self.scrapyProcess.crawl(scrapyCrawlerSettings)
+
         self.getAllLinks(url)
 
 
@@ -33,7 +35,7 @@ class CrawlerWayBackMachine:
 
         url = "https://web.archive.org/cdx/search?url="+link+"%2F&matchType=prefix&collapse=urlkey&output=json&fl=original%2Cmimetype%2Ctimestamp%2Cendtimestamp%2Cgroupcount%2Cuniqcount&filter=!statuscode%3A%5B45%5D..&_=1503841753810"
 
-        result = self.session.get(url + "auth/login", data=data, headers=headers)
+        result = self.session.get(url, data=data, headers=headers)
         result = result.json()
 
         # Sample of answers from Archive.org
@@ -60,9 +62,22 @@ class CrawlerWayBackMachine:
 
         return None
 
-    def processURL(self, url, timestamp, endtimestamp):
+    def processURL(self, initialURL, timestamp, endtimestamp):
         # https://web.archive.org/web/20130502222444/http://hackpedia.info/viewtopic.php?f=43&t=16653&p=116862&sid=2a60dce4bac29bf5b399c5741f4e5cb3
 
-        url = "https://web.archive.org/web/"+endtimestamp+"/"+url
+        url = "https://web.archive.org/web/"+endtimestamp+"/"+initialURL
 
-        self.scrapyProcess.start()
+        data = {}
+        headers = {}
+
+        html = self.session.get(url , data=data, headers=headers)
+        html = html.content
+        html = html.decode("utf-8")
+        #print(html)
+        #print(type(html))
+
+        sel = Selector(text=html)
+
+        self.crawler.parseResponse(sel, initialURL)
+
+        print("crawler parse done")

@@ -10,7 +10,7 @@ class CrawlerAntena3Category(CrawlerBasic):
     start_urls = (url,)
     allowed_domains = [domain]
 
-    def crawlerProcess(self, response):
+    def crawlerProcess(self, response, url):
         self.title = self.extractFirstElement(response.css('div.header-categorie h1::text'))
 
     def validate(self):

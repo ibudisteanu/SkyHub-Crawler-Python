@@ -13,7 +13,7 @@ class CrawlerPHPBBTopic(CrawlerBasic):
     start_urls = (url,)
     allowed_domains = [domain]
 
-    def crawlerProcess(self, response):
+    def crawlerProcess(self, response, url):
         self.author = self.extractFirstElement(response.css('div.autor-ora-comentarii span.fl a::text'))
         self.authorLink = self.extractFirstElement(response.css('div.autor-ora-comentarii span.fl a::attr(href)'))
 

@@ -10,7 +10,7 @@ class CrawlerPHPBBForums(CrawlerBasic):
     start_urls = (url,)
     allowed_domains = [domain]
 
-    def crawlerProcess(self, response):
+    def crawlerProcess(self, response, url):
 
         for i in range(100, 1):
             self.title = self.extractFirstElement(response.css('p.breadcrumbs > a:nth-child('+str(i)+')'))
