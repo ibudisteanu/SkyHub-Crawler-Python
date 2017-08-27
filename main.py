@@ -14,7 +14,7 @@ print(ServerAPI.getAddress("Ferdinand Street, No 28", "Romania"))
 ServerAPI.loginUser("admin")
 ServerAPI.loginUser("admin")
 ServerAPI.loginUser("admin")
-#ServerAPI.postAddTopic("admin")
+ServerAPI.postAddTopic("admin","","TITLU TEST","DESCRIERE","",["misto","coool","awesome"],[],"Romania","City","Romanian",-666,-666)
 
 
 from scrapy.crawler import CrawlerProcess

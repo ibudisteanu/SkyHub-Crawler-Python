@@ -15,11 +15,11 @@ class ServerAPI:
     def loginUser(user):
 
         user = getUser(user)
-        if user == None:
+        if user is None:
             return False
 
         global userLoggedIn
-        if (userLoggedIn != None) and ((userLoggedIn['username'] == user['username'])or(userLoggedIn['id'] == user['id'])):
+        if (userLoggedIn is not None) and ((userLoggedIn['username'] == user['username'])or(userLoggedIn['id'] == user['id'])):
             return userLoggedIn
 
         data = {
@@ -40,11 +40,15 @@ class ServerAPI:
         return None
 
     @staticmethod
-    def postAddTopic(user, parentId, title, description, shortDescription='',  arrKeywords=[], arrAttachments=[], country='', city='', language='' ):
+    def postAddTopic(user, parentId, title, description, shortDescription='',  arrKeywords=[], arrAttachments=[], country='', city='', language='', latitude=-666, longitude=-666 ):
         user = ServerAPI.loginUser(user)
 
-        if user == None:
+        if user is None:
             return False
+
+        rez = ServerAPI.processLocation(country, city, language, latitude, longitude)
+        latitude = rez[0]
+        longitude = rez[1]
 
         data = {
             'authorId': user['id'],
@@ -52,11 +56,13 @@ class ServerAPI:
             'title': title,
             'description': description,
             'shortDescription': shortDescription,
-            'keywords': arrKeywords,
+            'keywords': ','.join(str(e) for e in arrKeywords),
             'attachments': arrAttachments,
             'country': country,
             'city': city,
-            'language': language
+            'language': language,
+            'latitude': latitude,
+            'longitude': longitude
         }
 
         headers = {}
@@ -66,23 +72,29 @@ class ServerAPI:
         return result
 
     @staticmethod
-    def postAddForum(user, parentId, name, title, description, iconPic, coverPic, arrKeywords = [], country='', city='', language=''):
+    def postAddForum(user, parentId, name, title, description, iconPic, coverPic, arrKeywords = [], country='', city='', language='',  latitude=-666, longitude=-666):
 
         user = ServerAPI.loginUser(user)
 
-        if user == None:
+        if user is None:
             return False
+
+        rez = ServerAPI.processLocation(country, city, language, latitude, longitude)
+        latitude = rez[0]
+        longitude = rez[1]
 
         data = {
             'authorId': user['id'],
             'parentId': parentId,
             'title': title,
-            'name' : name,
+            'name': name,
             'description': description,
-            'keywords': arrKeywords,
+            'keywords': ','.join(str(e) for e in arrKeywords),
             'country': country,
             'city': city,
             'language': language,
+            'latitude': latitude,
+            'longitude': longitude
         }
 
         headers = {}
@@ -90,6 +102,16 @@ class ServerAPI:
         result = session.get(url + "forums/add-forum", data=data, headers=headers)
         print(result)
         return result
+
+    @staticmethod
+    def processLocation(country, city, language, latitude, longitude):
+        if ((country or language) != '') or (city != ''):
+            location = ServerAPI.getAddress(city, (country or language))
+            if location is not None:
+                latitude = location['lat']
+                longitude = location['lng']
+
+        return [latitude, longitude]
 
     @staticmethod
     def getAddress(city, country):
