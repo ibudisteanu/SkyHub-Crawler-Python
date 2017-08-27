@@ -1,7 +1,11 @@
 
-#Instalation
-1. `conda create -n crawler3`
-2. `source activate crawler3`
-3. `pip install scrapy`
-3. `pip install dateparser`
-4. ` pip install beautifulsoup4`
+##Installation steps for SkyHub Crawler in Python
+```
+conda create -n crawler3
+source activate crawler3
+pip install scrapy
+pip install dateparser
+pip install beautifulsoup4
+pip install parsel
+pip install requests
+```
