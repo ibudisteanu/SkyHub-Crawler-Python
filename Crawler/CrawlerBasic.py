@@ -7,6 +7,10 @@ from Crawler.Helpers.AttrDict import AttrDict
 
 
 class CrawlerBasic(scrapy.Spider):
+    url = ''
+    onlyOnePage = False
+
+    rejectionSubstr = []
 
     title = ''
     shortDescription = ''
@@ -19,17 +23,23 @@ class CrawlerBasic(scrapy.Spider):
     date = ''
     currentPageURL=''
 
-    parent = ''
-    parentIndex = -1
-
     ogTitle = ''
     ogDescription = ''
     ogImage = ''
     ogSiteName = ''
     ogType = ''
 
-    url = ''
-    onlyOnePage = False
+
+    authorAvatar = ''
+
+
+    parent = ''
+    parentIndex = -1
+
+    grandparent = ''
+    grandparentIndex = -1
+
+    replies = []
 
     def __init__(self):
         pass
@@ -107,9 +117,13 @@ class CrawlerBasic(scrapy.Spider):
 
 
     def parseResponse(self, response, url):
-        print("prase function", url)
+        #print("prase function", url)
 
         LinksHelper.addLinkVisited(url)
+
+        for rejection in self.rejectionSubstr:
+            if rejection in url:
+                return None
 
         self.basicProcess(response, url)
         self.crawlerProcess(response, url)
@@ -132,6 +146,8 @@ class CrawlerBasic(scrapy.Spider):
             else:
                 print("Already processed ", url)
 
+        return None
+
 
 
     def getNextPages(self, response):
@@ -142,15 +158,22 @@ class CrawlerBasic(scrapy.Spider):
         return ''
 
     def toString(self):
-        print("title:", self.title)
-        print("shortDescription:", self.shortDescription)
-        print("fullDescription:", self.fullDescription)
-        print("language:", self.language)
-        print("images:", self.images)
-        print("keywords:", self.keywords)
-        print("author:", self.author, self.authorLink)
-        print("date:", self.date)
 
+        if len(self.title) > 0: print("title:", self.title)
+        if len(self.shortDescription) > 0: print("shortDescription:", self.shortDescription)
+        if len(self.fullDescription) > 0: print("fullDescription:", self.fullDescription)
+        if len(self.language) > 0: print("language:", self.language)
+        if len(self.images) > 0: print("images:", self.images)
+        if len(self.keywords) > 0: print("keywords:", self.keywords)
+        if len(self.author) > 0: print("author:", self.author, self.authorLink)
+        if len(self.date) > 0: print("date:", self.date)
+
+        if len(self.authorAvatar) > 0: print("authorAvatar", self.authorAvatar)
+
+        if len(self.parent) > 0: print("parent",self.parent, self.parentIndex)
+        if len(self.grandparent) > 0: print("grandparent", self.grandparent, self.grandparentIndex)
+
+        if len(self.replies) > 0: print("replies", self.replies)
 
         # print("og:title", self.ogTitle)
         # print("og:description", self.ogDescription)

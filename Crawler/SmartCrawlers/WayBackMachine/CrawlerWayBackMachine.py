@@ -65,6 +65,12 @@ class CrawlerWayBackMachine:
     def processURL(self, initialURL, timestamp, endtimestamp):
         # https://web.archive.org/web/20130502222444/http://hackpedia.info/viewtopic.php?f=43&t=16653&p=116862&sid=2a60dce4bac29bf5b399c5741f4e5cb3
 
+        initialURL = "http://hackpedia.info/viewtopic.php?f=14&t=14764&sid=97ffaea0727ec816f88a27e7a6778587"
+
+        for rejection in self.crawler.rejectionSubstr:
+            if rejection in initialURL:
+                return None
+
         url = "https://web.archive.org/web/"+endtimestamp+"/"+initialURL
 
         data = {}
