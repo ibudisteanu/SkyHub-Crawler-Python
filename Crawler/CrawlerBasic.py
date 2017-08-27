@@ -19,6 +19,9 @@ class CrawlerBasic(scrapy.Spider):
     date = ''
     currentPageURL=''
 
+    parent = ''
+    parentIndex = -1
+
     ogTitle = ''
     ogDescription = ''
     ogImage = ''
