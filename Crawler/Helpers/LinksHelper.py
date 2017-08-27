@@ -1,11 +1,12 @@
 #import urllib.parse
 #import os.path
 from pathlib import Path
+import pickle
 
-fileLinksProcessed = None
+fileLinksObjects = None
 fileLinksVisited = None
 
-arrLinksProcessed = []
+arrLinksObjects = []
 arrLinksVisited = []
 
 class LinksHelper():
@@ -19,13 +20,12 @@ class LinksHelper():
 
         print("READING LINKS FILES")
 
-        global fileLinksProcessed, fileLinksVisited
-        global arrLinksProcessed, arrLinksVisited
+        global fileLinksObjects, fileLinksVisited
+        global arrLinksObjects, arrLinksVisited
 
-        if Path("data/urls_processed.xyz").is_file():
-            fileLinksProcessed = open("data//urls_processed.xyz", "r")
-            content = fileLinksProcessed.readlines()
-            arrLinksProcessed = [x.strip() for x in content] # you may also want to remove whitespace characters like `\n` at the end of each line
+        if Path("data/link_objects.xyz").is_file():
+            fileLinksObjects = open("data//link_objects.xyz", "rb")
+            arrLinksObjects = pickle.load(fileLinksObjects)
 
         if Path("data/urls_visited.xyz").is_file():
             fileLinksVisited = open("data//urls_visited.xyz", "r")
@@ -34,25 +34,26 @@ class LinksHelper():
 
     @staticmethod
     def appendLinksFiles():
-        global fileLinksProcessed, fileLinksVisited
-        fileLinksProcessed = open("data//urls_processed.xyz", "a")
+        global arrLinksObjects, fileLinksVisited
         fileLinksVisited = open("data//urls_visited.xyz", "a")
 
     @staticmethod
-    def checkLinkProcessedAlready( url):
+    def findLinkObjectAlready( url):
         url = LinksHelper.fix_url(url)
 
-        global arrLinksProcessed, arrLinksVisited
-        if url in arrLinksProcessed:
-            return True
-        return False
+        global arrLinksObjects
+        for object in arrLinksObjects:
+            #if (url in object.url) or (object.url in url):
+            if (url == object.url) or (url == object.title):
+                return object
+        return None
 
     @staticmethod
     def checkLinkVisitedAlready(url):
         url = LinksHelper.fix_url(url)
 
-        global arrLinksProcessed, arrLinksVisited
-        if url in arrLinksProcessed:
+        global arrLinksVisited
+        if url in arrLinksVisited:
             return True
         return False
 
@@ -66,13 +67,14 @@ class LinksHelper():
         fileLinksVisited.write(url)
 
     @staticmethod
-    def addLinkProcessed(url):
-        url = LinksHelper.fix_url(url)
+    def addLinkObject(object):
 
-        global arrLinksProcessed
-        global fileLinksProcessed
-        arrLinksProcessed.append(url)
-        fileLinksProcessed.write(url)
+        global arrLinksObjects
+        global fileLinksObjects
+
+        fileLinksObjects = open("data//link_objects.xyz", "wb")
+        pickle.dump(arrLinksObjects, fileLinksObjects, -1)
+        fileLinksObjects.close()
 
     @staticmethod
     def fix_url(url):   # based on https://stackoverflow.com/questions/32178535/repair-url-using-python

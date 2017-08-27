@@ -11,12 +11,11 @@ def CrawlerWayBackMachine():
     from Crawler.SmartCrawlers.WayBackMachine import CrawlerWayBackMachine
     crawlerWayBackMachine = CrawlerWayBackMachine.CrawlerWayBackMachine()
 
-    from Crawler.Crawlers.CrawlerPHPBBForums import CrawlerPHPBBForums
-    from Crawler.Crawlers.CrawlerPHPBBTopic import CrawlerPHPBBTopic
+    from Crawler.Crawlers.CrawlerPHPBB import CrawlerPHPBBTopic
+    crawlerWayBackMachine.start(CrawlerPHPBBTopic, "hackpedia.info")
 
-    crawlerWayBackMachine.start(CrawlerPHPBBForums, "hackpedia.info")
-
-    #crawlerWayBackMachine.start(CrawlerPHPBBTopic, "hackpedia.info")
+    # from Crawler.Crawlers.CrawlerPHPBBForums import CrawlerPHPBBForums
+    # crawlerWayBackMachine.start(CrawlerPHPBBForums, "hackpedia.info")
 
 
 

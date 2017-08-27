@@ -68,19 +68,24 @@ class CrawlerPHPBBTopic(CrawlerBasic):
             else: self.replies[i-1]['title'] = title
 
         self.parent = ''
-        self.grandparent = ''
+        self.grandparents = []
 
         if len(self.title) > 0:
             for i in reversed(range(1, 100)):
-                self.parent = self.extractFirstElement(response.css('p.breadcrumbs > a:nth-child('+str(i)+')::text'))
+                parent = response.css('p.breadcrumbs > a:nth-child('+str(i)+')')
+                parentText = self.extractFirstElement(parent.css('::text'))
 
-                if self.parent != '':
+                if parentText != '':
+                    self.parent = parentText
+                    self.parentURL = self.extractFirstElement(parent.css('::attr(href)'))
                     self.parentIndex = i
 
-                    self.grandparent = self.extractFirstElement(response.css('p.breadcrumbs > a:nth-child('+str(i-1)+')::text'))
-                    if self.grandparent != '':
-                        self.grandparentIndex = i-1
-                        break
+                    for j in reversed(range(0, i)):
+                        grandparent = response.css('p.breadcrumbs > a:nth-child('+str(j)+')')
+                        grandparentText = self.extractFirstElement(grandparent.css('::text'))
+
+                        if grandparentText != '':
+                            self.grandparents.append({'title':grandparentText, 'url':self.extractFirstElement(grandparent.css('::attr(href)'))})
 
                     break
 
