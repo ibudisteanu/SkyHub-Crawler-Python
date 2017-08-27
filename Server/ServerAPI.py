@@ -29,8 +29,7 @@ class ServerAPI:
             'password': user['password']
         }
 
-        headers = {
-        }
+        headers = {}
 
         result = session.get(url+"auth/login", data=data, headers=headers)
         result = result.json()
@@ -58,7 +57,7 @@ class ServerAPI:
             'id': user['id'],
             'sessionId': user['sessionId'],
 
-            'parentId': parentId,
+            'parent': parentId,
             'title': title,
             'description': description,
             'shortDescription': shortDescription,
@@ -71,13 +70,13 @@ class ServerAPI:
             'longitude': longitude
         }
 
-        headers = {
-
-        }
+        headers = { }
 
         result = session.get(url + "topics/add-topic", data=data, headers=headers).json()
         print(result)
-        return result
+        if result['result'] == True:
+            return result['topic']['id']
+        return None
 
     @staticmethod
     def postAddForum(user, parentId, name, title, description, iconPic, coverPic, arrKeywords = [], country='', city='', language='',  latitude=-666, longitude=-666):
@@ -95,7 +94,7 @@ class ServerAPI:
             'id': user['id'],
             'sessionId': user['sessionId'],
 
-            'parentId': parentId,
+            'parent': parentId,
             'title': title,
             'name': name,
             'description': description,
@@ -109,12 +108,55 @@ class ServerAPI:
             'longitude': longitude
         }
 
-        headers = {
-        }
+        headers = {}
 
         result = session.get(url + "forums/add-forum", data=data, headers=headers).json()
         print(result)
-        return result
+        if result['result'] == True:
+            return result['forum']['id']
+        return None
+
+
+    @staticmethod
+    def postAddReply(user, parentId, parentReplyId, title, description, arrKeywords = [], arrAttachments=[], country='', city='', language='',  latitude=-666, longitude=-666):
+
+        user = ServerAPI.loginUser(user)
+
+        if user is None:
+            return False
+        if parentId is None:
+            return False
+        if parentReplyId is None:
+            parentReplyId = ""
+
+        rez = ServerAPI.processLocation(country, city, language, latitude, longitude)
+        latitude = rez[0]
+        longitude = rez[1]
+
+        data = {
+            'id': user['id'],
+            'sessionId': user['sessionId'],
+
+            'parent': parentId,
+            'parentReply': parentReplyId,
+            'title': title,
+            'description': description,
+            'keywords': ','.join(str(e) for e in arrKeywords),
+            'attachments': arrAttachments,
+            'country': country,
+            'city': city,
+            'language': language,
+            'latitude': latitude,
+            'longitude': longitude
+        }
+
+        headers = {}
+
+        result = session.get(url + "replies/add-reply", data=data, headers=headers).json()
+        print(result)
+        if result['result'] == True:
+            return result['reply']['id']
+        return None
 
     @staticmethod
     def processLocation(country, city, language, latitude, longitude):
