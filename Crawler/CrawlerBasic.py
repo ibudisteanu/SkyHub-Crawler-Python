@@ -1,6 +1,8 @@
 from urllib.parse import urlparse
 
 import scrapy
+from Server.ServerAPI import ServerAPI
+
 from Crawler.Helpers.LinksHelper import LinksHelper
 from Crawler.Helpers.ObjectLink import ObjectLink
 
@@ -9,6 +11,14 @@ from Crawler.Helpers.AttrDict import AttrDict
 
 class CrawlerBasic(scrapy.Spider):
     url = ''
+    websiteName = ''
+    websiteImage = ''
+    websiteCover = ''
+    websiteCountry = ''
+    websiteCity = ''
+    websiteLanguage = ''
+    user = 'muflonel2000'
+
     onlyOnePage = False
 
     rejectionSubstr = []
@@ -33,17 +43,21 @@ class CrawlerBasic(scrapy.Spider):
 
     authorAvatar = ''
 
-
-    parent = ''
-    parentURL = ''
-    parentIndex = -1
-
-    grandparents = ''
+    parents = []
 
     replies = []
 
-    def __init__(self):
-        pass
+    def __init__(self, user='', url='', websiteName='', websiteImage='', websiteCover = '',  websiteCountry = '', websiteCity = '', websiteLanguage = ''):
+
+        if user != '': self.user = user
+        if websiteName != '': self.websiteName = websiteName
+        if websiteCover != '': self.websiteCover = websiteCover
+        if websiteImage != '': self.websiteImage = websiteImage
+        if websiteCountry != '': self.websiteCountry = websiteCountry
+        if websiteCity != '': self.websiteCity = websiteCity
+        if websiteLanguage != '': self.websiteLanguage = websiteLanguage
+
+        if url != '': self.url = url
 
     def extractFirstElement(self, list, returnValue='', index=0):
         if len(list) > index: return list[index].extract()
@@ -136,7 +150,7 @@ class CrawlerBasic(scrapy.Spider):
 
         self.toString()
 
-        if len(self.parent) > 0 or len(self.grandparents) > 0:
+        if len(self.parents) > 0:
             self.createParents()
 
         if self.validate() != '':
@@ -155,22 +169,24 @@ class CrawlerBasic(scrapy.Spider):
     def createParents(self):
 
         grandparentId = ''
-        for grandparent in reversed(self.grandparents):
-            grandparentObject = LinksHelper.findLinkObjectAlready(grandparent['title'])
-            if grandparentObject is None:
-                ########################### createGrandParent
-                grandparentObject = ObjectLink(grandparent['url'], 'forum', '############### ID FORUM', grandparent['title'], grandparentId)
-                LinksHelper.addLinkObject(grandparentObject)
+        for parent in self.parents:
+            parentObject = LinksHelper.findLinkObjectAlready(parent['name'])
+            if parentObject is None:
 
-            grandparentId = grandparentObject.id
+                image = self.websiteImage or self.ogImage
+                if (image == '') and (len(self.images) > 0):
+                    image = self.images[0]
+                idForum = ServerAPI.postAddForum(self.user, grandparentId, self.websiteName +" "+ parent['name'],
+                                                 self.websiteName + " " + parent['name'], self.websiteName +" "+ parent['name'],
+                                                 image,
+                                                 self.websiteCover,
+                                                 self.keywords,
+                                                 self.date, self.websiteCountry or self.language, self.websiteCity, self.websiteLanguage or self.language, -666, -666)
 
+                parentObject = ObjectLink(parent['url'], 'forum', idForum, parent['name'], grandparentId)
+                LinksHelper.addLinkObject(parentObject)
 
-
-        parentObject = LinksHelper.findLinkObjectAlready(self.parent)
-        if parentObject is None:
-            ########################### createParent
-            parentObject = ObjectLink(grandparent['url'], 'forum', '############### ID FORUM', self.parent, grandparentId)
-            LinksHelper.addLinkObject(parentObject)
+            grandparentId = parentObject.id
 
 
     def getNextPages(self, response):
@@ -193,8 +209,7 @@ class CrawlerBasic(scrapy.Spider):
 
         if len(self.authorAvatar) > 0: print("authorAvatar", self.authorAvatar)
 
-        if len(self.parent) > 0: print("parent",self.parent, self.parentURL, self.parentIndex)
-        if len(self.grandparents) > 0: print("grandparents", self.grandparents)
+        if len(self.parents) > 0: print("parents", self.parents)
 
         if len(self.replies) > 0: print("replies", self.replies)
 

@@ -13,6 +13,7 @@ class CrawlerPHPBBTopic(CrawlerBasic):
 
     removeLastMessage = True
 
+
     def crawlerProcess(self, response, url):
 
         self.title = self.extractFirstElement(response.css('#pageheader > h2 > a::text'))
@@ -67,27 +68,19 @@ class CrawlerPHPBBTopic(CrawlerBasic):
             if i == 0: self.title = title
             else: self.replies[i-1]['title'] = title
 
-        self.parent = ''
-        self.grandparents = []
+        self.parents = []
 
         if len(self.title) > 0:
             for i in reversed(range(1, 100)):
                 parent = response.css('p.breadcrumbs > a:nth-child('+str(i)+')')
                 parentText = self.extractFirstElement(parent.css('::text'))
+                parentURL = self.extractFirstElement(parent.css('::attr(href)'))
 
                 if parentText != '':
-                    self.parent = parentText
-                    self.parentURL = self.extractFirstElement(parent.css('::attr(href)'))
-                    self.parentIndex = i
+                    self.parents.append({'name':parentText, 'url':parentURL, 'index': i})
 
-                    for j in reversed(range(0, i)):
-                        grandparent = response.css('p.breadcrumbs > a:nth-child('+str(j)+')')
-                        grandparentText = self.extractFirstElement(grandparent.css('::text'))
+        self.parents = list(reversed(self.parents)) #changing the order
 
-                        if grandparentText != '':
-                            self.grandparents.append({'title':grandparentText, 'url':self.extractFirstElement(grandparent.css('::attr(href)'))})
-
-                    break
 
 
     def validate(self):

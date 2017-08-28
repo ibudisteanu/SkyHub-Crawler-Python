@@ -18,14 +18,12 @@ class CrawlerWayBackMachine:
 
         pass
 
-    def start(self, crawler, url):
+    def start(self, crawler):
 
-        crawler = crawler()
         crawler.onlyOnePage = True
         self.crawler = crawler
-        #self.scrapyProcess.crawl(scrapyCrawlerSettings)
 
-        self.getAllLinks(url)
+        self.getAllLinks(crawler.url)
 
 
     def getAllLinks(self, link):
