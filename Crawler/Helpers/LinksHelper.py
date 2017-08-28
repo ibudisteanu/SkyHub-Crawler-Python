@@ -38,14 +38,14 @@ class LinksHelper():
         fileLinksVisited = open("data//urls_visited.xyz", "a")
 
     @staticmethod
-    def findLinkObjectAlready( url):
+    def findLinkObjectAlready( url='', title=''):
         url = LinksHelper.fix_url(url)
 
         global arrLinksObjects
         for object in arrLinksObjects:
-            #if (url in object.url) or (object.url in url):
-            if (url == object.url) or (url == object.title):
+            if (url == object.url) or (title == object.title):
                 return object
+
         return None
 
     @staticmethod
@@ -71,6 +71,8 @@ class LinksHelper():
 
         global arrLinksObjects
         global fileLinksObjects
+
+        arrLinksObjects.append(object)
 
         fileLinksObjects = open("data//link_objects.xyz", "wb")
         pickle.dump(arrLinksObjects, fileLinksObjects, -1)

@@ -60,6 +60,9 @@ class ServerAPI:
         if dtOriginalDate is not None:
             arrAdditionalInfo['dtOriginal'] = dtOriginalDate
 
+        if isinstance(arrKeywords, str): keywords = arrKeywords
+        else: ','.join(str(e) for e in arrKeywords)
+
         data = {
             'id': user['id'],
             'sessionId': user['sessionId'],
@@ -68,7 +71,7 @@ class ServerAPI:
             'title': title,
             'description': description,
             'shortDescription': shortDescription,
-            'keywords': ','.join(str(e) for e in arrKeywords),
+            'keywords': keywords,
             'attachments': arrAttachments,
             'country': country,
             'city': city,
@@ -106,6 +109,9 @@ class ServerAPI:
         if dtOriginalDate is not None:
             arrAdditionalInfo['dtOriginal'] = dtOriginalDate
 
+        if isinstance(arrKeywords, str): keywords = arrKeywords
+        else: ','.join(str(e) for e in arrKeywords)
+
         data = {
             'id': user['id'],
             'sessionId': user['sessionId'],
@@ -116,7 +122,7 @@ class ServerAPI:
             'description': description,
             'iconPic': iconPic,
             'coverPic': coverPic,
-            'keywords': ','.join(str(e) for e in arrKeywords),
+            'keywords': keywords,
             'country': country,
             'city': city,
             'language': language,
@@ -129,8 +135,9 @@ class ServerAPI:
         headers = {}
 
         result = session.get(url + "forums/add-forum", data=data, headers=headers).json()
-        print(result)
+        #print(result)
         if result['result'] == True:
+            print('FORUM new ', result['forum']['URL'])
             return result['forum']['id']
         return None
 
@@ -158,6 +165,9 @@ class ServerAPI:
         if dtOriginalDate is not None:
             arrAdditionalInfo['dtOriginal'] = dtOriginalDate
 
+        if isinstance(arrKeywords, str): keywords = arrKeywords
+        else: ','.join(str(e) for e in arrKeywords)
+
         data = {
             'id': user['id'],
             'sessionId': user['sessionId'],
@@ -166,7 +176,7 @@ class ServerAPI:
             'parentReply': parentReplyId,
             'title': title,
             'description': description,
-            'keywords': ','.join(str(e) for e in arrKeywords),
+            'keywords': keywords,
             'attachments': arrAttachments,
             'country': country,
             'city': city,

@@ -23,50 +23,54 @@ class CrawlerPHPBBTopic(CrawlerBasic):
         response = response.css("#pagecontent")
 
         replies = response.css("div.postbody")
-        if self.removeLastMessage: del replies[-1]
-        for i, reply in enumerate(replies):
-            reply = '<br/>'.join(reply.css("::text").extract())
-            if i == 0:
-                self.fullDescription = reply
-                self.shortDescription = ''
-            else:
-                self.replies.append({'description': reply})
+        if len(replies) > 0:
+            if self.removeLastMessage: del replies[-1]
+            for i, reply in enumerate(replies):
+                reply = '<br/>'.join(reply.css("::text").extract())
+                if i == 0:
+                    self.fullDescription = reply
+                    self.shortDescription = ''
+                else:
+                    self.replies.append({'description': reply})
 
 
         authors = response.css("div.postauthor")
-        if self.removeLastMessage: del authors[-1]
-        for i, author in enumerate(authors):
-            author = ' '.join(author.css("::text").extract())
-            if i == 0: self.author = author
-            else: self.replies[i-1]['author'] = author
+        if len(authors) > 0:
+            if self.removeLastMessage: del authors[-1]
+            for i, author in enumerate(authors):
+                author = ' '.join(author.css("::text").extract())
+                if i == 0: self.author = author
+                else: self.replies[i-1]['author'] = author
 
         dates = response.css("td.postbottom")
+        if len(dates) > 0:
+            for i, date in enumerate(dates):
 
-        for i, date in enumerate(dates):
+                date = ' '.join(date.css('::text').extract())
 
-            date = ' '.join(date.css('::text').extract())
+                if (len(dates)<len(replies)): j=i
+                else:
+                    if (i % 2 == 0): j = i//2
+                    else: j = -1;
 
-            if (len(dates)<len(replies)): j=i
-            else:
-                if (i % 2 == 0): j = i//2
-                else: j = -1;
-
-            if (j!=-1):
-                if i == 0: self.date = date
-                else: self.replies[j-1]['date'] = date
+                if (j!=-1):
+                    if i == 0: self.date = date
+                    else: self.replies[j-1]['date'] = date
 
         avatars = response.css("div.postavatar::attr(src)")
-        for i, avatar in enumerate(avatars):
-            avatar = ' '.join(avatar.css('::text').extract())
-            if i == 0: self.authorAvatar = avatar
-            else: self.replies[i-1]['authorAvatar'] = avatar
+        if len(avatars) > 0:
+            for i, avatar in enumerate(avatars):
+                avatar = ' '.join(avatar.css('::text').extract())
+                if i == 0: self.authorAvatar = avatar
+                else: self.replies[i-1]['authorAvatar'] = avatar
 
         titles = response.css('div.postsubject')
-        for i, title in enumerate(titles):
-            title = ' '.join(title.css('::text').extract())
+        if len(titles) > 0:
+            for i, title in enumerate(titles):
+                title = ' '.join(title.css('::text').extract())
 
-            if i == 0: self.title = title
-            else: self.replies[i-1]['title'] = title
+                if i == 0: self.title = title
+                else: self.replies[i-1]['title'] = title
 
         self.parents = []
 

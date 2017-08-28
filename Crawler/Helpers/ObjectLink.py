@@ -8,12 +8,12 @@ class ObjectLink:
     parent = ''
     title = ''
 
-    def __init__(self, url, type, id, text, parent):
+    def __init__(self, url, type, id, title, parent):
 
         self.url = url
         self.url = LinksHelper.fix_url(self.url)
 
         self.type = type
         self.id = id
-        self.text = text
+        self.title = title
         self.parent = parent

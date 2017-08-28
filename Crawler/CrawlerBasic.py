@@ -40,10 +40,10 @@ class CrawlerBasic(scrapy.Spider):
     ogSiteName = ''
     ogType = ''
 
-
     authorAvatar = ''
 
     parents = []
+    parentId = ''
 
     replies = []
 
@@ -150,12 +150,12 @@ class CrawlerBasic(scrapy.Spider):
 
         self.toString()
 
-        if len(self.parents) > 0:
-            self.createParents()
+
+        self.parentId = self.createParents()
 
         if self.validate() != '':
             if LinksHelper.findLinkObjectAlready(url) is None:
-                if self.validate() == 'news':
+                if self.validate() in ['news','topic']:
                     pass
                 elif self.validate() in ['category', 'forum']:
                     pass
@@ -169,13 +169,18 @@ class CrawlerBasic(scrapy.Spider):
     def createParents(self):
 
         grandparentId = ''
+
         for parent in self.parents:
-            parentObject = LinksHelper.findLinkObjectAlready(parent['name'])
+
+            parentName = self.websiteName+' '+parent['name']
+            parentObject = LinksHelper.findLinkObjectAlready(parent['url'], parentName)
+
             if parentObject is None:
 
                 image = self.websiteImage or self.ogImage
                 if (image == '') and (len(self.images) > 0):
                     image = self.images[0]
+
                 idForum = ServerAPI.postAddForum(self.user, grandparentId, self.websiteName +" "+ parent['name'],
                                                  self.websiteName + " " + parent['name'], self.websiteName +" "+ parent['name'],
                                                  image,
@@ -183,10 +188,13 @@ class CrawlerBasic(scrapy.Spider):
                                                  self.keywords,
                                                  self.date, self.websiteCountry or self.language, self.websiteCity, self.websiteLanguage or self.language, -666, -666)
 
-                parentObject = ObjectLink(parent['url'], 'forum', idForum, parent['name'], grandparentId)
+                parentObject = ObjectLink(parent['url'], 'forum', idForum, parentName, grandparentId)
                 LinksHelper.addLinkObject(parentObject)
 
             grandparentId = parentObject.id
+            print("grandparentId   ",grandparentId)
+
+        return grandparentId
 
 
     def getNextPages(self, response):
