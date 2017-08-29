@@ -47,8 +47,14 @@ class ServerAPI:
     def postAddTopic(user, parentId, title, description, shortDescription='',  arrKeywords=[], arrAttachments=[],  dtOriginalDate = None, country='', city='', language='', latitude=-666, longitude=-666, authorName='', authorAvatar=''):
         user = ServerAPI.loginUser(user)
 
-        if user is None:
-            return False
+        if user is None: return False
+
+        title = ServerAPI.fixArchiveStrings(title)
+        description = ServerAPI.fixArchiveStrings(description)
+        shortDescription = ServerAPI.fixArchiveStrings(shortDescription)
+        authorAvatar = ServerAPI.fixArchiveStrings(authorAvatar)
+        authorName = ServerAPI.fixArchiveStrings(authorName)
+
 
         rez = ServerAPI.processLocation(country, city, language, latitude, longitude)
         latitude = rez[0]
@@ -156,6 +162,8 @@ class ServerAPI:
 
         title = ServerAPI.fixArchiveStrings(title)
         description = ServerAPI.fixArchiveStrings(description)
+        authorAvatar = ServerAPI.fixArchiveStrings(authorAvatar)
+        authorName = ServerAPI.fixArchiveStrings(authorName)
 
         rez = ServerAPI.processLocation(country, city, language, latitude, longitude)
         latitude = rez[0]
@@ -230,6 +238,6 @@ class ServerAPI:
         # https://web.archive.org/web/20130502222444/
         if "web.archive.org/web/" in text:
             positionStart = text.index("web.archive.org/web/")
-            text = text[0:positionStart] + text[positionStart + len("web.archive.org/web/20130502222444/"):10000]
+            text = text[positionStart + len("web.archive.org/web/20130502222444/"):10000]
 
         return text

@@ -28,7 +28,7 @@ class CrawlerPHPBBTopic(CrawlerBasic):
         replies = response.css("div.postbody")
         authors = response.css("div.postauthor")
         dates = response.css("td.postbottom")
-        avatars = response.css("div.postavatar::attr(src)")
+        avatars = response.css("div.postavatar img::attr(src)")
         titles = response.css('div.postsubject')
 
         if len(replies) == len(authors)+1:
