@@ -158,7 +158,7 @@ class CrawlerBasic(scrapy.Spider):
             if LinksHelper.findLinkObjectAlready(url) is None:
                 if validation in ['news', 'topic']:
 
-                    topicObject = LinksHelper.findLinkObjectAlready(self.currentPageURL, self.title or self.ogTitle)
+                    topicObject = LinksHelper.findLinkObjectAlready(self.currentPageURL, self.title or self.ogTitle, True)
                     if topicObject == None:
                         topicId = ServerAPI.postAddTopic(self.user, self.parentId,
                                                          self.title or self.ogTitle,

@@ -38,12 +38,15 @@ class LinksHelper():
         fileLinksVisited = open("data//urls_visited.xyz", "a")
 
     @staticmethod
-    def findLinkObjectAlready( url='', title=''):
+    def findLinkObjectAlready( url='', title='', allowTitleIncluded=false):
         url = LinksHelper.fix_url(url)
 
         global arrLinksObjects
         for object in arrLinksObjects:
             if (url == object.url) or (title == object.title):
+                return object
+
+            if allowTitleIncluded and (title in object.title or object.title in title):
                 return object
 
         return None
