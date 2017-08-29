@@ -38,7 +38,7 @@ class LinksHelper():
         fileLinksVisited = open("data//urls_visited.xyz", "a")
 
     @staticmethod
-    def findLinkObjectAlready( url='', title='', allowTitleIncluded=false):
+    def findLinkObjectAlready( url='', title='', allowTitleIncluded=False):
         url = LinksHelper.fix_url(url)
 
         global arrLinksObjects
