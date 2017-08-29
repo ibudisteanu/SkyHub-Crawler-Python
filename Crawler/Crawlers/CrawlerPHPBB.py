@@ -28,7 +28,7 @@ class CrawlerPHPBBTopic(CrawlerBasic):
         replies = response.css("div.postbody")
         authors = response.css("div.postauthor")
         dates = response.css("td.postbottom")
-        avatars = response.css("div.postavatar img::attr(src)")
+        avatars = response.css("div.postavatar img")
         titles = response.css('div.postsubject')
 
         if len(replies) == len(authors)+1:
@@ -52,7 +52,7 @@ class CrawlerPHPBBTopic(CrawlerBasic):
 
                 if i < len(avatars):
                     avatar = avatars[i]
-                    avatar = ' '.join(avatar.css('::text').extract())
+                    avatar = avatar.css('::attr(src)').extract_first()
                 else: avatar = ''
 
                 if i < len(titles):
