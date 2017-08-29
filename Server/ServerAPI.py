@@ -96,8 +96,12 @@ class ServerAPI:
 
         user = ServerAPI.loginUser(user)
 
-        if user is None:
-            return False
+        if user is None: return False
+
+        title = ServerAPI.fixArchiveStrings(title)
+        description = ServerAPI.fixArchiveStrings(description)
+        iconPic = ServerAPI.fixArchiveStrings(iconPic)
+        coverPic = ServerAPI.fixArchiveStrings(coverPic)
 
         rez = ServerAPI.processLocation(country, city, language, latitude, longitude)
         latitude = rez[0]
@@ -146,12 +150,12 @@ class ServerAPI:
 
         user = ServerAPI.loginUser(user)
 
-        if user is None:
-            return False
-        if parentId is None:
-            return False
-        if parentReplyId is None:
-            parentReplyId = ""
+        if user is None: return False
+        if parentId is None: return False
+        if parentReplyId is None: parentReplyId = ""
+
+        title = ServerAPI.fixArchiveStrings(title)
+        description = ServerAPI.fixArchiveStrings(description)
 
         rez = ServerAPI.processLocation(country, city, language, latitude, longitude)
         latitude = rez[0]
@@ -219,3 +223,13 @@ class ServerAPI:
         else:
             result = None
         return result
+
+    @staticmethod
+    def fixArchiveStrings(text):
+
+        # https://web.archive.org/web/20130502222444/
+        if "web.archive.org/web/" in text:
+            positionStart = text.index("web.archive.org/web/")
+            text = text[0:positionStart] + text[positionStart + len("web.archive.org/web/20130502222444/"):10000]
+
+        return text
