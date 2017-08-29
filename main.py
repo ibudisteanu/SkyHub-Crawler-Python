@@ -13,7 +13,7 @@ def CrawlerWayBackMachine():
     crawlerWayBackMachine = CrawlerWayBackMachine.CrawlerWayBackMachine()
 
     from Crawler.Crawlers.CrawlerPHPBB import CrawlerPHPBBTopic
-    crawlerWayBackMachine.start(CrawlerPHPBBTopic(user="muflonel2000", url="hackpedia.info", websiteName='Hackpedia', websiteImage="", websiteCover="https://www.cryptus.in/image/online-training-cceh.jpg", websiteCountry="Romania", websiteCity="Bucharest", websiteLanguage="Romanian"))
+    crawlerWayBackMachine.start(CrawlerPHPBBTopic(user="muflonel2000", url="hackpedia.info", websiteName='Hackpedia', websiteImage="https://s-media-cache-ak0.pinimg.com/236x/2e/e4/e7/2ee4e7f7bf6aa62e5c4cc13ac53c2487--hacking-websites-hacking-tricks.jpg", websiteCover="https://www.cryptus.in/image/online-training-cceh.jpg", websiteCountry="Romania", websiteCity="Bucharest", websiteLanguage="Romanian"))
 
     # from Crawler.Crawlers.CrawlerPHPBBForums import CrawlerPHPBBForums
     # crawlerWayBackMachine.start(CrawlerPHPBBForums, "hackpedia.info")
