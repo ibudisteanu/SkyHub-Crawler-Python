@@ -1,6 +1,7 @@
 import requests  # Tutorial based on http://docs.python-requests.org/en/master/user/advanced/
 
 from Server.UsersTable import getUser
+import ujson
 
 session = requests.Session()
 userLoggedIn = None
@@ -43,7 +44,7 @@ class ServerAPI:
         return None
 
     @staticmethod
-    def postAddTopic(user, parentId, title, description, shortDescription='',  arrKeywords=[], arrAttachments=[],  dtOriginalDate = None, country='', city='', language='', latitude=-666, longitude=-666 ):
+    def postAddTopic(user, parentId, title, description, shortDescription='',  arrKeywords=[], arrAttachments=[],  dtOriginalDate = None, country='', city='', language='', latitude=-666, longitude=-666, authorName='', authorAvatar=''):
         user = ServerAPI.loginUser(user)
 
         if user is None:
@@ -54,11 +55,12 @@ class ServerAPI:
         longitude = rez[1]
 
         arrAdditionalInfo = {
-            'scrapped': True,
+            'scraped':True,
         }
 
-        if dtOriginalDate is not None:
-            arrAdditionalInfo['dtOriginal'] = dtOriginalDate
+        if dtOriginalDate is not None: arrAdditionalInfo['dtOriginal'] = dtOriginalDate
+        if authorName != '': arrAdditionalInfo['orgName'] = authorName
+        if authorAvatar != '': arrAdditionalInfo['orgAvatar'] = authorAvatar
 
         if isinstance(arrKeywords, str): keywords = arrKeywords
         else: ','.join(str(e) for e in arrKeywords)
@@ -78,8 +80,7 @@ class ServerAPI:
             'language': language,
             'latitude': latitude,
             'longitude': longitude,
-            'additionalInfo.scraped': 1,
-            'additionalInfo.dtOriginal': dtOriginalDate,
+            'additionalInfo': ujson.dumps(arrAdditionalInfo)
         }
 
         headers = { }
@@ -103,11 +104,10 @@ class ServerAPI:
         longitude = rez[1]
 
         arrAdditionalInfo = {
-            'scrapped': True,
+            'scraped':True,
         }
 
-        if dtOriginalDate is not None:
-            arrAdditionalInfo['dtOriginal'] = dtOriginalDate
+        if dtOriginalDate is not None: arrAdditionalInfo['dtOriginal'] = dtOriginalDate
 
         if isinstance(arrKeywords, str): keywords = arrKeywords
         else: ','.join(str(e) for e in arrKeywords)
@@ -128,8 +128,7 @@ class ServerAPI:
             'language': language,
             'latitude': latitude,
             'longitude': longitude,
-            'additionalInfo.scraped': 1,
-            'additionalInfo.dtOriginal': dtOriginalDate,
+            'additionalInfo': ujson.dumps(arrAdditionalInfo)
         }
 
         headers = {}
@@ -143,7 +142,7 @@ class ServerAPI:
 
 
     @staticmethod
-    def postAddReply(user, parentId, parentReplyId, title, description, arrKeywords = [], arrAttachments=[], dtOriginalDate = None, country='', city='', language='',  latitude=-666, longitude=-666):
+    def postAddReply(user, parentId, parentReplyId, title, description, arrKeywords = [], arrAttachments=[], dtOriginalDate = None, country='', city='', language='',  latitude=-666, longitude=-666, authorName='', authorAvatar='' ):
 
         user = ServerAPI.loginUser(user)
 
@@ -159,14 +158,17 @@ class ServerAPI:
         longitude = rez[1]
 
         arrAdditionalInfo = {
-            'scrapped':True,
+            'scraped':True,
         }
 
-        if dtOriginalDate is not None:
-            arrAdditionalInfo['dtOriginal'] = dtOriginalDate
+        if dtOriginalDate is not None: arrAdditionalInfo['dtOriginal'] = dtOriginalDate
+        if authorName != '': arrAdditionalInfo['orgName'] = authorName
+        if authorAvatar != '': arrAdditionalInfo['orgAvatar'] = authorAvatar
 
         if isinstance(arrKeywords, str): keywords = arrKeywords
         else: ','.join(str(e) for e in arrKeywords)
+
+        arrAdditionalInfo
 
         data = {
             'id': user['id'],
@@ -183,8 +185,7 @@ class ServerAPI:
             'language': language,
             'latitude': latitude,
             'longitude': longitude,
-            'additionalInfo.scraped': 1,
-            'additionalInfo.dtOriginal': dtOriginalDate,
+            'additionalInfo': ujson.dumps(arrAdditionalInfo)
         }
 
         headers = {}

@@ -4,6 +4,7 @@ import requests  # Tutorial based on http://docs.python-requests.org/en/master/u
 from scrapy.crawler import CrawlerProcess
 from Crawler.Helpers.LinksHelper import LinksHelper
 from parsel import Selector
+import datetime
 
 class CrawlerWayBackMachine:
 
@@ -82,6 +83,15 @@ class CrawlerWayBackMachine:
 
         sel = Selector(text=html)
 
+        date = endtimestamp
+        date = date[:4] + '-' + date[4:]
+        date = date[:6+1] + '-' + date[6+1:]
+        date = date[:8+2] + ' ' + date[8+2:]
+        date = date[:10+3] + ':' + date[10+3:]
+        date = date[:12+4] + ':' + date[12+4:]
+
+
+        self.crawler.date = date
         self.crawler.parseResponse(sel, initialURL)
 
-        print("crawler parse done")
+        #print("crawler parse done")

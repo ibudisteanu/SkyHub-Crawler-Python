@@ -153,9 +153,46 @@ class CrawlerBasic(scrapy.Spider):
 
         self.parentId = self.createParents()
 
-        if self.validate() != '':
+        validation = self.validate()
+        if validation != '':
             if LinksHelper.findLinkObjectAlready(url) is None:
-                if self.validate() in ['news','topic']:
+                if validation in ['news', 'topic']:
+
+                    topicObject = LinksHelper.findLinkObjectAlready(self.currentPageURL, self.title or self.ogTitle)
+                    if topicObject == None:
+                        topicId = ServerAPI.postAddTopic(self.user, self.parentId,
+                                                         self.title or self.ogTitle,
+                                                         self.fullDescription or self.ogDescription or self.shortDescription,
+                                                         self.ogDescription or self.shortDescription,
+                                                         self.keywords, self.images, self.date,
+                                                         self.websiteCountry or self.language, self.websiteCity, self.websiteLanguage or self.language, -666, -666,
+                                                         self.author, self.authorAvatar)
+
+                        topicObject = ObjectLink(self.currentPageURL, 'topic', topicId, self.title, self.parentId)
+                        LinksHelper.addLinkObject(topicObject)
+
+                    topicId = topicObject.id
+                    print("new topic ", topicId)
+
+                    if len(self.replies) > 0:
+                        for reply in self.replies:
+                            replyObjectURL = self.currentPageURL+reply['title'] + reply['description']
+                            replyObjectTitle = reply['title'] + reply['description']
+
+                            replyObject = LinksHelper.findLinkObjectAlready(replyObjectURL, replyObjectTitle)
+                            if replyObject == None:
+                                replyId = ServerAPI.postAddReply(self.user, topicId,
+                                                                 "", reply['title'], reply['description'],
+                                                                 self.keywords, [], reply['date'],
+                                                                 self.websiteCountry or self.language, self.websiteCity, self.websiteLanguage or self.language, -666, -666,
+                                                                 reply['author'], reply['authorAvatar'])
+
+                                replyObject = ObjectLink(replyObjectURL, 'reply', replyId, replyObjectTitle, topicId)
+                                LinksHelper.addLinkObject(replyObject)
+
+                        replyId = replyObject.id
+                        print("new reply ", replyId)
+
                     pass
                 elif self.validate() in ['category', 'forum']:
                     pass
@@ -170,6 +207,9 @@ class CrawlerBasic(scrapy.Spider):
 
         grandparentId = ''
 
+        if len(self.parents) == 0:
+            self.parents.append({'name': '', 'url': self.url})
+
         for parent in self.parents:
 
             parentName = self.websiteName+' '+parent['name']
@@ -178,21 +218,20 @@ class CrawlerBasic(scrapy.Spider):
             if parentObject is None:
 
                 image = self.websiteImage or self.ogImage
-                if (image == '') and (len(self.images) > 0):
-                    image = self.images[0]
+                if (image == '') and (len(self.images) > 0): image = self.images[0]
 
-                idForum = ServerAPI.postAddForum(self.user, grandparentId, self.websiteName +" "+ parent['name'],
+                forumId = ServerAPI.postAddForum(self.user, grandparentId, self.websiteName +" "+ parent['name'],
                                                  self.websiteName + " " + parent['name'], self.websiteName +" "+ parent['name'],
                                                  image,
                                                  self.websiteCover,
                                                  self.keywords,
                                                  self.date, self.websiteCountry or self.language, self.websiteCity, self.websiteLanguage or self.language, -666, -666)
 
-                parentObject = ObjectLink(parent['url'], 'forum', idForum, parentName, grandparentId)
+                parentObject = ObjectLink(parent['url'], 'forum', forumId, parentName, grandparentId)
                 LinksHelper.addLinkObject(parentObject)
 
             grandparentId = parentObject.id
-            print("grandparentId   ",grandparentId)
+            #print("grandparentId   ",grandparentId)
 
         return grandparentId
 
@@ -234,7 +273,6 @@ class CrawlerBasic(scrapy.Spider):
 
         return text
 
-        #
         # cleaner = Cleaner()
         # cleaner.javascript = True  # This is True because we want to activate the javascript filter
         # #cleaner.style = True  # This is True because we want to activate the styles & stylesheet filter

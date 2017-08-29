@@ -8,4 +8,5 @@ pip install dateparser
 pip install beautifulsoup4
 pip install parsel
 pip install requests
+pip install ujson
 ```

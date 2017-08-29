@@ -3,3 +3,5 @@ __pycache__/
 .idea/
 Server/UsersTable.py
 data/urls_visited\.xyz
+
+data/link_objects\.xyz

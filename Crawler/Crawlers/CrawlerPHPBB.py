@@ -17,6 +17,9 @@ class CrawlerPHPBBTopic(CrawlerBasic):
     def crawlerProcess(self, response, url):
 
         self.title = self.extractFirstElement(response.css('#pageheader > h2 > a::text'))
+        self.fullDescription = ''
+        self.shortDescription = ''
+
 
         self.replies = []
 
@@ -31,7 +34,7 @@ class CrawlerPHPBBTopic(CrawlerBasic):
                     self.fullDescription = reply
                     self.shortDescription = ''
                 else:
-                    self.replies.append({'description': reply})
+                    self.replies.append({'description': reply, 'author':'', 'date':'', 'authorAvatar':'' })
 
 
         authors = response.css("div.postauthor")
@@ -83,12 +86,20 @@ class CrawlerPHPBBTopic(CrawlerBasic):
                 if parentText != '':
                     self.parents.append({'name':parentText, 'url':parentURL, 'index': i})
 
+        if len(self.parents) > 0:
+            ok = False
+            for parent in self.parents:
+                if parent['name'] == '':
+                    ok = True
+            if ok == False:
+                self.parents.append({'name':'','url': self.url})
+
         self.parents = list(reversed(self.parents)) #changing the order
 
 
 
     def validate(self):
-        if len(self.title) > 0:
+        if len(self.title) > 0 and len(self.fullDescription) > 0:
             return 'topic'
 
         return ''

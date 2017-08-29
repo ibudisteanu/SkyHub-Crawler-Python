@@ -92,4 +92,6 @@ class LinksHelper():
         if (url.find("www.") >= 0) and (url.find("www.") < 10):
             url = url.replace("www.", "")
 
+        url = url.split("#", 1)[0]
+
         return url
