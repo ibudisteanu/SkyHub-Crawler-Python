@@ -240,4 +240,9 @@ class ServerAPI:
             positionStart = text.index("web.archive.org/web/")
             text = text[positionStart + len("web.archive.org/web/20130502222444/"):10000]
 
+        if "http" in text:
+            positionStart = text.index("http")
+            if positionStart != 0:
+                text = text[positionStart:10000]
+
         return text
