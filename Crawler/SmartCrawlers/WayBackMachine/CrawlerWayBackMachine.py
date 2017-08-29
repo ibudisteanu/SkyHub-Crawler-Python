@@ -76,8 +76,10 @@ class CrawlerWayBackMachine:
         headers = {}
 
         html = self.session.get(url , data=data, headers=headers)
-        html = html.content
-        html = html.decode("utf-8")
+        # html = html.content
+        # html = html.decode("utf-8")
+        html = html.text
+
         #print(html)
         #print(type(html))
 
