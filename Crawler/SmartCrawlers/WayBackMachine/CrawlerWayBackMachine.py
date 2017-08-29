@@ -83,7 +83,7 @@ class CrawlerWayBackMachine:
 
         sel = Selector(text=html)
 
-        date = endtimestamp
+        date = timestamp
         date = date[:4] + '-' + date[4:]
         date = date[:6+1] + '-' + date[6+1:]
         date = date[:8+2] + ' ' + date[8+2:]
