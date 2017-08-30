@@ -25,6 +25,8 @@ class CrawlerPHPBB(CrawlerBasic):
     breadcrumbsCSS = ''
     breadcrumbsChildrenCSS = 'p.breadcrumbs > a'
 
+    rejectReplyTitle = True
+
     def crawlerProcess(self, response, url):
 
         self.title = self.extractFirstElement(response.css('#pageheader > h2 > a::text'))
@@ -79,8 +81,10 @@ class CrawlerPHPBB(CrawlerBasic):
                     self.author = author
                     self.date = date
                     self.authorAvatar = avatar
-                    self.title = title
+                    #self.title = title
                 else:
+                    if self.rejectReplyTitle:
+                        title = ''
                     self.replies.append({'description': reply, 'title':title, 'author':author, 'date':date, 'authorAvatar': avatar })
 
         self.parents = []
@@ -97,7 +101,8 @@ class CrawlerPHPBB(CrawlerBasic):
         if len(self.parents) > 0:
             ok = False
             for parent in self.parents:
-                if parent['name'] == '': ok = True
+                if parent['name'] == '':
+                    ok = True
             if ok == False:
                 self.parents.append({'name':'','url': self.url})
 

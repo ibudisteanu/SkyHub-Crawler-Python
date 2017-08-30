@@ -93,8 +93,9 @@ class ServerAPI:
 
         result = session.get(url + "topics/add-topic", data=data, headers=headers).json()
 
-        print(result)
+        #print(result)
         if result['result'] == True:
+            print('topic new ', result['topic']['URL'])
             return result['topic']['id']
         return None
 
@@ -202,8 +203,9 @@ class ServerAPI:
         headers = {}
 
         result = session.get(url + "replies/add-reply", data=data, headers=headers).json()
-        print(result)
+        #print(result)
         if result['result'] == True:
+            print('reply new ', result['reply']['URL'])
             return result['reply']['id']
         return None
 

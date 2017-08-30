@@ -189,14 +189,14 @@ class CrawlerBasic(scrapy.Spider):
                                 replyObjectURL = self.currentPageURL+reply['title'] + reply['description']
                                 replyObjectTitle = reply['title'] + reply['description']
 
-                                replyObject = LinksHelper.findLinkObjectAlready(replyObjectURL, replyObjectTitle)
+                                replyObject = LinksHelper.findLinkObjectAlready(replyObjectURL, replyObjectTitle, True)
 
                                 if replyObject is None: # we have to add the reply
 
-                                    if len(reply['description']) > 30:
+                                    if len(reply['description']) > 40:
                                         replyId = ServerAPI.postAddReply(self.user, topicId,
                                                                          "", reply['title'], reply['description'],
-                                                                         self.keywords, [], reply['date'],
+                                                                         '', [], reply['date'],
                                                                          self.websiteCountry or self.language, self.websiteCity, self.websiteLanguage or self.language, -666, -666,
                                                                          reply['author'], reply['authorAvatar'])
 
