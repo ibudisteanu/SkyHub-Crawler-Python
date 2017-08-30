@@ -160,7 +160,7 @@ class CrawlerBasic(scrapy.Spider):
 
                     topicObject = LinksHelper.findLinkObjectAlready(self.currentPageURL, self.title or self.ogTitle, True)
 
-                    if topicObject is not None:  #we have to add the topic
+                    if topicObject is None:  #we have to add the topic
 
                         title = self.title or self.ogTitle
                         description = self.fullDescription or self.ogDescription or self.shortDescription
@@ -188,7 +188,7 @@ class CrawlerBasic(scrapy.Spider):
 
                                 replyObject = LinksHelper.findLinkObjectAlready(replyObjectURL, replyObjectTitle)
 
-                                if replyObject == None: # we have to add the reply
+                                if replyObject is None: # we have to add the reply
 
                                     if len(reply['description']) > 30:
                                         replyId = ServerAPI.postAddReply(self.user, topicId,

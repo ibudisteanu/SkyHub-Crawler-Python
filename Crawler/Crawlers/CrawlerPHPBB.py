@@ -1,6 +1,6 @@
 from Crawler.CrawlerBasic import CrawlerBasic
 
-class CrawlerPHPBBTopic(CrawlerBasic):
+class CrawlerPHPBB(CrawlerBasic):
 
     name = 'CrawlerPHPForums'
 
@@ -13,6 +13,17 @@ class CrawlerPHPBBTopic(CrawlerBasic):
 
     removeLastMessage = True
 
+    #CSS
+    bodyFilterCSS = "#pagecontent"
+
+    repliesCSS = "div.postbody"
+    authorsCSS = "div.postauthor"
+    datesCSS = "td.postbottom"
+    avatarsCSS = "div.postavatar img"
+    titlesCSS = "div.postsubject"
+
+    breadcrumbsCSS = ''
+    breadcrumbsChildrenCSS = 'p.breadcrumbs > a'
 
     def crawlerProcess(self, response, url):
 
@@ -23,13 +34,14 @@ class CrawlerPHPBBTopic(CrawlerBasic):
 
         self.replies = []
 
-        response = response.css("#pagecontent")
+        if self.bodyFilterCSS != '':
+            response = response.css(self.bodyFilterCSS)
 
-        replies = response.css("div.postbody")
-        authors = response.css("div.postauthor")
-        dates = response.css("td.postbottom")
-        avatars = response.css("div.postavatar img")
-        titles = response.css('div.postsubject')
+        replies = response.css(self.repliesCSS)
+        authors = response.css(self.authorsCSS)
+        dates = response.css(self.datesCSS)
+        avatars = response.css(self.avatarsCSS)
+        titles = response.css(self.titlesCSS)
 
         if len(replies) == len(authors)+1:
             if self.removeLastMessage: del replies[-1]
@@ -75,7 +87,7 @@ class CrawlerPHPBBTopic(CrawlerBasic):
 
         if len(self.title) > 0:
             for i in reversed(range(1, 100)):
-                parent = response.css('p.breadcrumbs > a:nth-child('+str(i)+')')
+                parent = response.css(self.breadcrumbsChildrenCSS+':nth-child('+str(i)+')')
                 parentText = self.extractFirstElement(parent.css('::text'))
                 parentURL = self.extractFirstElement(parent.css('::attr(href)'))
 
@@ -85,8 +97,7 @@ class CrawlerPHPBBTopic(CrawlerBasic):
         if len(self.parents) > 0:
             ok = False
             for parent in self.parents:
-                if parent['name'] == '':
-                    ok = True
+                if parent['name'] == '': ok = True
             if ok == False:
                 self.parents.append({'name':'','url': self.url})
 
