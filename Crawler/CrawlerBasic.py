@@ -159,39 +159,50 @@ class CrawlerBasic(scrapy.Spider):
                 if validation in ['news', 'topic']:
 
                     topicObject = LinksHelper.findLinkObjectAlready(self.currentPageURL, self.title or self.ogTitle, True)
-                    if topicObject == None:
-                        topicId = ServerAPI.postAddTopic(self.user, self.parentId,
-                                                         self.title or self.ogTitle,
-                                                         self.fullDescription or self.ogDescription or self.shortDescription,
-                                                         self.ogDescription or self.shortDescription,
-                                                         self.keywords, self.images, self.date,
-                                                         self.websiteCountry or self.language, self.websiteCity, self.websiteLanguage or self.language, -666, -666,
-                                                         self.author, self.authorAvatar)
 
-                        topicObject = ObjectLink(self.currentPageURL, 'topic', topicId, self.title, self.parentId)
-                        LinksHelper.addLinkObject(topicObject)
+                    if topicObject is not None:  #we have to add the topic
 
-                    topicId = topicObject.id
-                    print("new topic ", topicId)
+                        title = self.title or self.ogTitle
+                        description = self.fullDescription or self.ogDescription or self.shortDescription
 
-                    if len(self.replies) > 0:
-                        for reply in self.replies:
-                            replyObjectURL = self.currentPageURL+reply['title'] + reply['description']
-                            replyObjectTitle = reply['title'] + reply['description']
+                        if len(title) > 5 and len(description) > 30:
+                            topicId = ServerAPI.postAddTopic(self.user, self.parentId,
+                                                             title,
+                                                             description,
+                                                             self.ogDescription or self.shortDescription,
+                                                             self.keywords, self.images, self.date,
+                                                             self.websiteCountry or self.language, self.websiteCity, self.websiteLanguage or self.language, -666, -666,
+                                                             self.author, self.authorAvatar)
 
-                            replyObject = LinksHelper.findLinkObjectAlready(replyObjectURL, replyObjectTitle)
-                            if replyObject == None:
-                                replyId = ServerAPI.postAddReply(self.user, topicId,
-                                                                 "", reply['title'], reply['description'],
-                                                                 self.keywords, [], reply['date'],
-                                                                 self.websiteCountry or self.language, self.websiteCity, self.websiteLanguage or self.language, -666, -666,
-                                                                 reply['author'], reply['authorAvatar'])
+                            topicObject = ObjectLink(self.currentPageURL, 'topic', topicId, self.title, self.parentId)
+                            LinksHelper.addLinkObject(topicObject)
 
-                                replyObject = ObjectLink(replyObjectURL, 'reply', replyId, replyObjectTitle, topicId)
-                                LinksHelper.addLinkObject(replyObject)
+                    if topicObject is not None:
+                        topicId = topicObject.id
+                        print("new topic ", topicId)
 
-                        replyId = replyObject.id
-                        print("new reply ", replyId)
+                        if len(self.replies) > 0:
+                            for reply in self.replies:
+                                replyObjectURL = self.currentPageURL+reply['title'] + reply['description']
+                                replyObjectTitle = reply['title'] + reply['description']
+
+                                replyObject = LinksHelper.findLinkObjectAlready(replyObjectURL, replyObjectTitle)
+
+                                if replyObject == None: # we have to add the reply
+
+                                    if len(reply['description']) > 30:
+                                        replyId = ServerAPI.postAddReply(self.user, topicId,
+                                                                         "", reply['title'], reply['description'],
+                                                                         self.keywords, [], reply['date'],
+                                                                         self.websiteCountry or self.language, self.websiteCity, self.websiteLanguage or self.language, -666, -666,
+                                                                         reply['author'], reply['authorAvatar'])
+
+                                        replyObject = ObjectLink(replyObjectURL, 'reply', replyId, replyObjectTitle, topicId)
+                                        LinksHelper.addLinkObject(replyObject)
+
+                                if replyObject is not None:
+                                    replyId = replyObject.id
+                                    print("new reply ", replyId)
 
                     pass
                 elif self.validate() in ['category', 'forum']:
