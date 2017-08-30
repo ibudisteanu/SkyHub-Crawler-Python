@@ -19,6 +19,8 @@ class CrawlerBasic(scrapy.Spider):
     websiteLanguage = ''
     user = 'muflonel2000'
 
+    forumGrandParentId = ''
+
     onlyOnePage = False
 
     rejectionSubstr = []
@@ -47,9 +49,10 @@ class CrawlerBasic(scrapy.Spider):
 
     replies = []
 
-    def __init__(self, user='', url='', websiteName='', websiteImage='', websiteCover = '',  websiteCountry = '', websiteCity = '', websiteLanguage = ''):
+    def __init__(self, user='', url='', forumGrandParentId = '', websiteName='', websiteImage='', websiteCover = '',  websiteCountry = '', websiteCity = '', websiteLanguage = ''):
 
         if user != '': self.user = user
+        if forumGrandParentId != '': self.forumGrandParentId = forumGrandParentId
         if websiteName != '': self.websiteName = websiteName
         if websiteCover != '': self.websiteCover = websiteCover
         if websiteImage != '': self.websiteImage = websiteImage
@@ -216,7 +219,7 @@ class CrawlerBasic(scrapy.Spider):
 
     def createParents(self):
 
-        grandparentId = ''
+        grandparentId = self.forumGrandParentId
 
         if len(self.parents) == 0:
             self.parents.append({'name': '', 'url': self.url})

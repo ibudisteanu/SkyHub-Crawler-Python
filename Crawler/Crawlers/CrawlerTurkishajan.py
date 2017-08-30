@@ -24,4 +24,4 @@ class CrawlerTurkishajan(CrawlerPHPBB):
     titlesCSS = "div.postsubject"
 
     breadcrumbsCSS = ''
-    breadcrumbsChildrenCSS = 'p.breadcrumbs > a'
+    breadcrumbsChildrenCSS = 'div.page_left > a'
