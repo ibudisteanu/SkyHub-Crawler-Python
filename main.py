@@ -15,9 +15,10 @@ def CrawlerWayBackMachine():
     from Crawler.Crawlers.CrawlerPHPBB import CrawlerPHPBB
 
     #hackpedia.info
-    crawlerWayBackMachine.start(CrawlerPHPBB(user="muflonel2000", url="hackpedia.info", websiteName='Hackpedia', websiteImage="https://a.wattpad.com/useravatar/anon_hacker.128.204872.jpg", websiteCover="https://www.cryptus.in/image/online-training-cceh.jpg", websiteCountry="Romania", websiteCity="Bucharest", websiteLanguage="Romanian"))
+    crawlerWayBackMachine.start(CrawlerPHPBB(user="muflonel2000", url="hackpedia.info", forumGrandParentId='1_forum_14996534590908914', websiteName='Hackpedia', websiteImage="https://a.wattpad.com/useravatar/anon_hacker.128.204872.jpg", websiteCover="https://www.cryptus.in/image/online-training-cceh.jpg", websiteCountry="Romania", websiteCity="Bucharest", websiteLanguage="Romanian"))
 
-    # crawlerWayBackMachine.start(CrawlerPHPBBTopic(user="muflonel2000", url="turkishajan.com", websiteName='Turkishajan', websiteImage="https://pbs.twimg.com/profile_images/660874924815310848/ymph0vVr.jpg", websiteCover="https://www.technobezz.com/files/uploads/2016/01/Turkish-Hacker-Sentenced-To-344-years-1170x644.jpg", websiteCountry="Turkey", websiteCity="Instanbul", websiteLanguage="Turkish"))
+    #from Crawler.Crawlers.CrawlerTurkishajan import  CrawlerTurkishajan
+    #crawlerWayBackMachine.start(CrawlerTurkishajan(user="muflonel2000", url="turkishajan.com", forumGrandParentId='1_forum_14996534590908914', websiteName='Turkishajan', websiteImage="https://pbs.twimg.com/profile_images/660874924815310848/ymph0vVr.jpg", websiteCover="https://www.technobezz.com/files/uploads/2016/01/Turkish-Hacker-Sentenced-To-344-years-1170x644.jpg", websiteCountry="Turkey", websiteCity="Instanbul", websiteLanguage="Turkish"))
 
     # from Crawler.Crawlers.CrawlerPHPBBForums import CrawlerPHPBBForums
     # crawlerWayBackMachine.start(CrawlerPHPBBForums, "hackpedia.info")
