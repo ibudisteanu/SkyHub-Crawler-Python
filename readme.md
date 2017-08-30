@@ -25,4 +25,5 @@ Optionals
 
 ## Running
 
+`source activate crawler3`
 `python3 main.py`
