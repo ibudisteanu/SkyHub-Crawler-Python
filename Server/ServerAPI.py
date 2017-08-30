@@ -69,7 +69,7 @@ class ServerAPI:
         if authorAvatar != '': arrAdditionalInfo['orgAvatar'] = authorAvatar
 
         if isinstance(arrKeywords, str): keywords = arrKeywords
-        else: ','.join(str(e) for e in arrKeywords)
+        else: keywords = ','.join(str(e) for e in arrKeywords)
 
         data = {
             'id': user['id'],
@@ -92,6 +92,7 @@ class ServerAPI:
         headers = { }
 
         result = session.get(url + "topics/add-topic", data=data, headers=headers).json()
+
         print(result)
         if result['result'] == True:
             return result['topic']['id']
@@ -120,7 +121,7 @@ class ServerAPI:
         if dtOriginalDate is not None: arrAdditionalInfo['dtOriginal'] = dtOriginalDate
 
         if isinstance(arrKeywords, str): keywords = arrKeywords
-        else: ','.join(str(e) for e in arrKeywords)
+        else: keywords = ','.join(str(e) for e in arrKeywords)
 
         data = {
             'id': user['id'],
@@ -178,9 +179,7 @@ class ServerAPI:
         if authorAvatar != '': arrAdditionalInfo['orgAvatar'] = authorAvatar
 
         if isinstance(arrKeywords, str): keywords = arrKeywords
-        else: ','.join(str(e) for e in arrKeywords)
-
-        arrAdditionalInfo
+        else: keywords = ','.join(str(e) for e in arrKeywords)
 
         data = {
             'id': user['id'],
