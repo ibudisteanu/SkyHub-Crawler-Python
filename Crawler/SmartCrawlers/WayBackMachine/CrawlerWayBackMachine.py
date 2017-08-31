@@ -75,7 +75,7 @@ class CrawlerWayBackMachine:
         data = {}
         headers = {}
 
-        LinksHelper.getRequestTrials(self.session, url, data, headers, maxTrials = 5)
+        response = LinksHelper.getRequestTrials(self.session, url, data, headers, maxTrials = 5)
 
         # html = html.content
         # html = html.decode("utf-8")
