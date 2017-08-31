@@ -32,7 +32,7 @@ class CrawlerWayBackMachine:
         data = {}
         headers = {}
 
-        url = "https://web.archive.org/cdx/search?url="+link+"%2F&matchType=prefix&collapse=urlkey&output=json&fl=original%2Cmimetype%2Ctimestamp%2Cendtimestamp%2Cgroupcount%2Cuniqcount&filter=!statuscode%3A%5B45%5D..&_=1503841753810"
+        url = "http://web.archive.org/cdx/search?url="+link+"%2F&matchType=prefix&collapse=urlkey&output=json&fl=original%2Cmimetype%2Ctimestamp%2Cendtimestamp%2Cgroupcount%2Cuniqcount&filter=!statuscode%3A%5B45%5D..&_=1503841753810"
 
         result = self.session.get(url, data=data, headers=headers)
         result = result.json()
@@ -70,15 +70,16 @@ class CrawlerWayBackMachine:
             if rejection in initialURL:
                 return None
 
-        url = "https://web.archive.org/web/"+endtimestamp+"/"+initialURL
+        url = "http://web.archive.org/web/"+endtimestamp+"/"+initialURL
 
         data = {}
         headers = {}
 
-        html = self.session.get(url , data=data, headers=headers)
+        LinksHelper.getRequestTrials(self.session, url, data, headers, maxTrials = 5)
+
         # html = html.content
         # html = html.decode("utf-8")
-        html = html.text
+        html = response.text
 
         #print(html)
         #print(type(html))

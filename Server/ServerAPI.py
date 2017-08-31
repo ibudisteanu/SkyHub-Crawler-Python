@@ -1,6 +1,7 @@
 import requests  # Tutorial based on http://docs.python-requests.org/en/master/user/advanced/
 
 from Server.UsersTable import getUser
+from Crawler.Helpers.LinksHelper import LinksHelper
 import ujson
 
 session = requests.Session()
@@ -44,72 +45,16 @@ class ServerAPI:
         return None
 
     @staticmethod
-    def postAddTopic(user, parentId, title, description, shortDescription='',  arrKeywords=[], arrAttachments=[],  dtOriginalDate = None, country='', city='', language='', latitude=-666, longitude=-666, authorName='', authorAvatar=''):
-        user = ServerAPI.loginUser(user)
-
-        if user is None: return False
-
-        title = ServerAPI.fixArchiveStrings(title)
-        description = ServerAPI.fixArchiveStrings(description)
-        shortDescription = ServerAPI.fixArchiveStrings(shortDescription)
-        authorAvatar = ServerAPI.fixArchiveStrings(authorAvatar)
-        authorName = ServerAPI.fixArchiveStrings(authorName)
-
-
-        rez = ServerAPI.processLocation(country, city, language, latitude, longitude)
-        latitude = rez[0]
-        longitude = rez[1]
-
-        arrAdditionalInfo = {
-            'scraped':True,
-        }
-
-        if dtOriginalDate is not None: arrAdditionalInfo['dtOriginal'] = dtOriginalDate
-        if authorName != '': arrAdditionalInfo['orgName'] = authorName
-        if authorAvatar != '': arrAdditionalInfo['orgAvatar'] = authorAvatar
-
-        if isinstance(arrKeywords, str): keywords = arrKeywords
-        else: keywords = ','.join(str(e) for e in arrKeywords)
-
-        data = {
-            'id': user['id'],
-            'sessionId': user['sessionId'],
-
-            'parent': parentId,
-            'title': title,
-            'description': description,
-            'shortDescription': shortDescription,
-            'keywords': keywords,
-            'attachments': arrAttachments,
-            'country': country,
-            'city': city,
-            'language': language,
-            'latitude': latitude,
-            'longitude': longitude,
-            'additionalInfo': ujson.dumps(arrAdditionalInfo)
-        }
-
-        headers = { }
-
-        result = session.get(url + "topics/add-topic", data=data, headers=headers).json()
-
-        #print(result)
-        if result['result'] == True:
-            print('topic new ', result['topic']['URL'])
-            return result['topic']['id']
-        return None
-
-    @staticmethod
     def postAddForum(user, parentId, name, title, description, iconPic, coverPic, arrKeywords = [],  dtOriginalDate = None, country='', city='', language='',  latitude=-666, longitude=-666):
 
         user = ServerAPI.loginUser(user)
 
         if user is None: return False
 
-        title = ServerAPI.fixArchiveStrings(title)
-        description = ServerAPI.fixArchiveStrings(description)
-        iconPic = ServerAPI.fixArchiveStrings(iconPic)
-        coverPic = ServerAPI.fixArchiveStrings(coverPic)
+        title = LinksHelper.fixArchiveStrings(title)
+        description = LinksHelper.fixArchiveStrings(description)
+        iconPic = LinksHelper.fixArchiveStrings(iconPic)
+        coverPic = LinksHelper.fixArchiveStrings(coverPic)
 
         rez = ServerAPI.processLocation(country, city, language, latitude, longitude)
         latitude = rez[0]
@@ -145,13 +90,73 @@ class ServerAPI:
 
         headers = {}
 
-        result = session.get(url + "forums/add-forum", data=data, headers=headers).json()
+        result = LinksHelper.getRequestTrials(session, url + "forums/add-forum", data, headers, maxTrials = 5)
+        result = result.json()
         #print(result)
         if result['result'] == True:
             print('FORUM new ', result['forum']['URL'])
             return result['forum']['id']
         return None
 
+    @staticmethod
+    def postAddTopic(user, parentId, title, description, shortDescription='', arrKeywords=[], arrAttachments=[],
+                     dtOriginalDate=None, country='', city='', language='', latitude=-666, longitude=-666,
+                     authorName='', authorAvatar=''):
+        user = ServerAPI.loginUser(user)
+
+        if user is None: return False
+
+        title = LinksHelper.fixArchiveStrings(title)
+        description = LinksHelper.fixArchiveStrings(description)
+        shortDescription = LinksHelper.fixArchiveStrings(shortDescription)
+        authorAvatar = LinksHelper.fixArchiveStrings(authorAvatar)
+        authorName = LinksHelper.fixArchiveStrings(authorName)
+
+        rez = ServerAPI.processLocation(country, city, language, latitude, longitude)
+        latitude = rez[0]
+        longitude = rez[1]
+
+        arrAdditionalInfo = {
+            'scraped': True,
+        }
+
+        if dtOriginalDate is not None: arrAdditionalInfo['dtOriginal'] = dtOriginalDate
+        if authorName != '': arrAdditionalInfo['orgName'] = authorName
+        if authorAvatar != '': arrAdditionalInfo['orgAvatar'] = authorAvatar
+
+        if isinstance(arrKeywords, str):
+            keywords = arrKeywords
+        else:
+            keywords = ','.join(str(e) for e in arrKeywords)
+
+        data = {
+            'id': user['id'],
+            'sessionId': user['sessionId'],
+
+            'parent': parentId,
+            'title': title,
+            'description': description,
+            'shortDescription': shortDescription,
+            'keywords': keywords,
+            'attachments': arrAttachments,
+            'country': country,
+            'city': city,
+            'language': language,
+            'latitude': latitude,
+            'longitude': longitude,
+            'additionalInfo': ujson.dumps(arrAdditionalInfo)
+        }
+
+        headers = {}
+
+        result = LinksHelper.getRequestTrials(session, url + "topics/add-topic", data, headers, maxTrials = 5)
+        result = result.json()
+
+        # print(result)
+        if result['result'] == True:
+            print('topic new ', result['topic']['URL'])
+            return result['topic']['id']
+        return None
 
     @staticmethod
     def postAddReply(user, parentId, parentReplyId, title, description, arrKeywords = [], arrAttachments=[], dtOriginalDate = None, country='', city='', language='',  latitude=-666, longitude=-666, authorName='', authorAvatar='' ):
@@ -162,10 +167,10 @@ class ServerAPI:
         if parentId is None: return False
         if parentReplyId is None: parentReplyId = ""
 
-        title = ServerAPI.fixArchiveStrings(title)
-        description = ServerAPI.fixArchiveStrings(description)
-        authorAvatar = ServerAPI.fixArchiveStrings(authorAvatar)
-        authorName = ServerAPI.fixArchiveStrings(authorName)
+        title = LinksHelper.fixArchiveStrings(title)
+        description = LinksHelper.fixArchiveStrings(description)
+        authorAvatar = LinksHelper.fixArchiveStrings(authorAvatar)
+        authorName = LinksHelper.fixArchiveStrings(authorName)
 
         rez = ServerAPI.processLocation(country, city, language, latitude, longitude)
         latitude = rez[0]
@@ -202,7 +207,9 @@ class ServerAPI:
 
         headers = {}
 
-        result = session.get(url + "replies/add-reply", data=data, headers=headers).json()
+        result = LinksHelper.getRequestTrials(session, url + "replies/add-reply", data, headers, maxTrials = 5)
+        result = result.json()
+
         #print(result)
         if result['result'] == True:
             print('reply new ', result['reply']['URL'])
@@ -225,7 +232,7 @@ class ServerAPI:
         address = address.replace(' ', '+')
 
         session = requests.Session()
-        result = session.get('https://maps.google.com/maps/api/geocode/json?address='+address+'&sensor=false')
+        result = LinksHelper.getRequestTrials(session, 'https://maps.google.com/maps/api/geocode/json?address='+address+'&sensor=false', {}, {}, maxTrials=5)
         result = result.json()
         if len(result['results']) > 0:
             result =result['results'][0]['geometry']['location']
@@ -233,17 +240,5 @@ class ServerAPI:
             result = None
         return result
 
-    @staticmethod
-    def fixArchiveStrings(text):
 
-        # https://web.archive.org/web/20130502222444/
-        if "web.archive.org/web/" in text:
-            positionStart = text.index("web.archive.org/web/")
-            text = text[positionStart + len("web.archive.org/web/20130502222444/"):10000]
 
-        if "http" in text:
-            positionStart = text.index("http")
-            if positionStart != 0:
-                text = text[positionStart:10000]
-
-        return text
