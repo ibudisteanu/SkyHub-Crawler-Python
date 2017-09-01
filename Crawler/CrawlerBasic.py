@@ -96,6 +96,8 @@ class CrawlerBasic(scrapy.Spider):
         print("CRAWLER BASIC IS WORKING")
 
     def start_requests(self):
+        print("URL TO BE PROCESSED", self.start_urls)
+
         for url in self.start_urls:
             print("processing url",url)
             yield scrapy.Request(url=url, callback=self.parse)
@@ -224,6 +226,15 @@ class CrawlerBasic(scrapy.Spider):
         if len(self.parents) == 0:
             self.parents.append({'name': '', 'url': self.url})
 
+        if len(self.parents) > 0:
+            ok = False
+            for parent in self.parents:
+                if parent['name'] == '':
+                    ok = True
+
+            if ok == False:
+                self.parents = [{'name': '', 'url': self.url}] + self.parents
+
         for parent in self.parents:
 
             parentName = self.websiteName+' '+parent['name']
@@ -266,7 +277,7 @@ class CrawlerBasic(scrapy.Spider):
         if len(self.images) > 0: print("images:", self.images)
         if len(self.keywords) > 0: print("keywords:", self.keywords)
         if len(self.author) > 0: print("author:", self.author, self.authorLink)
-        if len(self.date) > 0: print("date:", self.date)
+        if self.date is not None : print("date:", self.date)
 
         if len(self.authorAvatar) > 0: print("authorAvatar", self.authorAvatar)
 
@@ -284,11 +295,4 @@ class CrawlerBasic(scrapy.Spider):
         print("validate", self.validate())
 
     def cleanText(self, text):
-
         return text
-
-        # cleaner = Cleaner()
-        # cleaner.javascript = True  # This is True because we want to activate the javascript filter
-        # #cleaner.style = True  # This is True because we want to activate the styles & stylesheet filter
-        # cleaner.remove_tags = ['script','div']
-        # return cleaner.clean_html(text)

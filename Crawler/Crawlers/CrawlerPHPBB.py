@@ -16,20 +16,21 @@ class CrawlerPHPBB(CrawlerBasic):
     #CSS
     bodyFilterCSS = "#pagecontent"
 
-    repliesCSS = "div.postbody"
-    authorsCSS = "div.postauthor"
-    datesCSS = "td.postbottom"
-    avatarsCSS = "div.postavatar img"
-    titlesCSS = "div.postsubject"
+    cssTitle = "#pageheader > h2 > a::text"
+    cssReplies = "div.postbody"
+    cssAuthors = "div.postauthor"
+    cssDates = "td.postbottom"
+    cssAvatars = "div.postavatar img"
+    cssTitles = "div.postsubject"
 
-    breadcrumbsCSS = ''
-    breadcrumbsChildrenCSS = 'p.breadcrumbs > a'
+    cssBreadcrumbs = ''
+    cssBreadcrumbsChildren = 'p.breadcrumbs > a'
 
     rejectReplyTitle = True
 
     def crawlerProcess(self, response, url):
 
-        self.title = self.extractFirstElement(response.css('#pageheader > h2 > a::text'))
+        self.title = self.extractFirstElement(response.css(self.cssTitle))
         self.fullDescription = ''
         self.shortDescription = ''
 
@@ -39,11 +40,11 @@ class CrawlerPHPBB(CrawlerBasic):
         if self.bodyFilterCSS != '':
             response = response.css(self.bodyFilterCSS)
 
-        replies = response.css(self.repliesCSS)
-        authors = response.css(self.authorsCSS)
-        dates = response.css(self.datesCSS)
-        avatars = response.css(self.avatarsCSS)
-        titles = response.css(self.titlesCSS)
+        replies = response.css(self.cssReplies)
+        authors = response.css(self.cssAuthors)
+        dates = response.css(self.cssDates)
+        avatars = response.css(self.cssAvatars)
+        titles = response.css(self.cssTitles)
 
         if len(replies) == len(authors)+1:
             if self.removeLastMessage: del replies[-1]
@@ -51,7 +52,7 @@ class CrawlerPHPBB(CrawlerBasic):
         if len(replies) > 0 and len(authors) > 0 and len(dates) > 0 and len(titles) > 0:
             for i, reply in enumerate(replies):
                 reply = replies[i]
-                reply = '<br/>'.join(reply.css("::text").extract())
+                reply = '<br/>'.join(reply.extract())
 
                 if i < len(authors):
                     author = authors[i]
@@ -91,20 +92,13 @@ class CrawlerPHPBB(CrawlerBasic):
 
         if len(self.title) > 0:
             for i in reversed(range(1, 100)):
-                parent = response.css(self.breadcrumbsChildrenCSS+':nth-child('+str(i)+')')
+                parent = response.css(self.cssBreadcrumbsChildren+':nth-child('+str(i)+')')
                 parentText = self.extractFirstElement(parent.css('::text'))
                 parentURL = self.extractFirstElement(parent.css('::attr(href)'))
 
                 if parentText != '':
                     self.parents.append({'name':parentText, 'url':parentURL, 'index': i})
 
-        if len(self.parents) > 0:
-            ok = False
-            for parent in self.parents:
-                if parent['name'] == '':
-                    ok = True
-            if ok == False:
-                self.parents.append({'name':'','url': self.url})
 
         self.parents = list(reversed(self.parents)) #changing the order
 

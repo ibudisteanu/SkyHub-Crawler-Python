@@ -96,7 +96,9 @@ class ServerAPI:
         if result['result'] == True:
             print('FORUM new ', result['forum']['URL'])
             return result['forum']['id']
-        return None
+        else:
+            print("ERROR adding new forum ", result)
+            return None
 
     @staticmethod
     def postAddTopic(user, parentId, title, description, shortDescription='', arrKeywords=[], arrAttachments=[],
@@ -156,7 +158,9 @@ class ServerAPI:
         if result['result'] == True:
             print('topic new ', result['topic']['URL'])
             return result['topic']['id']
-        return None
+        else:
+            print("ERROR adding new topic ",result)
+            return None
 
     @staticmethod
     def postAddReply(user, parentId, parentReplyId, title, description, arrKeywords = [], arrAttachments=[], dtOriginalDate = None, country='', city='', language='',  latitude=-666, longitude=-666, authorName='', authorAvatar='' ):
@@ -214,7 +218,9 @@ class ServerAPI:
         if result['result'] == True:
             print('reply new ', result['reply']['URL'])
             return result['reply']['id']
-        return None
+        else:
+            print("ERROR adding new reply ",result)
+            return None
 
     @staticmethod
     def processLocation(country, city, language, latitude, longitude):
