@@ -45,7 +45,7 @@ class ServerAPI:
         return None
 
     @staticmethod
-    def postAddForum(user, parentId, name, title, description, iconPic, coverPic, arrKeywords = [],  dtOriginalDate = None, country='', city='', language='',  latitude=-666, longitude=-666):
+    def postAddForum(rootURL, user, parentId, name, title, description, iconPic, coverPic, arrKeywords = [],  dtOriginalDate = None, country='', city='', language='',  latitude=-666, longitude=-666):
 
         user = ServerAPI.loginUser(user)
 
@@ -55,6 +55,8 @@ class ServerAPI:
         description = LinksHelper.fixArchiveStrings(description)
         iconPic = LinksHelper.fixArchiveStrings(iconPic)
         coverPic = LinksHelper.fixArchiveStrings(coverPic)
+
+        description = LinksHelper.fix_relative_urls(description, rootURL)
 
         rez = ServerAPI.processLocation(country, city, language, latitude, longitude)
         latitude = rez[0]
@@ -101,7 +103,7 @@ class ServerAPI:
             return None
 
     @staticmethod
-    def postAddTopic(user, parentId, title, description, shortDescription='', arrKeywords=[], arrAttachments=[],
+    def postAddTopic(rootURL, user, parentId, title, description, shortDescription='', arrKeywords=[], arrAttachments=[],
                      dtOriginalDate=None, country='', city='', language='', latitude=-666, longitude=-666,
                      authorName='', authorAvatar=''):
         user = ServerAPI.loginUser(user)
@@ -113,6 +115,8 @@ class ServerAPI:
         shortDescription = LinksHelper.fixArchiveStrings(shortDescription)
         authorAvatar = LinksHelper.fixArchiveStrings(authorAvatar)
         authorName = LinksHelper.fixArchiveStrings(authorName)
+
+        description = LinksHelper.fix_relative_urls(description, rootURL)
 
         rez = ServerAPI.processLocation(country, city, language, latitude, longitude)
         latitude = rez[0]
@@ -163,7 +167,7 @@ class ServerAPI:
             return None
 
     @staticmethod
-    def postAddReply(user, parentId, parentReplyId, title, description, arrKeywords = [], arrAttachments=[], dtOriginalDate = None, country='', city='', language='',  latitude=-666, longitude=-666, authorName='', authorAvatar='' ):
+    def postAddReply(rootURL, user, parentId, parentReplyId, title, description, arrKeywords = [], arrAttachments=[], dtOriginalDate = None, country='', city='', language='',  latitude=-666, longitude=-666, authorName='', authorAvatar='' ):
 
         user = ServerAPI.loginUser(user)
 
@@ -175,6 +179,8 @@ class ServerAPI:
         description = LinksHelper.fixArchiveStrings(description)
         authorAvatar = LinksHelper.fixArchiveStrings(authorAvatar)
         authorName = LinksHelper.fixArchiveStrings(authorName)
+
+        description = LinksHelper.fix_relative_urls(description, rootURL)
 
         rez = ServerAPI.processLocation(country, city, language, latitude, longitude)
         latitude = rez[0]

@@ -20,6 +20,8 @@ class CrawlerBlog(CrawlerBasic):
     cssDate = "time::attr(datetime)"
     cssParent = "dd.category-name a"
 
+    removeShortDescription = True
+
     def setParams(self, url='', domain='', cssTitle='', cssAuthor='', cssAuthorLink='', cssFullDescription='', cssDate='', cssParent=''):
 
         if url != '':
@@ -35,6 +37,10 @@ class CrawlerBlog(CrawlerBasic):
 
     def crawlerProcess(self, response, url):
 
+        if self.removeShortDescription:
+            self.shortDescription = ''
+            self.ogDescription = ''
+
         if self.cssAuthor != '':
             self.author = self.extractFirstElement(response.css(self.cssAuthor))
 
@@ -42,6 +48,9 @@ class CrawlerBlog(CrawlerBasic):
             self.authorLink = self.extractFirstElement(response.css(self.cssAuthorLink))
 
         self.fullDescription = ''.join(response.css(self.cssFullDescription).extract()).strip()
+
+        if self.cssTitle != '':
+            self.title = self.extractFirstElement(response.css(self.cssTitle))
 
         text = ' '.join(response.css(self.cssDate).extract()).strip()
         print(text)
@@ -55,7 +64,7 @@ class CrawlerBlog(CrawlerBasic):
             self.parents.append({'name': parentText, 'url': parentURL, 'index': 1})
 
     def validate(self):
-        if (len(self.title) > 3) and (len(self.shortDescription) > 3) and (len(self.fullDescription) > 10):
+        if (len(self.title) > 3) and (len(self.fullDescription) > 10):
             return 'news'
 
         return ''

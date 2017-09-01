@@ -105,6 +105,19 @@ class LinksHelper():
         return url
 
     @staticmethod
+    def fix_relative_urls(text, rootURL):
+        # src='/img' pr href="/"
+
+        text = text.replace("src='/", "src='"+rootURL+'/')
+        text = text.replace('src="/', 'src="'+rootURL+'/')
+
+        text = text.replace("href='/", "href='"+rootURL+'/')
+        text = text.replace('href="/', 'href="'+rootURL+'/')
+
+        return text
+
+
+    @staticmethod
     def fixArchiveStrings(text):
 
         # https://web.archive.org/web/20130502222444/

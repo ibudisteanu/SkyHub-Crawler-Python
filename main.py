@@ -4,6 +4,7 @@ print("Hello World!!")
 import sys
 sys.path.insert(0, 'Crawler')
 sys.path.insert(0, 'Crawler/Crawlers')
+sys.path.insert(0, 'Crawler/Crawlers/Apps')
 sys.path.insert(0, 'Crawler/Helpers')
 sys.path.insert(0, 'SmartCrawlers/WayBackMachine')
 sys.path.insert(0, 'Server')
@@ -44,15 +45,19 @@ def testServerAPI():
 def CrawlerScrapy():
     from scrapy.crawler import CrawlerProcess
 
-    from Crawler.Crawlers.CrawlerAntena3 import CrawlerAntena3
-    from Crawler.Crawlers.CrawlerAntena3Category import CrawlerAntena3Category
-
     scrapyProcess = CrawlerProcess({
         'USER_AGENT': 'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)'
     })
 
-    scrapyProcess.crawl(CrawlerAntena3)
-    scrapyProcess.crawl(CrawlerAntena3Category)
+    # from Crawler.Crawlers.CrawlerAntena3 import CrawlerAntena3
+    # scrapyProcess.crawl(CrawlerAntena3)
+    #
+    # from Crawler.Crawlers.CrawlerAntena3Category import CrawlerAntena3Category
+    # scrapyProcess.crawl(CrawlerAntena3Category)
+
+    from Crawler.Crawlers.Apps.CrawlerFonduriUeRo import CrawlerFonduriUeRo
+    scrapyProcess.crawl(CrawlerFonduriUeRo)
+
     scrapyProcess.start() # the script will block here until the crawling is finished
 
 #init main
@@ -61,5 +66,5 @@ LinksHelper.readLinksFiles()
 LinksHelper.appendLinksFiles()
 
 
-CrawlerWayBackMachine()
-#CrawlerScrapy()
+#CrawlerWayBackMachine()
+CrawlerScrapy()

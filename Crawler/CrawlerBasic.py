@@ -171,7 +171,7 @@ class CrawlerBasic(scrapy.Spider):
                         description = self.fullDescription or self.ogDescription or self.shortDescription
 
                         if len(title) > 5 and len(description) > 30:
-                            topicId = ServerAPI.postAddTopic(self.user, self.parentId,
+                            topicId = ServerAPI.postAddTopic(self.url, self.user, self.parentId,
                                                              title,
                                                              description,
                                                              self.ogDescription or self.shortDescription,
@@ -183,6 +183,7 @@ class CrawlerBasic(scrapy.Spider):
                             LinksHelper.addLinkObject(topicObject)
 
                     if topicObject is not None:
+
                         topicId = topicObject.id
                         print("new topic ", topicId)
 
@@ -196,7 +197,7 @@ class CrawlerBasic(scrapy.Spider):
                                 if replyObject is None: # we have to add the reply
 
                                     if len(reply['description']) > 40:
-                                        replyId = ServerAPI.postAddReply(self.user, topicId,
+                                        replyId = ServerAPI.postAddReply(self.url, self.user, topicId,
                                                                          "", reply['title'], reply['description'],
                                                                          '', [], reply['date'],
                                                                          self.websiteCountry or self.language, self.websiteCity, self.websiteLanguage or self.language, -666, -666,
@@ -245,7 +246,7 @@ class CrawlerBasic(scrapy.Spider):
                 image = self.websiteImage or self.ogImage
                 if (image == '') and (len(self.images) > 0): image = self.images[0]
 
-                forumId = ServerAPI.postAddForum(self.user, grandparentId, self.websiteName +" "+ parent['name'],
+                forumId = ServerAPI.postAddForum(self.url, self.user, grandparentId, self.websiteName +" "+ parent['name'],
                                                  self.websiteName + " " + parent['name'], self.websiteName +" "+ parent['name'],
                                                  image,
                                                  self.websiteCover,
