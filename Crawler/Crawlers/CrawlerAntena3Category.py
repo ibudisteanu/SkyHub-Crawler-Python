@@ -1,6 +1,6 @@
-from Crawler.CrawlerBasic import CrawlerBasic
+from Crawler.CrawlerProcess import CrawlerProcess
 
-class CrawlerAntena3Category(CrawlerBasic):
+class CrawlerAntena3Category(CrawlerProcess):
 
     name = 'CrawlerAntena3Category'
 

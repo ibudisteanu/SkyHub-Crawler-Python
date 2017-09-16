@@ -14,6 +14,13 @@ class ObjectProduct:
     categories = []
 
     title = ''
+
+    timeLeft = ''
+    itemCondition = ''
+    itemConditionDetails = ''
+    itemBrand = ''
+    itemMaterial = ''
+
     description = ''
     price = ''
     details = ''
@@ -25,13 +32,13 @@ class ObjectProduct:
 
     returnPolicy = ''
 
-    stockAvailable = 0
+    quantityAvailable = 0
 
     reviews = []  # reviews array of Review
 
     lastUpdate = 0
 
-    def __init__(self, url, type, originalId, id, sellerUsername, categories, title, description, price, details, date, ratingsTotal, ratings, returnPolicy, stockAvailable, reviews, lastUpdate ):
+    def __init__(self, url, type, originalId, id, sellerUsername, categories, title, timeLeft, itemCondition,itemConditionDetails, itemBrand, itemMaterial, description, price, details, date, ratingsTotal, ratings, returnPolicy, quantityAvailable, reviews, lastUpdate ):
 
         self.url = url
         self.url = LinksHelper.fix_url(self.url)
@@ -42,6 +49,9 @@ class ObjectProduct:
         self.sellerUsername = sellerUsername
         self.categories = categories
         self.title = title
+        self.timeLeft = timeLeft
+        self.itemCondition = itemCondition
+
         self.description = description
         self.price = price
         self.details = details
@@ -49,6 +59,6 @@ class ObjectProduct:
         self.ratingsTotal = ratingsTotal
         self.ratings = ratings
         self.returnPolicy = returnPolicy
-        self.stockAvailable = stockAvailable
+        self.quantityAvailable = quantityAvailable
         self.reviews = reviews
         self.lastUpdate = lastUpdate

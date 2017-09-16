@@ -13,13 +13,14 @@ class CrawlerProcess(CrawlerBasic):
         self.shortDescription = self.cleanText(self.shortDescription)
         self.author = self.cleanText(self.author)
 
-        self.toString()
-
         self.parentId = self.createParents()
 
+        # validate
         validation = self.validate()
+
         if validation != '':
             if LinksHelper.findLinkObjectAlready(url) is None:
+
                 if validation in ['news', 'topic']:
 
                     topicObject = LinksHelper.findLinkObjectAlready(self.currentPageURL, self.title or self.ogTitle, True)

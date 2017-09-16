@@ -3,23 +3,39 @@ import dateparser
 from Crawler.CrawlerProcess import CrawlerProcess
 
 
-class CrawlerBlog(CrawlerProcess):
+class CrawlerEbay(CrawlerProcess):
 
-    name = 'CrawlerBlog'
+    name = 'CrawlerEbay'
 
-    url = 'http://fonduri-ue.ro'
-    domain = 'fonduri-ue.ro'
+    url = 'http://ebay.com'
+    domain = 'ebay.com'
 
     start_urls = (url,)
     allowed_domains = [domain]
 
-    cssTitle = "h1.article-title a::attr(title)"
-    cssAuthor = "div.postbody"
-    cssAuthorLink = "div.postauthor"
-    cssFullDescription = "section p"
+    cssTitle = "#itemTitle"
+    cssItemCondition = "#vi-itm-cond"
+    cssTimeLeft = "span.vi-tm-left noscript"
+    cssQuantityAvailable = "#qtySubTxt span"
+
+    cssItemSpecifications = "div.itemAttr "
+    #cssItemConditionDetails = "#vi-cond-addl-info"
+    #cssItemBrand = "tr td h2 span"
+    #cssItemMaterial = ""
+
+    cssFullDescription = "desc_wrapper_ctr"
+
+    cssAuthor = "span.mbg-nw"
+    cssAuthorLink = "#mbgLink"
+
+    cssAuthorScore = "span.mbg-l a"
+    cssAuthorFeedbackOverall = "#si-fb"
+
+    cssItemId = "#descItemNumber"
 
     cssDateText = ""
-    cssDate = "time::attr(datetime)"
+    cssDate = ""
+    #cssDate = "time::attr(datetime)"
 
     cssParent = "dd.category-name a"
 

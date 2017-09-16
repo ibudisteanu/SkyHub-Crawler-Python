@@ -7,6 +7,9 @@ class ObjectAuthor:
 
     # objectId from SkyHub
     id = ''
+
+    userTitle = ''
+
     name = ''
     score = 0.0
     feedbackOverall = 0
@@ -18,12 +21,13 @@ class ObjectAuthor:
 
     lastUpdate = 0
 
-    def __init__(self,  url = '', username = '' , id = '' , name = '', score = 0.0, feedbackOverall = 0, feedbackRatings = [], feedback2Ratings = [], reviews = [] , lastUpdate = 0):
+    def __init__(self,  url='', username='', userTitle='', id='', name='', score=0.0, feedbackOverall=0, feedbackRatings=[], feedback2Ratings=[], reviews=[], lastUpdate=0):
 
         self.url = url
         self.url = LinksHelper.fix_url(self.url)
-
         self.username = username
+
+        self.userTitle = userTitle
         self.id = id
         self.name = name
         self.score = score

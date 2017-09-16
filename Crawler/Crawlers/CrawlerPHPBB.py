@@ -1,6 +1,6 @@
-from Crawler.CrawlerBasic import CrawlerBasic
+from Crawler.CrawlerProcess import CrawlerProcess
 
-class CrawlerPHPBB(CrawlerBasic):
+class CrawlerPHPBB(CrawlerProcess):
 
     name = 'CrawlerPHPForums'
 
