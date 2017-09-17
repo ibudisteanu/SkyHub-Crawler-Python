@@ -1,5 +1,8 @@
 from Crawler.CrawlerBasic import CrawlerBasic
+
 from Crawler.Helpers.LinksHelper import LinksHelper
+from Crawler.Helpers.LinksDB import LinksDB
+
 from Crawler.Objects.ObjectLink import ObjectLink
 from Server.ServerAPI import ServerAPI
 
@@ -19,11 +22,11 @@ class CrawlerProcess(CrawlerBasic):
         validation = self.validate()
 
         if validation != '':
-            if LinksHelper.findLinkObjectAlready(url) is None:
+            if LinksDB.findLinkObjectAlready(url) is None:
 
                 if validation in ['news', 'topic']:
 
-                    topicObject = LinksHelper.findLinkObjectAlready(self.currentPageURL, self.title or self.ogTitle, True)
+                    topicObject = LinksDB.findLinkObjectAlready(self.currentPageURL, self.title or self.ogTitle, True)
 
                     if topicObject is None:  #we have to add the topic
 
@@ -40,7 +43,7 @@ class CrawlerProcess(CrawlerBasic):
                                                              self.author, self.authorAvatar)
 
                             topicObject = ObjectLink(self.currentPageURL, 'topic', topicId, self.title, self.parentId)
-                            LinksHelper.addLinkObject(topicObject)
+                            LinksDB.addLinkObject(topicObject)
 
                     if topicObject is not None:
 
@@ -52,7 +55,7 @@ class CrawlerProcess(CrawlerBasic):
                                 replyObjectURL = self.currentPageURL+reply['title'] + reply['description']
                                 replyObjectTitle = reply['title'] + reply['description']
 
-                                replyObject = LinksHelper.findLinkObjectAlready(replyObjectURL, replyObjectTitle, True)
+                                replyObject = LinksDB.findLinkObjectAlready(replyObjectURL, replyObjectTitle, True)
 
                                 if replyObject is None: # we have to add the reply
 
@@ -64,7 +67,7 @@ class CrawlerProcess(CrawlerBasic):
                                                                          reply['author'], reply['authorAvatar'])
 
                                         replyObject = ObjectLink(replyObjectURL, 'reply', replyId, replyObjectTitle, topicId)
-                                        LinksHelper.addLinkObject(replyObject)
+                                        LinksDB.addLinkObject(replyObject)
 
                                 if replyObject is not None:
                                     replyId = replyObject.id
@@ -104,7 +107,7 @@ class CrawlerProcess(CrawlerBasic):
         for parent in self.parents:
 
             parentName = self.websiteName+' '+parent['name']
-            parentObject = LinksHelper.findLinkObjectAlready(parent['url'], parentName)
+            parentObject = LinksDB.findLinkObjectAlready(parent['url'], parentName)
 
             if parentObject is None:
 
@@ -119,7 +122,7 @@ class CrawlerProcess(CrawlerBasic):
                                                  self.date, self.websiteCountry or self.language, self.websiteCity, self.websiteLanguage or self.language, -666, -666)
 
                 parentObject = ObjectLink(parent['url'], 'forum', forumId, parentName, grandparentId)
-                LinksHelper.addLinkObject(parentObject)
+                LinksDB.addLinkObject(parentObject)
 
             grandparentId = parentObject.id
             #print("grandparentId   ",grandparentId)

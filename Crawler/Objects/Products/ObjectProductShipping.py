@@ -1,6 +1,6 @@
 from Crawler.Helpers.LinksHelper import LinksHelper
 
-class ObjectProduct:
+class ObjectProductShipping:
 
     url = ''
 

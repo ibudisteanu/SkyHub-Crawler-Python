@@ -3,7 +3,7 @@ import dateparser
 from Crawler.CrawlerProcess import CrawlerProcess
 
 
-class CrawlerEbay(CrawlerProcess):
+class CrawlerProduct(CrawlerProcess):
 
     name = 'CrawlerEbay'
 
@@ -76,7 +76,7 @@ class CrawlerEbay(CrawlerProcess):
         if self.cssTimeLeft != '':
             self.timeLeft = self.extractFirstElement(response.css(self.cssTimeLeft))
 
-        if self.cssQuantityAvailable != ''
+        if self.cssQuantityAvailable != '':
             self.quantityAvailable = self.extractFirstElement(response.css(self.cssQuantityAvailable))
 
         if self.cssItemSpecifications != '':

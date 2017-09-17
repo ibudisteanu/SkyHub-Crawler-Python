@@ -55,15 +55,18 @@ def CrawlerScrapy():
     # from Crawler.Crawlers.CrawlerAntena3Category import CrawlerAntena3Category
     # scrapyProcess.crawl(CrawlerAntena3Category)
 
-    from Crawler.Crawlers.Apps.CrawlerFonduriUeRo import CrawlerFonduriUeRo
-    scrapyProcess.crawl(CrawlerFonduriUeRo)
+    # from Crawler.Crawlers.Apps.CrawlerFonduriUeRo import CrawlerFonduriUeRo
+    # scrapyProcess.crawl(CrawlerFonduriUeRo)
+
+    from Crawler.Crawlers.Apps.Products.CrawlerEbay import  CrawlerEbay
+    scrapyProcess.crawl(CrawlerEbay)
 
     scrapyProcess.start() # the script will block here until the crawling is finished
 
 #init main
-from Crawler.Helpers.LinksHelper import LinksHelper
-LinksHelper.readLinksFiles()
-LinksHelper.appendLinksFiles()
+from Crawler.Helpers.LinksDB import LinksDB
+LinksDB.readLinksFiles()
+LinksDB.appendLinksFiles()
 
 
 #CrawlerWayBackMachine()

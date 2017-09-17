@@ -4,6 +4,7 @@ import scrapy
 
 from Crawler.Helpers.AttrDict import AttrDict
 from Crawler.Helpers.LinksHelper import LinksHelper
+from Crawler.Helpers.LinksDB import LinksDB
 
 class CrawlerBasic(scrapy.Spider):
     url = ''
@@ -134,7 +135,7 @@ class CrawlerBasic(scrapy.Spider):
     def parseResponse(self, response, url):
         #print("prase function", url)
 
-        LinksHelper.addLinkVisited(url)
+        LinksDB.addLinkVisited(url)
 
         for rejection in self.rejectionSubstr:
             if rejection in url:
