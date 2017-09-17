@@ -10,6 +10,12 @@ fileLinksVisited = None
 arrLinksObjects = []
 arrLinksVisited = []
 
+from Crawler.Objects.ObjectLink import ObjectLink
+from Crawler.Objects.Products.ObjectProduct import ObjectProduct
+from Crawler.Objects.Products.ObjectProductShipping import ObjectProductShipping
+from Crawler.Objects.Products.ObjectReview import ObjectReview
+from Crawler.Objects.Products.ObjectAuthor import ObjectAuthor
+
 class LinksHelper():
 
     def __init__(self):
