@@ -36,6 +36,9 @@ class ObjectProduct:
     ratingsTotal = 0
     ratings = []
 
+    deliverySummary = ''
+    shipping = ''
+
     returnPolicy = ''
 
     quantityAvailable = 0
@@ -44,7 +47,7 @@ class ObjectProduct:
 
     lastUpdate = 0
 
-    def __init__(self, url, type, originalId, id, sellerUsername, categories, title, timeLeft, itemCondition, itemSpecifications, itemConditionDetails, itemBrand, itemMaterial, description, images, price, details, date, ratingsTotal, ratings, returnPolicy, quantityAvailable, reviews, lastUpdate ):
+    def __init__(self, url, type, originalId, id, sellerUsername, categories, title, timeLeft, itemCondition, itemSpecifications, itemConditionDetails, itemBrand, itemMaterial, description, images, price, details, date, ratingsTotal, ratings, deliverySummary, shipping, returnPolicy, quantityAvailable, reviews, lastUpdate ):
 
         self.url = url
         self.url = LinksHelper.fix_url(self.url)
@@ -75,3 +78,6 @@ class ObjectProduct:
         self.quantityAvailable = quantityAvailable
         self.reviews = reviews
         self.lastUpdate = lastUpdate
+
+        self.deliverySummary = deliverySummary
+        self.shipping = shipping

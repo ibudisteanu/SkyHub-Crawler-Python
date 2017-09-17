@@ -13,10 +13,12 @@ class CrawlerProduct(CrawlerProcess):
     start_urls = (url,)
     allowed_domains = [domain]
 
-    cssTitle = "#itemTitle"
-    cssItemCondition = "#vi-itm-cond"
+    cssTitle = "#itemTitle::text"
+    cssItemCondition = "#vi-itm-cond::text"
     cssTimeLeft = "span.vi-tm-left noscript"
-    cssQuantityAvailable = "#qtySubTxt span"
+    cssShippingSummary = "#delSummary::text"
+
+    cssQuantityAvailable = "#qtySubTxt span::text"
 
     cssItemSpecifications = "div.itemAttr "
     #cssItemConditionDetails = "#vi-cond-addl-info"
@@ -28,13 +30,13 @@ class CrawlerProduct(CrawlerProcess):
 
     cssFullDescription = "desc_wrapper_ctr"
 
-    cssAuthor = "span.mbg-nw"
-    cssAuthorLink = "#mbgLink"
+    cssAuthor = "span.mbg-nw::text"
+    cssAuthorLink = "#mbgLink::attr(href)"
 
-    cssAuthorScore = "span.mbg-l a"
-    cssAuthorFeedbackOverall = "#si-fb"
+    cssAuthorScore = "span.mbg-l a::text"
+    cssAuthorFeedbackOverall = "#si-fb::text"
 
-    cssItemId = "#descItemNumber"
+    cssItemId = "#descItemNumber::text"
 
     cssDateText = ""
     cssDate = ""
@@ -42,6 +44,8 @@ class CrawlerProduct(CrawlerProcess):
     cssImages = "td.tdThumb div img"
 
     cssBreadcrumbsChildren = "td.vi-VR-brumblnkLst table tbody tr td h2 ul li"
+
+    cssShipping = ""
 
     removeShortDescription = True
 
@@ -56,6 +60,8 @@ class CrawlerProduct(CrawlerProcess):
     itemMaterial = ''
 
     timeLeft = ''
+    shippingSummary = ''
+    shipping = []
 
     authorScore = 0
     authorFeedbackOverall = 0
@@ -80,6 +86,9 @@ class CrawlerProduct(CrawlerProcess):
 
         if self.cssQuantityAvailable != '':
             self.quantityAvailable = self.extractFirstElement(response.css(self.cssQuantityAvailable))
+
+        if self.cssShippingSummary != '':
+            self.shippingSummary = self.extractFirstElement(response.css(self.cssQuantityAvailable))
 
         if self.cssItemSpecifications != '':
             self.itemSpecifications = self.extractFirstElement(response.css(self.cssItemSpecifications))
@@ -153,3 +162,7 @@ class CrawlerProduct(CrawlerProcess):
         if len(self.authorFeedbackOverall) > 0: print("Author Feedback Overall", self.authorFeedbackOverall)
         if len(self.itemId) > 0: print("Item ID", self.itemId)
         if len(self.quantityAvailable) > 0: print("Quantity Available", self.quantityAvailable)
+
+        if len(self.images) > 0: print("Images", self.images)
+        if len(self.shippingSummary) > 0: print("Shippinh Summary", self.shippingSummary)
+        if len(self.shipping) > 0: print("Shipping", self.shipping)
