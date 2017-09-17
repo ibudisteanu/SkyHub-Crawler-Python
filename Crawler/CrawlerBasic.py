@@ -144,6 +144,8 @@ class CrawlerBasic(scrapy.Spider):
         self.basicProcess(response, url)
         self.crawlerProcess(response, url)
 
+        self.toString()
+
         self.processScrapedData(url)
 
     def processScrapedData(self, url):
@@ -182,8 +184,13 @@ class CrawlerBasic(scrapy.Spider):
         # print("og:site_name", self.ogSiteName)
         # print("page_url", self.currentPageURL)
 
+        self.toStringAdditional()
+
         print("url:", self.currentPageURL)
         print("validate", self.validate())
+
+    def toStringAdditional(self):
+        pass
 
     def cleanText(self, text):
         return text

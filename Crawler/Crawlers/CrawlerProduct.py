@@ -41,9 +41,11 @@ class CrawlerProduct(CrawlerProcess):
 
     cssImages = "td.tdThumb div img"
 
-    cssCategories = "td.vi-VR-brumblnkLst table tbody tr td h2 ul li"
+    cssBreadcrumbsChildren = "td.vi-VR-brumblnkLst table tbody tr td h2 ul li"
 
     removeShortDescription = True
+
+
 
     # variables
 
@@ -113,16 +115,23 @@ class CrawlerProduct(CrawlerProcess):
             print("DATEEE",date)
             self.date = dateparser.parse(date)
         else: #timestamp format
-            if self.extractFirstElement(response.css(self.cssDate)) == '':
-                self.fullDescription = ''
-            else:
+            if self.cssDate != '':
                 self.date = self.extractFirstElement(response.css(self.cssDate))
 
         if self.cssImages != '':
-            cssImages = response.css(self.cssImages+"::attr(href)")
+            self.images = response.css(self.cssImages+"::attr(href)")
 
-        if self.cssCategories != '':
-            cssCategories = response.css(self.cssCategories)
+        if self.cssBreadcrumbsChildren != '':
+            for i in reversed(range(1, 100)):
+                parent = response.css(self.cssBreadcrumbsChildren + ':nth-child(' + str(i) + ')')
+                parentText = self.extractFirstElement(parent.css('::text'))
+                parentURL = self.extractFirstElement(parent.css('::attr(href)'))
+
+                if parentText != '':
+                    self.parents.append({'name': parentText, 'url': parentURL, 'index': i})
+
+        self.parents = list(reversed(self.parents))  # changing the order
+
 
 
 
@@ -131,3 +140,16 @@ class CrawlerProduct(CrawlerProcess):
             return 'product'
 
         return ''
+
+    def toStringAdditional(self):
+
+        if len(self.itemCondition) > 0: print("Item Condition", self.itemCondition)
+        if len(self.itemSpecifications) > 0: print("Item Specs", self.itemSpecifications)
+        if len(self.itemConditionDetails) > 0: print("Item Condition Details", self.itemConditionDetails)
+        if len(self.itemBrand) > 0: print("Item Brand", self.itemBrand)
+        if len(self.itemMaterial) > 0: print("Item Material", self.itemMaterial)
+        if len(self.timeLeft) > 0: print("Time Left", self.timeLeft)
+        if len(self.authorScore) > 0: print("Author Score", self.authorScore)
+        if len(self.authorFeedbackOverall) > 0: print("Author Feedback Overall", self.authorFeedbackOverall)
+        if len(self.itemId) > 0: print("Item ID", self.itemId)
+        if len(self.quantityAvailable) > 0: print("Quantity Available", self.quantityAvailable)

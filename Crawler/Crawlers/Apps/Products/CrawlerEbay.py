@@ -15,7 +15,7 @@ class CrawlerEbay(CrawlerProduct):
     websiteCity = "Mountain View"
     websiteCountry = "USA"
     websiteLanguage = "English"
-    websiteImage = ""
+    websiteImage = "http://www.iconarchive.com/download/i31641/sykonist/popular-sites/eBay.ico"
     websiteCover = ""
 
     user = "muflonel2000"

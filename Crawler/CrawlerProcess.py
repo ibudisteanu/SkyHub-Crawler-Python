@@ -92,8 +92,8 @@ class CrawlerProcess(CrawlerBasic):
 
         grandparentId = self.forumGrandParentId
 
-        if len(self.parents) == 0:
-            self.parents.append({'name': '', 'url': self.url})
+        # if len(self.parents) == 0:
+        #     self.parents.append({'name': '', 'url': self.url})
 
         if len(self.parents) > 0:
             ok = False
