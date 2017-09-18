@@ -1,7 +1,7 @@
 import dateparser
 
 from Crawler.Crawlers.CrawlerProcess import CrawlerProcess
-
+from Crawler.Objects.Products.ObjectReviewsScore import ObjectReviewScore
 
 class CrawlerProduct(CrawlerProcess):
 
@@ -61,6 +61,22 @@ class CrawlerProduct(CrawlerProcess):
     cssPrice = "#prcIsum::text"
     cssWatching = "span.vi-buybox-watchcount::text"
 
+    cssRatingScoresList = "ul.ebay-review-list li.ebay-review-item"
+    cssRatingScoresListElementValue = "p.ebay-review-item-stars"
+    cssRatingScoresListElementScore = "p.ebay-review-item-stars"
+
+    cssReviewsList = "div.reviews div.ebay-review-section"
+    cssReviewsListElementUsername = "div a"
+    cssReviewsListElementDate = "div span::text"
+    cssReviewsListElementRatingScore = ""
+    cssReviewsListElementRatingScoreStars = "div div span i.fullStar"
+    cssReviewsListElementTitle = "div p.review-item-title::text"
+    cssReviewsListElementBody = "div p.review -item-content"
+    cssReviewsListElementPurchased = "div p.review-attr"
+    cssReviewsListElementThumbsUp = "div.review-btns div a span.review-section-rr-txt span.positive-h-c::text"
+    cssReviewsListElementThumbsDown = "div.review-btns div a span.review-section-rr-txt span.negative-h-c::text"
+
+
     # variables
 
     itemCondition = ''
@@ -85,6 +101,9 @@ class CrawlerProduct(CrawlerProcess):
     youSave = ''
     price = ''
     watching = ''
+
+    ratingScoresList = []
+    reviewsList = []
 
     def crawlerProcess(self, response, url):
 
@@ -178,6 +197,41 @@ class CrawlerProduct(CrawlerProcess):
                 self.availableToBuy = True
 
 
+        if self.cssRatingScoresList != '' and len(self.title) > 0:
+            self.ratingScoresList = []
+
+            for i in range(1, 100):
+                ratingScoreObject = response.css(self.cssRatingScoresList + ':nth-child(' + str(i) + ')')
+                ratingScore = self.extractFirstElement(ratingScoreObject.css(self.cssRatingScoresListElementScore+ '::text'))
+                ratingValue = self.extractFirstElement(ratingScoreObject.css(self.cssRatingScoresListElementValue+ '::text'))
+
+                if ratingScore != '' and ratingValue != '':
+                    self.ratingScoresList.append(ObjectReviewScore(ratingScore, ratingValue))
+
+        if self.cssReviewsList != '' and len(self.title) > 0:
+            self.reviewsList = []
+
+            for i in range(1, 100):
+                reviewObject = response.css(self.cssReviewsList + ':nth-child(' + str(i) + ')')
+                reviewUsername = ''.join(reviewObject.css(self.cssReviewsListElementUsername)).strip()
+                reviewDate = ''.join(reviewObject.css(self.cssReviewsListElementDate)).strip()
+                reviewTitle = ''.join(reviewObject.css(self.cssReviewsListElementTitle)).strip()
+                reviewBody = ''.join(reviewObject.css(self.cssReviewsListElementBody)).strip()
+
+                if self.cssReviewsListElementRatingScore != '':
+                    reviewScore = ''.join(reviewObject.css(self.cssReviewsListElementRatingScore)).strip()
+
+                if self.cssReviewsListElementRatingScoreStars != '': #with stars
+                    reviewScore = len(reviewObject.css(self.cssReviewsListElementRatingScoreStars))
+
+                reviewPurchased = ''.join(reviewObject.css(self.cssReviewsListElementPurchased)).strip()
+                reviewThumbsUp = ''.join(reviewObject.css(self.cssReviewsListElementThumbsUp)).strip()
+                reviewThumbsDown = ''.join(reviewObject.css(self.cssReviewsListElementThumbsDown)).strip()
+
+                if ratingScore != '' and ratingValue != '':
+                    self.ratingScoresList.append(ObjectReviewScore(ratingScore, ratingValue))
+
+
     def validate(self):
         if (len(self.title) > 3) and (len(self.fullDescription) > 40) and self.availableToBuy:
             return 'product'
@@ -209,5 +263,7 @@ class CrawlerProduct(CrawlerProcess):
         if len(self.youSave) > 0: print("You Save", self.youSave)
         if len(self.price) > 0: print("Price", self.price)
         if len(self.watching) > 0: print("Watching", self.watching)
+
+        if len(self.ratingScoresList) >0: print("Rating Scores List", self.ratingScoresList)
 
         print("Available To Buy", self.availableToBuy)
