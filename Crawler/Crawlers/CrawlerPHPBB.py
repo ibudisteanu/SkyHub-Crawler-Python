@@ -23,8 +23,9 @@ class CrawlerPHPBB(CrawlerProcess):
     cssAvatars = "div.postavatar img"
     cssTitles = "div.postsubject"
 
-    cssBreadcrumbs = ''
-    cssBreadcrumbsChildren = 'p.breadcrumbs > a'
+    cssBreadcrumbsChildrenList = 'p.breadcrumbs > a'
+    cssBreadcrumbsChildrenListElementHref = ''
+    cssBreadcrumbsChildrenListElement = ''
 
     rejectReplyTitle = True
 
@@ -88,19 +89,7 @@ class CrawlerPHPBB(CrawlerProcess):
                         title = ''
                     self.replies.append({'description': reply, 'title':title, 'author':author, 'date':date, 'authorAvatar': avatar })
 
-        self.parents = []
 
-        if len(self.title) > 0:
-            for i in reversed(range(1, 100)):
-                parent = response.css(self.cssBreadcrumbsChildren+':nth-child('+str(i)+')')
-                parentText = self.extractFirstElement(parent.css('::text'))
-                parentURL = self.extractFirstElement(parent.css('::attr(href)'))
-
-                if parentText != '':
-                    self.parents.append({'name':parentText, 'url':parentURL, 'index': i})
-
-
-        self.parents = list(reversed(self.parents)) #changing the order
 
 
 

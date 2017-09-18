@@ -15,10 +15,11 @@ class CrawlerProduct(CrawlerProcess):
 
     cssTitle = "#itemTitle::text"
     cssItemCondition = "#vi-itm-cond::text"
-    cssTimeLeft = "span.vi-tm-left noscript"
-    cssShippingSummary = "#delSummary::text"
+    cssTimeLeft = "span.timeMs::attr(timems)"
+    cssShippingSummary = "#shSummary"
 
     cssQuantityAvailable = "#qtySubTxt span::text"
+    cssQuantitySold = "span.vi-qtyS-hot-red.vi-qty-vert-algn.vi-qty-pur-lnk a::text"
 
     cssItemSpecifications = "div.itemAttr "
     #cssItemConditionDetails = "#vi-cond-addl-info"
@@ -28,7 +29,7 @@ class CrawlerProduct(CrawlerProcess):
     #cssItemMaterial = ""
     cssItemMaterial = ""
 
-    cssFullDescription = "desc_wrapper_ctr"
+    cssFullDescription = "#desc_div"
 
     cssAuthor = "span.mbg-nw::text"
     cssAuthorLink = "#mbgLink::attr(href)"
@@ -43,13 +44,19 @@ class CrawlerProduct(CrawlerProcess):
 
     cssImages = "td.tdThumb div img"
 
-    cssBreadcrumbsChildren = "td.vi-VR-brumblnkLst table tbody tr td h2 ul li"
+    cssBreadcrumbsChildrenList = "#vi-VR-brumb-lnkLst table tr td h2 ul li"
+    cssBreadcrumbsChildrenListElementHref = 'a'
+    cssBreadcrumbsChildrenListElement = 'a span'
 
     cssShipping = ""
 
     removeShortDescription = True
 
 
+    cssListPrice = "#orgPrc::text"
+    cssYouSave ="#youSaveSTP::text"
+    cssPrice = "#prcIsum::text"
+    cssWatching = "span.vi-buybox-watchcount::text"
 
     # variables
 
@@ -68,6 +75,13 @@ class CrawlerProduct(CrawlerProcess):
 
     itemId = ''
     quantityAvailable = 0
+    quantitySold = 0
+
+
+    listPrice = ''
+    youSave = ''
+    price = ''
+    watching = ''
 
     def crawlerProcess(self, response, url):
 
@@ -87,8 +101,12 @@ class CrawlerProduct(CrawlerProcess):
         if self.cssQuantityAvailable != '':
             self.quantityAvailable = self.extractFirstElement(response.css(self.cssQuantityAvailable))
 
+        if self.cssQuantitySold != '':
+            self.quantitySold = self.extractFirstElement(response.css(self.cssQuantitySold))
+
         if self.cssShippingSummary != '':
-            self.shippingSummary = self.extractFirstElement(response.css(self.cssQuantityAvailable))
+            self.shippingSummary = ''.join(response.css(self.cssShippingSummary).extract()).strip()
+
 
         if self.cssItemSpecifications != '':
             self.itemSpecifications = self.extractFirstElement(response.css(self.cssItemSpecifications))
@@ -128,20 +146,41 @@ class CrawlerProduct(CrawlerProcess):
                 self.date = self.extractFirstElement(response.css(self.cssDate))
 
         if self.cssImages != '':
-            self.images = response.css(self.cssImages+"::attr(href)")
+            self.images = []
 
-        if self.cssBreadcrumbsChildren != '':
-            for i in reversed(range(1, 100)):
-                parent = response.css(self.cssBreadcrumbsChildren + ':nth-child(' + str(i) + ')')
-                parentText = self.extractFirstElement(parent.css('::text'))
-                parentURL = self.extractFirstElement(parent.css('::attr(href)'))
+            images = response.css(self.cssImages)
+            for i, image in enumerate(images):
+                imageSrc = image.css('::attr(src)').extract_first()
+                imageAlt = image.css('::attr(alt)').extract_first()
+
+                self.images.append({'src': imageSrc, 'alt': imageAlt})
+
+
+        self.parents = []
+        if self.cssBreadcrumbsChildrenList != '':
+            for i in reversed(range(1, 20)):
+                parent = response.css(self.cssBreadcrumbsChildrenList + ':nth-child(' + str(i) + ')')
+                parentText = self.extractFirstElement(parent.css(self.cssBreadcrumbsChildrenListElement+'::text'))
+                parentURL = self.extractFirstElement(parent.css(self.cssBreadcrumbsChildrenListElementHref+'::attr(href)'))
+
+                print("parentText", self.cssBreadcrumbsChildrenList + ':nth-child(' + str(i) + ')', parent, parentText, parentURL)
 
                 if parentText != '':
                     self.parents.append({'name': parentText, 'url': parentURL, 'index': i})
 
         self.parents = list(reversed(self.parents))  # changing the order
 
+        if self.cssListPrice != '':
+            self.listPrice = self.extractFirstElement(response.css(self.cssListPrice))
 
+        if self.cssYouSave != '':
+            self.youSave = self.extractFirstElement(response.css(self.cssYouSave))
+
+        if self.cssPrice != '':
+            self.price = self.extractFirstElement(response.css(self.cssPrice))
+
+        if self.cssWatching != '':
+            self.watching = self.extractFirstElement(response.css(self.cssWatching))
 
 
     def validate(self):
@@ -161,8 +200,15 @@ class CrawlerProduct(CrawlerProcess):
         if len(self.authorScore) > 0: print("Author Score", self.authorScore)
         if len(self.authorFeedbackOverall) > 0: print("Author Feedback Overall", self.authorFeedbackOverall)
         if len(self.itemId) > 0: print("Item ID", self.itemId)
+
         if len(self.quantityAvailable) > 0: print("Quantity Available", self.quantityAvailable)
+        if len(self.quantitySold) > 0: print("Quantity Sold", self.quantitySold)
 
         if len(self.images) > 0: print("Images", self.images)
-        if len(self.shippingSummary) > 0: print("Shippinh Summary", self.shippingSummary)
+        if len(self.shippingSummary) > 0: print("Shipping Summary", self.shippingSummary)
         if len(self.shipping) > 0: print("Shipping", self.shipping)
+
+        if len(self.listPrice) > 0: print("List Price", self.listPrice)
+        if len(self.youSave) > 0: print("You Save", self.youSave)
+        if len(self.price) > 0: print("Price", self.price)
+        if len(self.watching) > 0: print("Watching", self.watching)

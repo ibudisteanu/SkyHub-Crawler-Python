@@ -42,12 +42,13 @@ class ObjectProduct:
     returnPolicy = ''
 
     quantityAvailable = 0
+    quantitySold = 0
 
     reviews = []  # reviews array of Review
 
     lastUpdate = 0
 
-    def __init__(self, url, type, originalId, id, sellerUsername, categories, title, timeLeft, itemCondition, itemSpecifications, itemConditionDetails, itemBrand, itemMaterial, description, images, price, details, date, ratingsTotal, ratings, deliverySummary, shipping, returnPolicy, quantityAvailable, reviews, lastUpdate ):
+    def __init__(self, url, type, originalId, id, sellerUsername, categories, title, timeLeft, itemCondition, itemSpecifications, itemConditionDetails, itemBrand, itemMaterial, description, images, price, details, date, ratingsTotal, ratings, deliverySummary, shipping, returnPolicy, quantityAvailable, quantitySold, reviews, lastUpdate ):
 
         self.url = url
         self.url = LinksHelper.fix_url(self.url)
@@ -75,7 +76,11 @@ class ObjectProduct:
         self.ratingsTotal = ratingsTotal
         self.ratings = ratings
         self.returnPolicy = returnPolicy
+
+
         self.quantityAvailable = quantityAvailable
+        self.quantitySold = quantitySold
+
         self.reviews = reviews
         self.lastUpdate = lastUpdate
 

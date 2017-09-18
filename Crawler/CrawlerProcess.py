@@ -8,6 +8,10 @@ from Server.ServerAPI import ServerAPI
 
 class CrawlerProcess(CrawlerBasic):
 
+    cssBreadcrumbsChildrenList = ''
+    cssBreadcrumbsChildrenListElementHref = ''
+    cssBreadcrumbsChildrenListElement = ''
+
     #Process Data and Create new Objects
     def processScrapedData(self, url):
 
@@ -82,6 +86,22 @@ class CrawlerProcess(CrawlerBasic):
                 print("Already processed ", url)
 
         return None
+
+    def processScrapedData(self, url):
+
+        self.parents = []
+
+        if len(self.title) > 0:
+            for i in reversed(range(1, 100)):
+                parent = response.css(self.cssBreadcrumbsChildrenList+':nth-child('+str(i)+')')
+                parentText = self.extractFirstElement(parent.css(self.cssBreadcrumbsChildrenListElement+'::text'))
+                parentURL = self.extractFirstElement(parent.css(self.cssBreadcrumbsChildrenListElementHref+'::attr(href)'))
+
+                if parentText != '':
+                    self.parents.append({'name':parentText, 'url':parentURL, 'index': i})
+
+
+        self.parents = list(reversed(self.parents)) #changing the order
 
     # ---------------------
     # ---------------------

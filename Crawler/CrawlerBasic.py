@@ -163,6 +163,7 @@ class CrawlerBasic(scrapy.Spider):
 
     def toString(self):
 
+        print("url", self.currentPageURL)
         if len(self.title) > 0: print("title:", self.title)
         if len(self.shortDescription) > 0: print("shortDescription:", self.shortDescription)
         if len(self.fullDescription) > 0: print("fullDescription:", self.fullDescription)
@@ -184,13 +185,9 @@ class CrawlerBasic(scrapy.Spider):
         # print("og:site_name", self.ogSiteName)
         # print("page_url", self.currentPageURL)
 
-        self.toStringAdditional()
-
         print("url:", self.currentPageURL)
         print("validate", self.validate())
 
-    def toStringAdditional(self):
-        pass
 
     def cleanText(self, text):
         return text
