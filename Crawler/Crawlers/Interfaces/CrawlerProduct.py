@@ -13,6 +13,9 @@ class CrawlerProduct(CrawlerProcess):
     start_urls = (url,)
     allowed_domains = [domain]
 
+    availableToBuy = True
+    cssAvailableToBuy = "#binBtn_btn"
+
     cssTitle = "#itemTitle::text"
     cssItemCondition = "#vi-itm-cond::text"
     cssTimeLeft = "span.timeMs::attr(timems)"
@@ -169,9 +172,14 @@ class CrawlerProduct(CrawlerProcess):
         if self.cssWatching != '':
             self.watching = self.extractFirstElement(response.css(self.cssWatching))
 
+        if self.cssAvailableToBuy != '':
+            self.availableToBuy = False
+            if len(response.css(self.cssAvailableToBuy)) >0:
+                self.availableToBuy = True
+
 
     def validate(self):
-        if (len(self.title) > 3) and (len(self.fullDescription) > 40):
+        if (len(self.title) > 3) and (len(self.fullDescription) > 40) and self.availableToBuy:
             return 'product'
 
         return ''
@@ -201,3 +209,5 @@ class CrawlerProduct(CrawlerProcess):
         if len(self.youSave) > 0: print("You Save", self.youSave)
         if len(self.price) > 0: print("Price", self.price)
         if len(self.watching) > 0: print("Watching", self.watching)
+
+        print("Available To Buy", self.availableToBuy)

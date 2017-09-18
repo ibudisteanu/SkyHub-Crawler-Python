@@ -18,3 +18,4 @@ class CrawlerEbay(CrawlerProduct):
     websiteCover = ""
 
     user = "muflonel2000"
+
