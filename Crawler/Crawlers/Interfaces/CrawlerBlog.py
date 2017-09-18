@@ -1,6 +1,6 @@
 import dateparser
 
-from Crawler.CrawlerProcess import CrawlerProcess
+from Crawler.Crawlers.CrawlerProcess import CrawlerProcess
 
 
 class CrawlerBlog(CrawlerProcess):
@@ -26,6 +26,8 @@ class CrawlerBlog(CrawlerProcess):
     removeShortDescription = True
 
     def crawlerProcess(self, response, url):
+
+        super().crawlerProcess(response, url)
 
         if self.removeShortDescription:
             self.shortDescription = ''

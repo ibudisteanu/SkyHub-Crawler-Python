@@ -1,6 +1,6 @@
 import dateparser
 
-from Crawler.CrawlerProcess import CrawlerProcess
+from Crawler.Crawlers.CrawlerProcess import CrawlerProcess
 
 
 class CrawlerAntena3(CrawlerProcess):
@@ -14,6 +14,8 @@ class CrawlerAntena3(CrawlerProcess):
     allowed_domains = [domain]
 
     def crawlerProcess(self, response, url):
+        super().crawlerProcess(response, url)
+
         self.author = self.extractFirstElement(response.css('div.autor-ora-comentarii span.fl a::text'))
         self.authorLink = self.extractFirstElement(response.css('div.autor-ora-comentarii span.fl a::attr(href)'))
 

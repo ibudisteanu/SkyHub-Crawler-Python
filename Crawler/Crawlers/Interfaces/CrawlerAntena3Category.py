@@ -1,4 +1,4 @@
-from Crawler.CrawlerProcess import CrawlerProcess
+from Crawler.Crawlers.CrawlerProcess import CrawlerProcess
 
 class CrawlerAntena3Category(CrawlerProcess):
 
@@ -11,6 +11,8 @@ class CrawlerAntena3Category(CrawlerProcess):
     allowed_domains = [domain]
 
     def crawlerProcess(self, response, url):
+        super().crawlerProcess(response, url)
+
         self.title = self.extractFirstElement(response.css('div.header-categorie h1::text'))
 
     def validate(self):

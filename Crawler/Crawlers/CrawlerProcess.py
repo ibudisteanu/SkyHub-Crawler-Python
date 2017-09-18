@@ -1,10 +1,8 @@
-from Crawler.CrawlerBasic import CrawlerBasic
-
-from Crawler.Helpers.LinksHelper import LinksHelper
 from Crawler.Helpers.LinksDB import LinksDB
-
 from Crawler.Objects.ObjectLink import ObjectLink
+from Crawler.SmartCrawlers.CrawlerBasic import CrawlerBasic
 from Server.ServerAPI import ServerAPI
+
 
 class CrawlerProcess(CrawlerBasic):
 
@@ -87,7 +85,9 @@ class CrawlerProcess(CrawlerBasic):
 
         return None
 
-    def processScrapedData(self, url):
+    def crawlerProcess(self, response, url):
+
+        super().crawlerProcess(response, url)
 
         self.parents = []
 

@@ -1,4 +1,4 @@
-from Crawler.CrawlerProcess import CrawlerProcess
+from Crawler.Crawlers.CrawlerProcess import CrawlerProcess
 
 class CrawlerPHPBB(CrawlerProcess):
 
@@ -30,6 +30,8 @@ class CrawlerPHPBB(CrawlerProcess):
     rejectReplyTitle = True
 
     def crawlerProcess(self, response, url):
+
+        super().crawlerProcess(response, url)
 
         self.title = self.extractFirstElement(response.css(self.cssTitle))
         self.fullDescription = ''
@@ -88,8 +90,6 @@ class CrawlerPHPBB(CrawlerProcess):
                     if self.rejectReplyTitle:
                         title = ''
                     self.replies.append({'description': reply, 'title':title, 'author':author, 'date':date, 'authorAvatar': avatar })
-
-
 
 
 

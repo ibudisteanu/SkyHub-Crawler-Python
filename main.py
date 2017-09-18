@@ -13,7 +13,7 @@ def CrawlerWayBackMachine():
     from Crawler.SmartCrawlers.WayBackMachine import CrawlerWayBackMachine
     crawlerWayBackMachine = CrawlerWayBackMachine.CrawlerWayBackMachine()
 
-    from Crawler.Crawlers.CrawlerPHPBB import CrawlerPHPBB
+    from Crawler.Crawlers.Interfaces.CrawlerPHPBB import CrawlerPHPBB
 
     #hackpedia.info
     crawlerWayBackMachine.start(CrawlerPHPBB(user="muflonel2000", url="hackpedia.info", forumGrandParentId='1_forum_14996534590908914', websiteName='Hackpedia', websiteImage="https://a.wattpad.com/useravatar/anon_hacker.128.204872.jpg", websiteCover="https://www.cryptus.in/image/online-training-cceh.jpg", websiteCountry="Romania", websiteCity="Bucharest", websiteLanguage="Romanian"))
@@ -58,7 +58,7 @@ def CrawlerScrapy():
     # from Crawler.Crawlers.Apps.CrawlerFonduriUeRo import CrawlerFonduriUeRo
     # scrapyProcess.crawl(CrawlerFonduriUeRo)
 
-    from Crawler.Crawlers.Apps.Products.CrawlerEbay import  CrawlerEbay
+    from Crawler.Crawlers.Interfaces.Apps.Products.CrawlerEbay import  CrawlerEbay
     scrapyProcess.crawl(CrawlerEbay)
 
     scrapyProcess.start() # the script will block here until the crawling is finished

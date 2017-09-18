@@ -1,6 +1,6 @@
 import dateparser
 
-from Crawler.CrawlerProcess import CrawlerProcess
+from Crawler.Crawlers.CrawlerProcess import CrawlerProcess
 
 
 class CrawlerProduct(CrawlerProcess):
@@ -85,6 +85,8 @@ class CrawlerProduct(CrawlerProcess):
 
     def crawlerProcess(self, response, url):
 
+        super().crawlerProcess(response, url)
+
         if self.removeShortDescription:
             self.shortDescription = ''
             self.ogDescription = ''
@@ -155,21 +157,6 @@ class CrawlerProduct(CrawlerProcess):
 
                 self.images.append({'src': imageSrc, 'alt': imageAlt})
 
-
-        self.parents = []
-        if self.cssBreadcrumbsChildrenList != '':
-            for i in reversed(range(1, 20)):
-                parent = response.css(self.cssBreadcrumbsChildrenList + ':nth-child(' + str(i) + ')')
-                parentText = self.extractFirstElement(parent.css(self.cssBreadcrumbsChildrenListElement+'::text'))
-                parentURL = self.extractFirstElement(parent.css(self.cssBreadcrumbsChildrenListElementHref+'::attr(href)'))
-
-                print("parentText", self.cssBreadcrumbsChildrenList + ':nth-child(' + str(i) + ')', parent, parentText, parentURL)
-
-                if parentText != '':
-                    self.parents.append({'name': parentText, 'url': parentURL, 'index': i})
-
-        self.parents = list(reversed(self.parents))  # changing the order
-
         if self.cssListPrice != '':
             self.listPrice = self.extractFirstElement(response.css(self.cssListPrice))
 
@@ -189,7 +176,9 @@ class CrawlerProduct(CrawlerProcess):
 
         return ''
 
-    def toStringAdditional(self):
+    def toString(self):
+
+        super().toString()
 
         if len(self.itemCondition) > 0: print("Item Condition", self.itemCondition)
         if len(self.itemSpecifications) > 0: print("Item Specs", self.itemSpecifications)

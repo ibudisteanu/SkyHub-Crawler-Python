@@ -1,4 +1,4 @@
-from Crawler.Crawlers.CrawlerBlog import CrawlerBlog
+from Crawler.Crawlers.Interfaces.CrawlerBlog import CrawlerBlog
 
 class CrawlerFonduriUeRo(CrawlerBlog):
 

@@ -1,5 +1,4 @@
-from Crawler.CrawlerBasic import CrawlerBasic
-from Crawler.Crawlers.CrawlerProduct import CrawlerProduct
+from Crawler.Crawlers.Interfaces.CrawlerProduct import CrawlerProduct
 
 class CrawlerEbay(CrawlerProduct):
 

@@ -64,7 +64,9 @@ class CrawlerBasic(scrapy.Spider):
         return returnValue
 
 
-    def basicProcess(self, response, url):
+
+    def crawlerProcess(self, response, url):
+
         self.title = self.extractFirstElement(response.xpath('//title/text()'))
         self.keywords = self.extractFirstElement(response.xpath("//meta[@name='keywords']/@content"))
         self.shortDescription = self.extractFirstElement(response.xpath("//meta[@name='description']/@content"))
@@ -85,9 +87,6 @@ class CrawlerBasic(scrapy.Spider):
         if self.ogImage != '':
             self.images = AttrDict(img=self.ogImage, title=self.title, description=self.shortDescription)
 
-
-    def crawlerProcess(self, response, url):
-        pass
 
     def test(self, response):
         print("CRAWLER BASIC IS WORKING")
@@ -141,7 +140,6 @@ class CrawlerBasic(scrapy.Spider):
             if rejection in url:
                 return None
 
-        self.basicProcess(response, url)
         self.crawlerProcess(response, url)
 
         self.toString()
