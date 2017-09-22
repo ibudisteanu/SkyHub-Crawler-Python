@@ -24,11 +24,11 @@ class CrawlerProcess(CrawlerBasic):
         validation = self.validate()
 
         if validation != '':
-            if LinksDB.findLinkObjectAlready(url) is None:
+            if LinksDB.findLinkObjectAlready(self.domain, url) is None:
 
                 if validation in ['news', 'topic']:
 
-                    topicObject = LinksDB.findLinkObjectAlready(self.currentPageURL, self.title or self.ogTitle, True)
+                    topicObject = LinksDB.findLinkObjectAlready(self.domain, self.currentPageURL, self.title or self.ogTitle, True)
 
                     if topicObject is None:  #we have to add the topic
 
@@ -45,7 +45,7 @@ class CrawlerProcess(CrawlerBasic):
                                                              self.author, self.authorAvatar)
 
                             topicObject = ObjectLink(self.currentPageURL, 'topic', topicId, self.title, self.parentId)
-                            LinksDB.addLinkObject(topicObject)
+                            LinksDB.addLinkObject(self.domain, topicObject)
 
                     if topicObject is not None:
 
@@ -57,7 +57,7 @@ class CrawlerProcess(CrawlerBasic):
                                 replyObjectURL = self.currentPageURL+reply['title'] + reply['description']
                                 replyObjectTitle = reply['title'] + reply['description']
 
-                                replyObject = LinksDB.findLinkObjectAlready(replyObjectURL, replyObjectTitle, True)
+                                replyObject = LinksDB.findLinkObjectAlready(self.domain, replyObjectURL, replyObjectTitle, True)
 
                                 if replyObject is None: # we have to add the reply
 
@@ -69,7 +69,7 @@ class CrawlerProcess(CrawlerBasic):
                                                                          reply['author'], reply['authorAvatar'])
 
                                         replyObject = ObjectLink(replyObjectURL, 'reply', replyId, replyObjectTitle, topicId)
-                                        LinksDB.addLinkObject(replyObject)
+                                        LinksDB.addLinkObject(self.domain, replyObject)
 
                                 if replyObject is not None:
                                     replyId = replyObject.id
@@ -127,7 +127,7 @@ class CrawlerProcess(CrawlerBasic):
         for parent in self.parents:
 
             parentName = self.websiteName+' '+parent['name']
-            parentObject = LinksDB.findLinkObjectAlready(parent['url'], parentName)
+            parentObject = LinksDB.findLinkObjectAlready(self.domain, parent['url'], parentName)
 
             if parentObject is None:
 
@@ -142,7 +142,7 @@ class CrawlerProcess(CrawlerBasic):
                                                  self.date, self.websiteCountry or self.language, self.websiteCity, self.websiteLanguage or self.language, -666, -666)
 
                 parentObject = ObjectLink(parent['url'], 'forum', forumId, parentName, grandparentId)
-                LinksDB.addLinkObject(parentObject)
+                LinksDB.addLinkObject(self.domain, parentObject)
 
             grandparentId = parentObject.id
             #print("grandparentId   ",grandparentId)

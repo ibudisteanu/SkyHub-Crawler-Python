@@ -1,13 +1,8 @@
-from Crawler.Objects.ObjectLink import ObjectLink
-from Crawler.Objects.Products.ObjectProduct import ObjectProduct
-from Crawler.Objects.Products.ObjectProductShipping import ObjectProductShipping
-from Crawler.Objects.Products.ObjectReview import ObjectReview
-from Crawler.Objects.Products.ObjectAuthor import ObjectAuthor
-
 from Crawler.Helpers.LinksHelper import LinksHelper
 
 #import urllib.parse
 #import os.path
+
 from pathlib import Path
 import pickle
 import requests  # Tutorial based on http://docs.python-requests.org/en/master/user/advanced/
@@ -15,8 +10,8 @@ import requests  # Tutorial based on http://docs.python-requests.org/en/master/u
 fileLinksObjects = None
 fileLinksVisited = None
 
-arrLinksObjects = []
-arrLinksVisited = []
+arrLinksObjects = {}
+arrLinksVisited = {}
 
 class LinksDB():
 
@@ -37,7 +32,7 @@ class LinksDB():
 
             list = pickle.load(fileLinksObjects)
 
-            arrLinksObjects.append({"website":website, list:list})
+            arrLinksObjects[website] = list
 
         filename = "data//urls-visited//" + website + ".xyz"
         if Path(filename).is_file():
@@ -46,24 +41,26 @@ class LinksDB():
             content = fileLinksVisited.readlines()
             list = [x.strip() for x in content] # you may also want to remove whitespace characters like `\n` at the end of each line
 
-            arrLinksVisited.append({"website":website, list:list})
-
-    @staticmethod
-    def appendLinksFiles(website):
-        global arrLinksObjects, fileLinksVisited
-        fileLinksVisited = open("data//urls_visited//"+website+".xyz", "a")
+            arrLinksVisited[website] = list
 
     @staticmethod
     def findLinkObjectAlready(website, url='', title='', allowTitleIncluded=False):
         url = LinksHelper.fix_url(url)
 
         global arrLinksObjects
-        for object in arrLinksObjects:
-            if (url == object.url) or (title == object.title):
-                return object
 
-            if allowTitleIncluded and (title in object.title or object.title in title):
-                return object
+        if hasattr(arrLinksObjects, website) == False:
+            return False
+
+        list = arrLinksObjects[website]
+
+        if list is not None:
+            for object in list:
+                if (url == object.url) or (title == object.title):
+                    return object
+
+                if allowTitleIncluded and (title in object.title or object.title in title):
+                    return object
 
         return None
 
@@ -72,18 +69,36 @@ class LinksDB():
         url = LinksHelper.fix_url(url)
 
         global arrLinksVisited
-        if url in arrLinksVisited:
-            return True
+
+        if hasattr(arrLinksVisited, website) == False:
+            return False
+
+        list = arrLinksVisited[website]
+        if list is not None:
+            if url in list:
+                return True
+
         return False
 
     @staticmethod
-    def addLinkVisited(url):
-        url = LinksHelper.fix_url(webiste, url)
+    def addLinkVisited(website, url):
+        url = LinksHelper.fix_url(url)
+
+        if LinksDB.checkLinkVisitedAlready(website, url) == True:
+            return False
 
         global arrLinksVisited
         global fileLinksVisited
-        arrLinksVisited.append(url)
-        fileLinksVisited.write(url)
+
+        if hasattr(arrLinksVisited, website) == False:
+            arrLinksVisited[website] = []
+
+        arrLinksVisited[website].append(url)
+
+        fileLinksVisited = open("data//urls_visited//"+website+".xyz", "wb")
+        pickle.dump(arrLinksVisited[website], fileLinksVisited, -1)
+        fileLinksVisited.close()
+
 
     @staticmethod
     def addLinkObject(website, object):
@@ -91,10 +106,13 @@ class LinksDB():
         global arrLinksObjects
         global fileLinksObjects
 
-        arrLinksObjects.append(object)
+        if hasattr(arrLinksObjects, website) == False:
+            arrLinksObjects[website] = []
 
-        fileLinksObjects = open("data//link_objects.xyz", "wb")
-        pickle.dump(arrLinksObjects, fileLinksObjects, -1)
+        arrLinksObjects[website].append(object)
+
+        fileLinksObjects = open("data//link_objects//"+website+".xyz", "wb")
+        pickle.dump(arrLinksObjects[website], fileLinksObjects, -1)
         fileLinksObjects.close()
 
 

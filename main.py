@@ -65,8 +65,6 @@ def CrawlerScrapy():
 
 #init main
 from Crawler.Helpers.LinksDB import LinksDB
-LinksDB.readLinksFiles()
-LinksDB.appendLinksFiles()
 
 
 #CrawlerWayBackMachine()

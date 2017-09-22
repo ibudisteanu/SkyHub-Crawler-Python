@@ -8,6 +8,8 @@ from Crawler.Helpers.LinksDB import LinksDB
 
 class CrawlerBasic(scrapy.Spider):
     url = ''
+    domain = ''
+
     websiteName = ''
     websiteImage = ''
     websiteCover = ''
@@ -134,7 +136,7 @@ class CrawlerBasic(scrapy.Spider):
     def parseResponse(self, response, url):
         #print("prase function", url)
 
-        LinksDB.addLinkVisited(url)
+        LinksDB.addLinkVisited(self.domain, url)
 
         for rejection in self.rejectionSubstr:
             if rejection in url:
