@@ -114,52 +114,52 @@ class CrawlerProduct(CrawlerProcess):
             self.ogDescription = ''
 
         if self.cssTitle != '':
-            self.title = self.extractFirstElement(response.css(self.cssTitle))
+            self.title = ''.join(response.css(self.cssTitle)).strip()
 
         if self.cssItemCondition != '':
-            self.itemCondition = self.extractFirstElement(response.css(self.cssItemCondition))
+            self.itemCondition = ''.join(response.css(self.cssItemCondition)).strip()
 
         if self.cssTimeLeft != '':
-            self.timeLeft = self.extractFirstElement(response.css(self.cssTimeLeft))
+            self.timeLeft = ''.join(response.css(self.cssTimeLeft)).strip().strip()
 
         if self.cssQuantityAvailable != '':
-            self.quantityAvailable = self.extractFirstElement(response.css(self.cssQuantityAvailable))
+            self.quantityAvailable = ''.join(response.css(self.cssQuantityAvailable)).strip()
 
         if self.cssQuantitySold != '':
-            self.quantitySold = self.extractFirstElement(response.css(self.cssQuantitySold))
+            self.quantitySold = ''.join(response.css(self.cssQuantitySold)).strip()
 
         if self.cssShippingSummary != '':
             self.shippingSummary = ''.join(response.css(self.cssShippingSummary).extract()).strip()
 
 
         if self.cssItemSpecifications != '':
-            self.itemSpecifications = self.extractFirstElement(response.css(self.cssItemSpecifications))
+            self.itemSpecifications = ''.join(response.css(self.cssItemSpecifications)).strip()
 
         if self.cssItemConditionDetails != '':
-            self.itemConditionDetails = self.extractFirstElement(response.css(self.cssItemConditionDetails))
+            self.itemConditionDetails = ''.join(response.css(self.cssItemConditionDetails)).strip()
 
         if self.cssItemBrand != '':
-            self.itemBrand = self.extractFirstElement(response.css(self.cssItemBrand))
+            self.itemBrand = ''.join(response.css(self.cssItemBrand)).strip()
 
         if self.cssItemMaterial != '':
-            self.itemMaterial = self.extractFirstElement(response.css(self.cssItemMaterial))
+            self.itemMaterial = ''.join(response.css(self.cssItemMaterial)).strip()
 
         self.fullDescription = ''.join(response.css(self.cssFullDescription).extract()).strip()
 
         if self.cssAuthor != '':
-            self.author = self.extractFirstElement(response.css(self.cssAuthor))
+            self.author = ''.join(response.css(self.cssAuthor)).strip()
 
         if self.cssAuthorLink != '':
-            self.authorLink = self.extractFirstElement(response.css(self.cssAuthorLink))
+            self.authorLink = ''.join(response.css(self.cssAuthorLink)).strip()
 
         if self.cssAuthorScore != '':
-            self.authorScore = self.extractFirstElement(response.css(self.cssAuthorScore))
+            self.authorScore = ''.join(response.css(self.cssAuthorScore)).strip()
 
         if self.cssAuthorFeedbackOverall != '':
-            self.authorFeedbackOverall = self.extractFirstElement(response.css(self.cssAuthorFeedbackOverall))
+            self.authorFeedbackOverall = ''.join(response.css(self.cssAuthorFeedbackOverall)).strip()
 
         if self.cssItemId != '':
-            self.itemId = self.extractFirstElement(response.css(self.cssItemId))
+            self.itemId = ''.join(response.css(self.cssItemId)).strip()
 
         if self.cssDateText != '':  #text format like 22 Jul 2017
             date = ' '.join(response.css(self.cssDate).extract()).strip()
@@ -167,7 +167,7 @@ class CrawlerProduct(CrawlerProcess):
             self.date = dateparser.parse(date)
         else: #timestamp format
             if self.cssDate != '':
-                self.date = self.extractFirstElement(response.css(self.cssDate))
+                self.date = ''.join(response.css(self.cssDate))
 
         if self.cssImages != '':
             self.images = []
@@ -180,16 +180,16 @@ class CrawlerProduct(CrawlerProcess):
                 self.images.append({'src': imageSrc, 'alt': imageAlt})
 
         if self.cssListPrice != '':
-            self.listPrice = self.extractFirstElement(response.css(self.cssListPrice))
+            self.listPrice = ''.join(response.css(self.cssListPrice))
 
         if self.cssYouSave != '':
-            self.youSave = self.extractFirstElement(response.css(self.cssYouSave))
+            self.youSave = ''.join(response.css(self.cssYouSave))
 
         if self.cssPrice != '':
-            self.price = self.extractFirstElement(response.css(self.cssPrice))
+            self.price = ''.join(response.css(self.cssPrice))
 
         if self.cssWatching != '':
-            self.watching = self.extractFirstElement(response.css(self.cssWatching))
+            self.watching = ''.join(response.css(self.cssWatching))
 
         if self.cssAvailableToBuy != '':
             self.availableToBuy = False
@@ -202,8 +202,8 @@ class CrawlerProduct(CrawlerProcess):
 
             for i in range(1, 100):
                 ratingScoreObject = response.css(self.cssRatingScoresList + ':nth-child(' + str(i) + ')')
-                ratingScore = self.extractFirstElement(ratingScoreObject.css(self.cssRatingScoresListElementScore+ '::text'))
-                ratingValue = self.extractFirstElement(ratingScoreObject.css(self.cssRatingScoresListElementValue+ '::text'))
+                ratingScore = ''.join(ratingScoreObject.css(self.cssRatingScoresListElementScore+ '::text')).strip()
+                ratingValue = ''.join(ratingScoreObject.css(self.cssRatingScoresListElementValue+ '::text')).strip()
 
                 if ratingScore != '' and ratingValue != '':
                     self.ratingScoresList.append(ObjectReviewScore(ratingScore, ratingValue))
@@ -212,6 +212,7 @@ class CrawlerProduct(CrawlerProcess):
             self.reviewsList = []
 
             for i in range(1, 100):
+
                 reviewObject = response.css(self.cssReviewsList + ':nth-child(' + str(i) + ')')
                 reviewUsername = ''.join(reviewObject.css(self.cssReviewsListElementUsername)).strip()
                 reviewDate = ''.join(reviewObject.css(self.cssReviewsListElementDate)).strip()
