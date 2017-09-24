@@ -65,6 +65,17 @@ class CrawlerBasic(scrapy.Spider):
         if len(list) > index: return list[index].extract()
         return returnValue
 
+    def extractText(self, list, returnValue='', index=-1):
+
+        if index == -1:
+            if len(list) > 0:
+                s = ' '.join(list.extract())
+                if s is not None: return s.strip()
+
+            return returnValue
+
+        if (index > 0) and (len(list) > index): return list[index].extract()
+        return returnValue
 
 
     def crawlerProcess(self, response, url):
