@@ -11,3 +11,9 @@ class ObjectReviewScore:
         self.score = score
         self.value = value
         self.lastUpdate = lastUpdate
+
+    def toString(self):
+
+        if len(self.score) > 0: print("   score", self.score)
+        if len(self.value) > 0: print("   value", self.value)
+        if len(self.lastUpdate) > 0: print("   lastUpdate", self.lastUpdate)

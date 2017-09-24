@@ -2,6 +2,7 @@ import dateparser
 
 from Crawler.Crawlers.CrawlerProcess import CrawlerProcess
 from Crawler.Objects.Products.ObjectReviewsScore import ObjectReviewScore
+from Crawler.Objects.Products.ObjectReview import ObjectReview
 
 class CrawlerProduct(CrawlerProcess):
 
@@ -216,6 +217,8 @@ class CrawlerProduct(CrawlerProcess):
                 reviewObject = response.css(self.cssReviewsList + ':nth-child(' + str(i) + ')')
 
                 reviewUsername = self.extractText(reviewObject.css(self.cssReviewsListElementUsername))
+                reviewFullName = ''
+
                 reviewDate = self.extractText(reviewObject.css(self.cssReviewsListElementDate))
                 reviewTitle = self.extractText(reviewObject.css(self.cssReviewsListElementTitle))
                 reviewBody = self.extractText(reviewObject.css(self.cssReviewsListElementBody))
@@ -230,8 +233,8 @@ class CrawlerProduct(CrawlerProcess):
                 reviewThumbsUp = self.extractText(reviewObject.css(self.cssReviewsListElementThumbsUp))
                 reviewThumbsDown = self.extractText(reviewObject.css(self.cssReviewsListElementThumbsDown))
 
-                if ratingScore != '' and ratingValue != '':
-                    self.ratingScoresList.append(ObjectReviewScore(ratingScore, ratingValue))
+                if (reviewBody != '' or reviewTitle != '') and ratingScore != '' and ratingValue != '':
+                    self.reviewsList.append(ObjectReview('', reviewUsername, reviewFullName, reviewDate, reviewScore, reviewTitle, reviewBody, reviewPurchased, reviewThumbsUp, reviewThumbsDown, ))
 
 
     def validate(self):
@@ -266,6 +269,14 @@ class CrawlerProduct(CrawlerProcess):
         if len(self.price) > 0: print("Price", self.price)
         if len(self.watching) > 0: print("Watching", self.watching)
 
-        if len(self.ratingScoresList) >0: print("Rating Scores List", self.ratingScoresList)
+        if len(self.ratingScoresList) >0:
+            for i, rating in enumerate(self.ratingScoresList):
+                print("Rating Scores List")
+                rating.toString()
+
+        if len(self.reviewList) > 0:
+            for i, review in enumerate(self.reviewsList):
+                print("ReviewList")
+                review.toString()
 
         print("Available To Buy", self.availableToBuy)

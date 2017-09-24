@@ -10,26 +10,46 @@ class ObjectReview:
     date = ''
     score = 5
     title = ''
-    description = ''
+    body = ''
 
-    additionalInfo = ''
+    purchased = 0
 
     thumbsUp = 0
     thumbsDown = 0
 
     lastUpdate = 0
 
-    def __init__(self, url, authorUsername, date, score, title, description, additionalInfo, thumbsUp, thumbsDown, lastUpdate):
+    def __init__(self, url, authorUsername, authorFullName, date, score, title, body, purchased, thumbsUp, thumbsDown,  lastUpdate=''):
 
         self.url = url
         self.url = LinksHelper.fix_url(self.url)
 
         self.authorUsername = authorUsername
+        self.authorFullName = authorFullName
         self.date = date
-        self.score = score
+
         self.title = title
-        self.description = description
-        self.additionalInfo = additionalInfo
+        self.body = body
+        self.purchased = purchased
         self.thumbsUp = thumbsUp
         self.thumbsDown = thumbsDown
+
+        self.score = score
+
         self.lastUpdate = lastUpdate
+
+    def toString(self):
+
+        if len(self.url) > 0: print("   url", self.url)
+        if len(self.authorUsername) > 0: print("   username", self.authorUsername)
+        if len(self.authorFullName) > 0: print("   fullname", self.authorFullName)
+        if len(self.date) > 0: print("   date", self.date)
+        if len(self.score) > 0: print("   score", self.score)
+        if len(self.title) > 0: print("   title", self.title)
+        if len(self.body) > 0: print("   body", self.body)
+        if len(self.purchased) > 0: print("   purchased", self.purchased)
+        if len(self.thumbsUp) > 0: print("   thumbsUp", self.thumbsUp)
+        if len(self.thumbsDown) > 0: print("   thumbsDown", self.thumbsDown)
+        if len(self.score) > 0: print("   score", self.score)
+
+        if len(self.lastUpdate) > 0: print("   lastUpdate", self.lastUpdate)
