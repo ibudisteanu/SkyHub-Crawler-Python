@@ -167,6 +167,70 @@ class ServerAPI:
             return None
 
     @staticmethod
+    def postAddProduct(rootURL, user, parentId, title, description, shortDescription='', arrKeywords=[], arrAttachments=[],
+                       dtOriginalDate=None, country='', city='', language='', latitude=-666, longitude=-666,
+                       authorName='', authorAvatar=''):
+        user = ServerAPI.loginUser(user)
+
+        if user is None: return False
+
+        title = LinksHelper.fixArchiveStrings(title)
+        description = LinksHelper.fixArchiveStrings(description)
+        shortDescription = LinksHelper.fixArchiveStrings(shortDescription)
+        authorAvatar = LinksHelper.fixArchiveStrings(authorAvatar)
+        authorName = LinksHelper.fixArchiveStrings(authorName)
+
+        description = LinksHelper.fix_relative_urls(description, rootURL)
+
+        rez = ServerAPI.processLocation(country, city, language, latitude, longitude)
+        latitude = rez[0]
+        longitude = rez[1]
+
+        arrAdditionalInfo = {
+            'scraped': True,
+        }
+
+        if dtOriginalDate is not None: arrAdditionalInfo['dtOriginal'] = dtOriginalDate
+        if authorName != '': arrAdditionalInfo['orgName'] = authorName
+        if authorAvatar != '': arrAdditionalInfo['orgAvatar'] = authorAvatar
+
+        if isinstance(arrKeywords, str):
+            keywords = arrKeywords
+        else:
+            keywords = ','.join(str(e) for e in arrKeywords)
+
+        data = {
+            'id': user['id'],
+            'sessionId': user['sessionId'],
+
+            'parent': parentId,
+            'title': title,
+            'description': description,
+            'shortDescription': shortDescription,
+            'keywords': keywords,
+            'attachments': arrAttachments,
+            'country': country,
+            'city': city,
+            'language': language,
+            'latitude': latitude,
+            'longitude': longitude,
+            'additionalInfo': ujson.dumps(arrAdditionalInfo)
+        }
+
+        headers = {}
+
+        result = LinksHelper.getRequestTrials(session, url + "topics/add-topic", data, headers, maxTrials = 5)
+        result = result.json()
+
+        # print(result)
+        if result['result'] == True:
+            print('topic new ', result['topic']['URL'])
+            return result['topic']['id']
+        else:
+            print("ERROR adding new topic ",result)
+            return None
+
+    @staticmethod
     def postAddReply(rootURL, user, parentId, parentReplyId, title, description, arrKeywords = [], arrAttachments=[], dtOriginalDate = None, country='', city='', language='',  latitude=-666, longitude=-666, authorName='', authorAvatar='' ):
 
         user = ServerAPI.loginUser(user)

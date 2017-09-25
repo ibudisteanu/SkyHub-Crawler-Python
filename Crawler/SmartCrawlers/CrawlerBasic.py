@@ -1,5 +1,6 @@
 from urllib.parse import urlparse
 
+import time
 import scrapy
 
 from Crawler.Helpers.AttrDict import AttrDict
@@ -39,6 +40,8 @@ class CrawlerBasic(scrapy.Spider):
     ogImage = ''
     ogSiteName = ''
     ogType = ''
+
+    lastUpdate = ''
 
     def __init__(self, user='', url='', forumGrandParentId = '', websiteName='', websiteImage='', websiteCover = '',  websiteCountry = '', websiteCity = '', websiteLanguage = ''):
 
@@ -91,6 +94,8 @@ class CrawlerBasic(scrapy.Spider):
         if self.ogDescription != '': self.shortDescription = self.ogDescription
         if self.ogImage != '':
             self.images = AttrDict(img=self.ogImage, title=self.title, description=self.shortDescription)
+
+        self.lastUpdate = time.time()
 
 
     def test(self, response):

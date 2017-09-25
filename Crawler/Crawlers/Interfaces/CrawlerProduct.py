@@ -5,6 +5,12 @@ from Crawler.Helpers.LinksDB import LinksDB
 from Crawler.Objects.Products.ObjectReviewsScore import ObjectReviewScore
 from Crawler.Objects.Products.ObjectReview import ObjectReview
 
+from Crawler.Objects.Products.ObjectProduct import ObjectProduct
+from Crawler.Objects.Products.ObjectProductPrice import ObjectProductPrice
+
+from Server.ServerAPI import ServerAPI
+
+
 class CrawlerProduct(CrawlerProcess):
 
     name = 'CrawlerEbay'
@@ -99,12 +105,11 @@ class CrawlerProduct(CrawlerProcess):
     quantitySold = 0
 
 
-    listPrice = ''
-    youSave = ''
-    price = ''
-    watching = ''
+    price = None
 
     ratingScoresList = []
+    ratingsTotal = 0
+
     reviewsList = []
 
     def crawlerProcess(self, response, url):
@@ -181,17 +186,15 @@ class CrawlerProduct(CrawlerProcess):
 
                 self.images.append({'src': imageSrc, 'alt': imageAlt})
 
-        if self.cssListPrice != '':
-            self.listPrice = self.extractText(response.css(self.cssListPrice))
+        if self.cssListPrice != '' or self.cssPrice != '' or self.cssYouSave != '' or self.cssWatching != '':
 
-        if self.cssYouSave != '':
-            self.youSave = self.extractText(response.css(self.cssYouSave))
+            self.price = ObjectProductPrice()
 
-        if self.cssPrice != '':
-            self.price = self.extractText(response.css(self.cssPrice))
+            if self.cssListPrice != '': self.price.listPrice = self.extractText(response.css(self.cssListPrice))
+            if self.cssYouSave != '': self.price.youSave = self.extractText(response.css(self.cssYouSave))
+            if self.cssPrice != '': self.price.price = self.extractText(response.css(self.cssPrice))
+            if self.cssWatching != '': self.price.watching = self.extractText(response.css(self.cssWatching))
 
-        if self.cssWatching != '':
-            self.watching = self.extractText(response.css(self.cssWatching))
 
         if self.cssAvailableToBuy != '':
             self.availableToBuy = False
@@ -201,7 +204,9 @@ class CrawlerProduct(CrawlerProcess):
 
         if self.cssRatingScoresList != '' and len(self.title) > 0:
             self.ratingScoresList = []
+            self.ratingsTotal = 0
 
+            count = 0
             for i in range(1, 100):
                 ratingScoreObject = response.css(self.cssRatingScoresList + ':nth-child(' + str(i) + ')')
                 ratingScore = self.extractText(ratingScoreObject.css(self.cssRatingScoresListElementScore+ '::text'))
@@ -209,6 +214,12 @@ class CrawlerProduct(CrawlerProcess):
 
                 if ratingScore != '' and ratingValue != '':
                     self.ratingScoresList.append(ObjectReviewScore(ratingScore, ratingValue))
+
+                    self.ratingsTotal += ratingScore * ratingValue
+                    count += ratingScore
+
+                if count > 0:
+                    self.ratingsTotal /= count
 
         if self.cssReviewsList != '' and len(self.title) > 0:
             self.reviewsList = []
@@ -266,10 +277,9 @@ class CrawlerProduct(CrawlerProcess):
         if len(self.shippingSummary) > 0: print("Shipping Summary", self.shippingSummary)
         if len(self.shipping) > 0: print("Shipping", self.shipping)
 
-        if len(self.listPrice) > 0: print("List Price", self.listPrice)
-        if len(self.youSave) > 0: print("You Save", self.youSave)
-        if len(self.price) > 0: print("Price", self.price)
-        if len(self.watching) > 0: print("Watching", self.watching)
+        if self.price is not None:
+            print("Price")
+            self.price.toString()
 
         if len(self.ratingScoresList) >0:
             for i, rating in enumerate(self.ratingScoresList):
@@ -304,14 +314,16 @@ class CrawlerProduct(CrawlerProcess):
                 description = self.fullDescription or self.ogDescription or self.shortDescription
 
                 if len(title) > 5 and len(description) > 30:
-                    topicId = ServerAPI.postAddTopic(self.url, self.user, self.parentId,
-                                                     title,
-                                                     description,
-                                                     self.ogDescription or self.shortDescription,
-                                                     self.keywords, self.images, self.date,
-                                                     self.websiteCountry or self.language, self.websiteCity,
-                                                     self.websiteLanguage or self.language, -666, -666,
-                                                     self.author, self.authorAvatar)
+                    productId = ServerAPI.postAddProduct(self.url, self.user, self.parentId,
+                                                         title,
+                                                         description,
+                                                         self.ogDescription or self.shortDescription,
+                                                         self.keywords, self.images, self.date,
+                                                         self.websiteCountry or self.language, self.websiteCity,
+                                                         self.websiteLanguage or self.language, -666, -666,
+                                                         self.author, self.authorAvatar)
 
-                    topicObject = ObjectLink(self.currentPageURL, 'topic', topicId, self.title, self.parentId)
-                    LinksDB.addLinkObject(self.domain, topicObject)
+                    productObject = ObjectProduct(self.currentPageURL, 'product', self.itemId, productId, self.author, self.parents, self.title, self.timeLeft, self.itemCondition, self.itemSpecifications, self.itemConditionDetails, self.itemBrand, self.itemMaterial,
+                                                  self.fullDescription, self.images, self.price, self.details, self.date, self.ratingsTotal, self.ratingScoresList, self.shipping , self.quantityAvailable, self.quantitySold,  self.reviewsList, self.lastUpdate)
+
+                    LinksDB.addLinkObject(self.domain, productObject)
