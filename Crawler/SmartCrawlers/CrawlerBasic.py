@@ -29,8 +29,7 @@ class CrawlerBasic(scrapy.Spider):
     fullDescription = ''
     images = []
     keywords = []
-    author = ''
-    authorLink = ''
+
     language = ''
     date = ''
     currentPageURL=''
@@ -40,13 +39,6 @@ class CrawlerBasic(scrapy.Spider):
     ogImage = ''
     ogSiteName = ''
     ogType = ''
-
-    authorAvatar = ''
-
-    parents = []
-    parentId = ''
-
-    replies = []
 
     def __init__(self, user='', url='', forumGrandParentId = '', websiteName='', websiteImage='', websiteCover = '',  websiteCountry = '', websiteCity = '', websiteLanguage = ''):
 
@@ -181,14 +173,8 @@ class CrawlerBasic(scrapy.Spider):
         if len(self.language) > 0: print("language:", self.language)
         if len(self.images) > 0: print("images:", self.images)
         if len(self.keywords) > 0: print("keywords:", self.keywords)
-        if len(self.author) > 0: print("author:", self.author, self.authorLink)
+
         if self.date is not None : print("date:", self.date)
-
-        if len(self.authorAvatar) > 0: print("authorAvatar", self.authorAvatar)
-
-        if len(self.parents) > 0: print("parents", self.parents)
-
-        if len(self.replies) > 0: print("replies", self.replies)
 
         # print("og:title", self.ogTitle)
         # print("og:description", self.ogDescription)

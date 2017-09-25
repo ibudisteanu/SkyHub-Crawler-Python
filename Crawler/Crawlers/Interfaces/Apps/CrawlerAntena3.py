@@ -1,9 +1,9 @@
 import dateparser
 
-from Crawler.Crawlers.CrawlerProcess import CrawlerProcess
+from Crawler.Crawlers.Interfaces.CrawlerNews import CrawlerNews
 
 
-class CrawlerAntena3(CrawlerProcess):
+class CrawlerAntena3(CrawlerNews):
 
     name = 'CrawlerAntena3'
 

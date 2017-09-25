@@ -1,6 +1,7 @@
 import dateparser
 
 from Crawler.Crawlers.CrawlerProcess import CrawlerProcess
+from Crawler.Helpers.LinksDB import LinksDB
 from Crawler.Objects.Products.ObjectReviewsScore import ObjectReviewScore
 from Crawler.Objects.Products.ObjectReview import ObjectReview
 
@@ -247,6 +248,7 @@ class CrawlerProduct(CrawlerProcess):
 
         super().toString()
 
+
         if len(self.itemCondition) > 0: print("Item Condition", self.itemCondition)
         if len(self.itemSpecifications) > 0: print("Item Specs", self.itemSpecifications)
         if len(self.itemConditionDetails) > 0: print("Item Condition Details", self.itemConditionDetails)
@@ -274,9 +276,42 @@ class CrawlerProduct(CrawlerProcess):
                 print("Rating Scores List")
                 rating.toString()
 
-        if len(self.reviewList) > 0:
+        if len(self.reviewsList) > 0:
             for i, review in enumerate(self.reviewsList):
                 print("ReviewList")
                 review.toString()
 
         print("Available To Buy", self.availableToBuy)
+
+
+    # Process Data and Create new Objects
+    def processScrapedData(self, url):
+
+        super().processScrapedData(url)
+
+        # validate
+        validation = self.validate()
+
+        # product
+        if validation in ['product']:
+
+            productObject = LinksDB.findLinkObjectAlready(self.domain, self.currentPageURL,
+                                                          self.title or self.ogTitle, True)
+
+            if productObject is None:  # we have to add the topic
+
+                title = self.title or self.ogTitle
+                description = self.fullDescription or self.ogDescription or self.shortDescription
+
+                if len(title) > 5 and len(description) > 30:
+                    topicId = ServerAPI.postAddTopic(self.url, self.user, self.parentId,
+                                                     title,
+                                                     description,
+                                                     self.ogDescription or self.shortDescription,
+                                                     self.keywords, self.images, self.date,
+                                                     self.websiteCountry or self.language, self.websiteCity,
+                                                     self.websiteLanguage or self.language, -666, -666,
+                                                     self.author, self.authorAvatar)
+
+                    topicObject = ObjectLink(self.currentPageURL, 'topic', topicId, self.title, self.parentId)
+                    LinksDB.addLinkObject(self.domain, topicObject)

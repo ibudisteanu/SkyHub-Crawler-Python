@@ -1,4 +1,4 @@
-from Crawler.Crawlers.Interfaces.CrawlerPHPBB import CrawlerPHPBB
+from Crawler.Crawlers.Interfaces.Apps.CrawlerPHPBB import CrawlerPHPBB
 
 class CrawlerTurkishajan(CrawlerPHPBB):
 

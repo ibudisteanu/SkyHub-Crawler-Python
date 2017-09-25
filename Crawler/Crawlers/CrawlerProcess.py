@@ -10,7 +10,16 @@ class CrawlerProcess(CrawlerBasic):
     cssBreadcrumbsChildrenListElementHref = ''
     cssBreadcrumbsChildrenListElement = ''
 
-    #Process Data and Create new Objects
+    #variables
+
+    author = ''
+    authorLink = ''
+    authorAvatar = ''
+
+    parents = []
+    parentId = ''
+
+    # Process Data and Create new Objects
     def processScrapedData(self, url):
 
         self.title = self.cleanText(self.title)
@@ -19,69 +28,6 @@ class CrawlerProcess(CrawlerBasic):
         self.author = self.cleanText(self.author)
 
         self.parentId = self.createParents()
-
-        # validate
-        validation = self.validate()
-
-        if validation != '':
-            if LinksDB.findLinkObjectAlready(self.domain, url) is None:
-
-                if validation in ['news', 'topic']:
-
-                    topicObject = LinksDB.findLinkObjectAlready(self.domain, self.currentPageURL, self.title or self.ogTitle, True)
-
-                    if topicObject is None:  #we have to add the topic
-
-                        title = self.title or self.ogTitle
-                        description = self.fullDescription or self.ogDescription or self.shortDescription
-
-                        if len(title) > 5 and len(description) > 30:
-                            topicId = ServerAPI.postAddTopic(self.url, self.user, self.parentId,
-                                                             title,
-                                                             description,
-                                                             self.ogDescription or self.shortDescription,
-                                                             self.keywords, self.images, self.date,
-                                                             self.websiteCountry or self.language, self.websiteCity, self.websiteLanguage or self.language, -666, -666,
-                                                             self.author, self.authorAvatar)
-
-                            topicObject = ObjectLink(self.currentPageURL, 'topic', topicId, self.title, self.parentId)
-                            LinksDB.addLinkObject(self.domain, topicObject)
-
-                    if topicObject is not None:
-
-                        topicId = topicObject.id
-                        print("new topic ", topicId)
-
-                        if len(self.replies) > 0:
-                            for reply in self.replies:
-                                replyObjectURL = self.currentPageURL+reply['title'] + reply['description']
-                                replyObjectTitle = reply['title'] + reply['description']
-
-                                replyObject = LinksDB.findLinkObjectAlready(self.domain, replyObjectURL, replyObjectTitle, True)
-
-                                if replyObject is None: # we have to add the reply
-
-                                    if len(reply['description']) > 40:
-                                        replyId = ServerAPI.postAddReply(self.url, self.user, topicId,
-                                                                         "", reply['title'], reply['description'],
-                                                                         '', [], reply['date'],
-                                                                         self.websiteCountry or self.language, self.websiteCity, self.websiteLanguage or self.language, -666, -666,
-                                                                         reply['author'], reply['authorAvatar'])
-
-                                        replyObject = ObjectLink(replyObjectURL, 'reply', replyId, replyObjectTitle, topicId)
-                                        LinksDB.addLinkObject(self.domain, replyObject)
-
-                                if replyObject is not None:
-                                    replyId = replyObject.id
-                                    print("new reply ", replyId)
-
-                    pass
-                elif self.validate() in ['category', 'forum']:
-                    pass
-                else:
-                    pass
-            else:
-                print("Already processed ", url)
 
         return None
 
@@ -144,7 +90,17 @@ class CrawlerProcess(CrawlerBasic):
                 parentObject = ObjectLink(parent['url'], 'forum', forumId, parentName, grandparentId)
                 LinksDB.addLinkObject(self.domain, parentObject)
 
-            grandparentId = parentObject.id
-            #print("grandparentId   ",grandparentId)
+            if parentObject is not None:
+                grandparentId = parentObject.id
+                #print("grandparentId   ",grandparentId)
 
         return grandparentId
+
+    def toString(self):
+
+        super().toString()
+
+        if len(self.parents) > 0: print("parents", self.parents)
+
+        if len(self.author) > 0: print("author:", self.author, self.authorLink)
+        if len(self.authorAvatar) > 0: print("authorAvatar", self.authorAvatar)
