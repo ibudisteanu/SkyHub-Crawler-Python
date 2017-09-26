@@ -3,8 +3,6 @@ from Crawler.Objects.Products.ObjectProductShippingCosts import ObjectProductShi
 
 class ObjectProductShipping:
 
-    url = ''
-
     itemLocation = ''
 
 
@@ -17,21 +15,19 @@ class ObjectProductShipping:
     lastUpdate = 0
 
     returnPolicy = ''
-    shippingSummary = ''
-    shippingDetails = ''
+    summary = ''
+    details = ''
+    text = ''
 
-    def __init__(self, url, itemLocation, shippingTo, shippingExcludes, shippingCosts, shippingDetails, shippingSummary, returnPolicy, lastUpdate):
-
-        self.url = url
-        self.url = LinksHelper.fix_url(self.url)
+    def __init__(self,  itemLocation='', shippingTo='', shippingExcludes='', shippingCosts='', details='', summary='', returnPolicy='', lastUpdate=''):
 
         self.itemLocation = itemLocation
         self.shippingTo = shippingTo
         self.shippingExcludes = shippingExcludes
         self.shippingCosts = shippingCosts
 
-        self.shippingDetails = shippingDetails
-        self.shippingSummary = shippingSummary
+        self.details = details
+        self.summary = summary
 
         self.returnPolicy = returnPolicy
         self.lastUpdate = lastUpdate
@@ -46,8 +42,8 @@ class ObjectProductShipping:
                 print("   Shipping Cost")
                 shippingCost.toString()
 
-        if len(self.shippingDetails) > 0: print("   ", self.shippingDetails)
+        if len(self.details) > 0: print("   ", self.details)
         if len(self.returnPolicy) > 0: print("   ", self.returnPolicy)
-        if len(self.shippingSummary) > 0: print("   ", self.shippingSummary)
+        if len(self.summary) > 0: print("   ", self.summary)
         if len(self.returnPolicy) > 0: print("   ", self.returnPolicy)
         if len(self.lastUpdate) > 0: print("   ", self.lastUpdate)

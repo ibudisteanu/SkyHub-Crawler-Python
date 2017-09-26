@@ -2,10 +2,13 @@ import dateparser
 
 from Crawler.Crawlers.CrawlerProcess import CrawlerProcess
 from Crawler.Helpers.LinksDB import LinksDB
-from Crawler.Objects.Products.ObjectReviewsScore import ObjectReviewScore
-from Crawler.Objects.Products.ObjectReview import ObjectReview
 
 from Crawler.Objects.Products.ObjectProduct import ObjectProduct
+from Crawler.Objects.Products.ObjectProductShipping import ObjectProductShipping
+from Crawler.Objects.Products.ObjectProductShippingCosts import ObjectProductShippingCosts
+
+from Crawler.Objects.Products.ObjectReviewsScore import ObjectReviewScore
+from Crawler.Objects.Products.ObjectReview import ObjectReview
 from Crawler.Objects.Products.ObjectProductPrice import ObjectProductPrice
 
 from Server.ServerAPI import ServerAPI
@@ -15,7 +18,8 @@ class CrawlerProduct(CrawlerProcess):
 
     name = 'CrawlerEbay'
 
-    url = 'http://ebay.com'
+    url = 'www.ebay.com/itm/Thunderbolt-Mini-DP-to-VGA-Male-Adapter-TV-AV-Cable-For-Macbook-Air-Pro-6FT-ZH2A/122697934092'
+    #url = 'http://ebay.com'
     domain = 'ebay.com'
 
     start_urls = (url,)
@@ -27,7 +31,13 @@ class CrawlerProduct(CrawlerProcess):
     cssTitle = "#itemTitle::text"
     cssItemCondition = "#vi-itm-cond::text"
     cssTimeLeft = "span.timeMs::attr(timems)"
+
+
     cssShippingSummary = "#shSummary"
+    cssShippingText = "#shipNHadling"
+    cssShippingItemLocation = "#itemLocation div div div.iti-eu-bld-gry span::text"
+    cssShippingTo = "#sh-gsp-wrap div.sh-sLoc:nth-child(1)::text"
+    cssShippingExcludes = "#sh-gsp-wrap div.sh-sLoc:last-child::text"
 
     cssQuantityAvailable = "#qtySubTxt span::text"
     cssQuantitySold = "span.vi-qtyS-hot-red.vi-qty-vert-algn.vi-qty-pur-lnk a::text"
@@ -59,8 +69,6 @@ class CrawlerProduct(CrawlerProcess):
     cssBreadcrumbsChildrenListElementHref = 'a'
     cssBreadcrumbsChildrenListElement = 'a span'
 
-    cssShipping = ""
-
     removeShortDescription = True
 
 
@@ -70,11 +78,11 @@ class CrawlerProduct(CrawlerProcess):
     cssWatching = "span.vi-buybox-watchcount::text"
 
     cssRatingScoresList = "ul.ebay-review-list li.ebay-review-item"
-    cssRatingScoresListElementValue = "p.ebay-review-item-stars"
-    cssRatingScoresListElementScore = "p.ebay-review-item-stars"
+    cssRatingScoresListElementValue = "p.ebay-review-item-stars::text"
+    cssRatingScoresListElementScore = "p.ebay-review-item-stars::text"
 
     cssReviewsList = "div.reviews div.ebay-review-section"
-    cssReviewsListElementUsername = "div a"
+    cssReviewsListElementUsername = "div a::text"
     cssReviewsListElementDate = "div span::text"
     cssReviewsListElementRatingScore = ""
     cssReviewsListElementRatingScoreStars = "div div span i.fullStar"
@@ -94,8 +102,7 @@ class CrawlerProduct(CrawlerProcess):
     itemMaterial = ''
 
     timeLeft = ''
-    shippingSummary = ''
-    shipping = []
+    shipping = None
 
     authorScore = 0
     authorFeedbackOverall = 0
@@ -103,7 +110,6 @@ class CrawlerProduct(CrawlerProcess):
     itemId = ''
     quantityAvailable = 0
     quantitySold = 0
-
 
     price = None
 
@@ -135,8 +141,24 @@ class CrawlerProduct(CrawlerProcess):
         if self.cssQuantitySold != '':
             self.quantitySold = self.extractText(response.css(self.cssQuantitySold))
 
-        if self.cssShippingSummary != '':
-            self.shippingSummary = self.extractText(response.css(self.cssShippingSummary))
+        if self.cssShippingSummary != '' or self.cssShippingText != '':
+
+            self.shipping = ObjectProductShipping()
+
+            if self.cssShippingSummary != '':
+                self.shipping.shippingSummary = self.extractText(response.css(self.cssShippingSummary))
+
+            if self.cssShippingText != '':
+                self.shipping.text = self.extractText(response.css(self.cssShippingText))
+
+            if self.cssShippingItemLocation != '':
+                self.shipping.itemLocation = self.extractText(response.css(self.cssShippingItemLocation))
+
+            if self.cssShippingTo != '':
+                self.shipping.shippingTo = self.extractText(response.css(self.cssShippingTo))
+
+            if self.cssShippingExcludes != '':
+                self.shipping.shippingExcludes = self.extractText(response.css(self.cssShippingExcludes))
 
 
         if self.cssItemSpecifications != '':
@@ -201,16 +223,25 @@ class CrawlerProduct(CrawlerProcess):
             if len(response.css(self.cssAvailableToBuy)) >0:
                 self.availableToBuy = True
 
-
+        # raiting scores
         if self.cssRatingScoresList != '' and len(self.title) > 0:
+
             self.ratingScoresList = []
             self.ratingsTotal = 0
 
+            ratingScoreList = response.css(self.cssRatingScoresList)
+
+            # print("!!!!!!!!!!!!!!!!!!! total", self.cssRatingScoresList, ratingScoreList)
+
             count = 0
-            for i in range(1, 100):
-                ratingScoreObject = response.css(self.cssRatingScoresList + ':nth-child(' + str(i) + ')')
-                ratingScore = self.extractText(ratingScoreObject.css(self.cssRatingScoresListElementScore+ '::text'))
-                ratingValue = self.extractText(ratingScoreObject.css(self.cssRatingScoresListElementValue+ '::text'))
+            for i, ratingScoreObject in  enumerate(ratingScoreList):
+
+                # print( "!!!!!!!!!!!!!!!!!!!", ratingScoreObject )
+
+                ratingScore = self.extractText( ratingScoreObject.css(self.cssRatingScoresListElementScore) )
+                ratingValue = self.extractText( ratingScoreObject.css(self.cssRatingScoresListElementValue) )
+
+                print("ratingScore", ratingScore, ratingValue)
 
                 if ratingScore != '' and ratingValue != '':
                     self.ratingScoresList.append(ObjectReviewScore(ratingScore, ratingValue))
@@ -218,35 +249,41 @@ class CrawlerProduct(CrawlerProcess):
                     self.ratingsTotal += ratingScore * ratingValue
                     count += ratingScore
 
-                if count > 0:
-                    self.ratingsTotal /= count
+            if count > 0:
+                self.ratingsTotal /= count
+
 
         if self.cssReviewsList != '' and len(self.title) > 0:
             self.reviewsList = []
 
-            for i in range(1, 100):
+            reviewList = response.css( self.cssReviewsList )
 
-                reviewObject = response.css(self.cssReviewsList + ':nth-child(' + str(i) + ')')
+            print("@@@@@@@@@@@@@@@  total", reviewList)
+            for i, reviewObject in enumerate(reviewList):
 
-                reviewUsername = self.extractText(reviewObject.css(self.cssReviewsListElementUsername))
-                reviewFullName = ''
+                print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@",reviewObject)
 
-                reviewDate = self.extractText(reviewObject.css(self.cssReviewsListElementDate))
-                reviewTitle = self.extractText(reviewObject.css(self.cssReviewsListElementTitle))
-                reviewBody = self.extractText(reviewObject.css(self.cssReviewsListElementBody))
+                if reviewObject is not None:
 
-                if self.cssReviewsListElementRatingScore != '':
-                    reviewScore = self.extractText(reviewObject.css(self.cssReviewsListElementRatingScore))
+                    reviewUsername = self.extractText(reviewObject.css(self.cssReviewsListElementUsername))
+                    reviewFullName = ''
 
-                if self.cssReviewsListElementRatingScoreStars != '': #with stars
-                    reviewScore = len(reviewObject.css(self.cssReviewsListElementRatingScoreStars))
+                    reviewDate = self.extractText(reviewObject.css(self.cssReviewsListElementDate))
+                    reviewTitle = self.extractText(reviewObject.css(self.cssReviewsListElementTitle))
+                    reviewBody = self.extractText(reviewObject.css(self.cssReviewsListElementBody))
 
-                reviewPurchased = self.extractText(reviewObject.css(self.cssReviewsListElementPurchased))
-                reviewThumbsUp = self.extractText(reviewObject.css(self.cssReviewsListElementThumbsUp))
-                reviewThumbsDown = self.extractText(reviewObject.css(self.cssReviewsListElementThumbsDown))
+                    if self.cssReviewsListElementRatingScore != '':
+                        reviewScore = self.extractText(reviewObject.css(self.cssReviewsListElementRatingScore))
 
-                if (reviewBody != '' or reviewTitle != '') and ratingScore != '' and ratingValue != '':
-                    self.reviewsList.append(ObjectReview('', reviewUsername, reviewFullName, reviewDate, reviewScore, reviewTitle, reviewBody, reviewPurchased, reviewThumbsUp, reviewThumbsDown, ))
+                    if self.cssReviewsListElementRatingScoreStars != '': #with stars
+                        reviewScore = len(reviewObject.css(self.cssReviewsListElementRatingScoreStars))
+
+                    reviewPurchased = self.extractText(reviewObject.css(self.cssReviewsListElementPurchased))
+                    reviewThumbsUp = self.extractText(reviewObject.css(self.cssReviewsListElementThumbsUp))
+                    reviewThumbsDown = self.extractText(reviewObject.css(self.cssReviewsListElementThumbsDown))
+
+                    if (reviewBody != '' or reviewTitle != '') and reviewScore != '':
+                        self.reviewsList.append(ObjectReview('', reviewUsername, reviewFullName, reviewDate, reviewScore, reviewTitle, reviewBody, reviewPurchased, reviewThumbsUp, reviewThumbsDown, ))
 
 
     def validate(self):
@@ -274,18 +311,22 @@ class CrawlerProduct(CrawlerProcess):
         if len(self.quantitySold) > 0: print("Quantity Sold", self.quantitySold)
 
         if len(self.images) > 0: print("Images", self.images)
-        if len(self.shippingSummary) > 0: print("Shipping Summary", self.shippingSummary)
-        if len(self.shipping) > 0: print("Shipping", self.shipping)
+
+        if self.shipping is not None:
+            print("Shipping Summary")
+            self.shipping.toString()
 
         if self.price is not None:
             print("Price")
             self.price.toString()
 
+        print("Rating Scores List", len(self.ratingScoresList))
         if len(self.ratingScoresList) >0:
             for i, rating in enumerate(self.ratingScoresList):
                 print("Rating Scores List")
                 rating.toString()
 
+        print("ReviewList",len(self.reviewsList))
         if len(self.reviewsList) > 0:
             for i, review in enumerate(self.reviewsList):
                 print("ReviewList")
