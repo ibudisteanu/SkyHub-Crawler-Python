@@ -18,9 +18,10 @@ class CrawlerProduct(CrawlerProcess):
 
     name = 'CrawlerEbay'
 
-    url = 'www.ebay.com/itm/Thunderbolt-Mini-DP-to-VGA-Male-Adapter-TV-AV-Cable-For-Macbook-Air-Pro-6FT-ZH2A/122697934092'
-    #url = 'http://ebay.com'
+    url = 'http://ebay.com'
     domain = 'ebay.com'
+
+    testingURL =  "http://www.ebay.com/itm/50g-mechanic-soldering-solder-welding-paste-flux-mcn-300-smd-smt-sn63-pb37-new/171150278650"
 
     start_urls = (url,)
     allowed_domains = [domain]
@@ -83,11 +84,11 @@ class CrawlerProduct(CrawlerProcess):
 
     cssReviewsList = "div.reviews div.ebay-review-section"
     cssReviewsListElementUsername = "div a::text"
-    cssReviewsListElementDate = "div span::text"
+    cssReviewsListElementDate = "div.ebay-review-section-l span::text"
     cssReviewsListElementRatingScore = ""
     cssReviewsListElementRatingScoreStars = "div div span i.fullStar"
     cssReviewsListElementTitle = "div p.review-item-title::text"
-    cssReviewsListElementBody = "div p.review -item-content"
+    cssReviewsListElementBody = "div p.review-item-content"
     cssReviewsListElementPurchased = "div p.review-attr"
     cssReviewsListElementThumbsUp = "div.review-btns div a span.review-section-rr-txt span.positive-h-c::text"
     cssReviewsListElementThumbsDown = "div.review-btns div a span.review-section-rr-txt span.negative-h-c::text"
@@ -244,6 +245,9 @@ class CrawlerProduct(CrawlerProcess):
                 print("ratingScore", ratingScore, ratingValue)
 
                 if ratingScore != '' and ratingValue != '':
+                    ratingScore = int(ratingScore)
+                    ratingValue = int(ratingValue)
+
                     self.ratingScoresList.append(ObjectReviewScore(ratingScore, ratingValue))
 
                     self.ratingsTotal += ratingScore * ratingValue
@@ -253,7 +257,9 @@ class CrawlerProduct(CrawlerProcess):
                 self.ratingsTotal /= count
 
 
+        # reviews
         if self.cssReviewsList != '' and len(self.title) > 0:
+
             self.reviewsList = []
 
             reviewList = response.css( self.cssReviewsList )
@@ -263,27 +269,39 @@ class CrawlerProduct(CrawlerProcess):
 
                 print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@",reviewObject)
 
-                if reviewObject is not None:
+                reviewUsername = self.extractText(reviewObject.css(self.cssReviewsListElementUsername))
+                reviewFullName = ''
 
-                    reviewUsername = self.extractText(reviewObject.css(self.cssReviewsListElementUsername))
-                    reviewFullName = ''
+                reviewDate = self.extractText(reviewObject.css(self.cssReviewsListElementDate))
+                reviewTitle = self.extractText(reviewObject.css(self.cssReviewsListElementTitle))
+                reviewBody = self.extractText(reviewObject.css(self.cssReviewsListElementBody))
 
-                    reviewDate = self.extractText(reviewObject.css(self.cssReviewsListElementDate))
-                    reviewTitle = self.extractText(reviewObject.css(self.cssReviewsListElementTitle))
-                    reviewBody = self.extractText(reviewObject.css(self.cssReviewsListElementBody))
+                if self.cssReviewsListElementRatingScore != '':
+                    reviewScore = self.extractText(reviewObject.css(self.cssReviewsListElementRatingScore))
 
-                    if self.cssReviewsListElementRatingScore != '':
-                        reviewScore = self.extractText(reviewObject.css(self.cssReviewsListElementRatingScore))
+                if self.cssReviewsListElementRatingScoreStars != '': #with stars
+                    reviewScore = len(reviewObject.css(self.cssReviewsListElementRatingScoreStars))
 
-                    if self.cssReviewsListElementRatingScoreStars != '': #with stars
-                        reviewScore = len(reviewObject.css(self.cssReviewsListElementRatingScoreStars))
+                reviewPurchased = self.extractText(reviewObject.css(self.cssReviewsListElementPurchased))
+                reviewThumbsUp = self.extractText(reviewObject.css(self.cssReviewsListElementThumbsUp))
+                reviewThumbsDown = self.extractText(reviewObject.css(self.cssReviewsListElementThumbsDown))
 
-                    reviewPurchased = self.extractText(reviewObject.css(self.cssReviewsListElementPurchased))
-                    reviewThumbsUp = self.extractText(reviewObject.css(self.cssReviewsListElementThumbsUp))
-                    reviewThumbsDown = self.extractText(reviewObject.css(self.cssReviewsListElementThumbsDown))
+                reviewScore = int(reviewScore)
+                reviewThumbsUp = int(reviewThumbsUp)
+                reviewThumbsDown = int(reviewThumbsDown)
 
-                    if (reviewBody != '' or reviewTitle != '') and reviewScore != '':
-                        self.reviewsList.append(ObjectReview('', reviewUsername, reviewFullName, reviewDate, reviewScore, reviewTitle, reviewBody, reviewPurchased, reviewThumbsUp, reviewThumbsDown, ))
+                # print("review username ", reviewUsername)
+                # print("review fullname ", reviewFullName)
+                # print("review date ", reviewDate)
+                # print("review title ", reviewTitle)
+                # print("review body ", reviewBody)
+                # print("review score ", reviewScore)
+                # print("review purchased ", reviewPurchased)
+                # print("review thumbs up ", reviewThumbsUp)
+                # print("review thumbs down ", reviewThumbsDown)
+
+                if (reviewBody != '' or reviewTitle != '') and reviewScore != '':
+                    self.reviewsList.append(ObjectReview('', reviewUsername, reviewFullName, reviewDate, reviewScore, reviewTitle, reviewBody, reviewPurchased, reviewThumbsUp, reviewThumbsDown, ))
 
 
     def validate(self):

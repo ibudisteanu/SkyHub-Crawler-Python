@@ -1,7 +1,10 @@
 from urllib.parse import urlparse
 
 import time
+
+import requests
 import scrapy
+from parsel import Selector
 
 from Crawler.Helpers.AttrDict import AttrDict
 from Crawler.Helpers.LinksHelper import LinksHelper
@@ -10,6 +13,7 @@ from Crawler.Helpers.LinksDB import LinksDB
 class CrawlerBasic(scrapy.Spider):
     url = ''
     domain = ''
+    testingURL = ""
 
     websiteName = ''
     websiteImage = ''
@@ -55,6 +59,8 @@ class CrawlerBasic(scrapy.Spider):
         if websiteLanguage != '': self.websiteLanguage = websiteLanguage
 
         if url != '': self.url = url
+
+        self.session = requests.Session()
 
     def extractFirstElement(self, list, returnValue='', index=0):
         if len(list) > index: return list[index].extract()
@@ -110,8 +116,15 @@ class CrawlerBasic(scrapy.Spider):
 
     def parse(self, response):
 
+        url = response.url
 
-        self.parseResponse(response,response.url)
+        if self.testingURL != '':
+            response = LinksHelper.getRequestTrials(self.session, self.testingURL, {}, {}, maxTrials = 5)
+            html = response.text
+            response = Selector(text=html)
+            url = self.testingURL
+
+        self.parseResponse(response, url)
 
 
         if self.onlyOnePage == False:
