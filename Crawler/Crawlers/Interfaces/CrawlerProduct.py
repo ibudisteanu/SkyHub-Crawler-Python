@@ -7,7 +7,8 @@ from Crawler.Objects.Products.ObjectProduct import ObjectProduct
 from Crawler.Objects.Products.ObjectProductShipping import ObjectProductShipping
 from Crawler.Objects.Products.ObjectProductShippingCosts import ObjectProductShippingCosts
 
-from Crawler.Objects.Products.ObjectReviewsScore import ObjectReviewScore
+from Crawler.Objects.Products.ObjectRatingScore import ObjectRatingScore
+from Crawler.Objects.Products.ObjectRatingScoresList import ObjectRatingScoresList
 from Crawler.Objects.Products.ObjectReview import ObjectReview
 from Crawler.Objects.Products.ObjectProductPrice import ObjectProductPrice
 
@@ -112,8 +113,7 @@ class CrawlerProduct(CrawlerProcess):
 
     price = None
 
-    ratingScoresList = []
-    ratingsTotal = 0
+    ratingScores = None
 
     reviewsList = []
 
@@ -219,8 +219,7 @@ class CrawlerProduct(CrawlerProcess):
         # raiting scores
         if self.cssRatingScoresList != '' and len(self.title) > 0:
 
-            self.ratingScoresList = []
-            self.ratingsTotal = 0
+            self.ratingScores = ObjectRatingScoresList([],0)
 
             ratingScoreList = response.css(self.cssRatingScoresList)
 
@@ -240,13 +239,13 @@ class CrawlerProduct(CrawlerProcess):
                     ratingScore = int(ratingScore)
                     ratingValue = int(ratingValue)
 
-                    self.ratingScoresList.append(ObjectReviewScore(ratingScore, ratingValue))
+                    self.ratingScores.ratingsList.append( ObjectRatingScore(ratingScore, ratingValue) )
 
-                    self.ratingsTotal += ratingScore * ratingValue
+                    self.ratingScores.ratingsTotal += ratingScore * ratingValue
                     count += ratingScore
 
             if count > 0:
-                self.ratingsTotal /= count
+                self.ratingScores.ratingsTotal /= count
 
 
         # reviews
@@ -315,9 +314,6 @@ class CrawlerProduct(CrawlerProcess):
         if len(self.authorFeedbackOverall) > 0: print("Author Feedback Overall", self.authorFeedbackOverall)
         if len(self.itemId) > 0: print("Item ID", self.itemId)
 
-        if len(self.quantityAvailable) > 0: print("Quantity Available", self.quantityAvailable)
-        if len(self.quantitySold) > 0: print("Quantity Sold", self.quantitySold)
-
         if len(self.images) > 0: print("Images", self.images)
 
         if self.shipping is not None:
@@ -328,11 +324,8 @@ class CrawlerProduct(CrawlerProcess):
             print("Price")
             self.price.toString()
 
-        print("Rating Scores List", len(self.ratingScoresList))
-        if len(self.ratingScoresList) >0:
-            for i, rating in enumerate(self.ratingScoresList):
-                print("Rating Scores List")
-                rating.toString()
+        if self.ratingScores is not None:
+            self.ratingScores.toString()
 
         print("ReviewList",len(self.reviewsList))
         if len(self.reviewsList) > 0:
@@ -370,9 +363,10 @@ class CrawlerProduct(CrawlerProcess):
                                                          self.keywords, self.images, self.date,
                                                          self.websiteCountry or self.language, self.websiteCity,
                                                          self.websiteLanguage or self.language, -666, -666,
-                                                         self.author, self.authorAvatar)
+                                                         self.author, self.authorAvatar,
+                                                         self.itemId, self.timeLeft, self.price.toJSON(), self.date, self.ratingScores)
 
-                    productObject = ObjectProduct(self.currentPageURL, 'product', self.itemId, productId, self.author, self.parents, self.title, self.fullDescription, self.images,
-                                                  self.timeLeft, self.details, self.price, self.details, self.date, self.ratingsTotal, self.ratingScoresList, self.shipping, self.reviewsList, self.lastUpdate)
+                    productObject = ObjectProduct(self.currentPageURL, 'product', self.itemId, productId, self.author, self.parents, title, description, self.images,
+                                                  self.timeLeft, self.price, self.details, self.date, self.ratingScores, elf.shipping, self.reviewsList, self.lastUpdate)
 
                     LinksDB.addLinkObject(self.domain, productObject)

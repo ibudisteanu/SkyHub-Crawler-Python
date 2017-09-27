@@ -2,7 +2,7 @@ import dateparser
 
 from Crawler.Crawlers.CrawlerProcess import CrawlerProcess
 from Crawler.Helpers.LinksDB import LinksDB
-from Crawler.Objects.Products.ObjectReviewsScore import ObjectReviewScore
+from Crawler.Objects.Products.ObjectRatingScore import ObjectReviewScore
 from Crawler.Objects.Products.ObjectReview import ObjectReview
 
 class CrawlerNews(CrawlerProcess):

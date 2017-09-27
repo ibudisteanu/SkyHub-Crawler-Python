@@ -26,8 +26,7 @@ class ObjectProduct:
 
     date = ''
 
-    ratingsTotal = 0
-    ratings = []
+    ratings = None
 
     shipping = None
 
@@ -37,7 +36,7 @@ class ObjectProduct:
     lastUpdate = 0
 
     def __init__(self, url, type, originalId, id, sellerUsername, categories, title,  description, images,
-                 timeLeft, price, details, date, ratingsTotal, ratings, shipping, reviews, lastUpdate ):
+                 timeLeft, price, details, date, ratings, shipping, reviews, lastUpdate ):
 
         self.url = url
         self.url = LinksHelper.fix_url(self.url)
@@ -58,11 +57,9 @@ class ObjectProduct:
         self.price = price
 
         self.date = date
-        self.ratingsTotal = ratingsTotal
         self.ratings = ratings
 
         self.reviews = reviews
         self.lastUpdate = lastUpdate
 
-        self.deliverySummary = deliverySummary
         self.shipping = shipping

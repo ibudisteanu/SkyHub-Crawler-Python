@@ -10,8 +10,6 @@ class ObjectProductPrice:
     price = 0
     currency = ''
 
-    self.quantityAvailable, self.quantitySold
-
     quantityAvailable = 0
     quantitySold = 0
 
@@ -36,3 +34,6 @@ class ObjectProductPrice:
         if len(self.youSave) > 0: print("   You Save", self.youSave)
         print("   Price", self.price)
         if len(self.watching) > 0: print("   Watching", self.watching)
+
+        print("   Quantity Sold", self.quantitySold)
+        print("   Quantity Available", self.quantityAvailable)

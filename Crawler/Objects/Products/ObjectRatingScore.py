@@ -1,6 +1,6 @@
 from Crawler.Helpers.LinksHelper import LinksHelper
 
-class ObjectReviewScore:
+class ObjectRatingScore:
 
     score = 0
     value = 0
