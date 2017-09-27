@@ -16,39 +16,28 @@ class ObjectProduct:
     title = ''
 
     timeLeft = ''
-    itemCondition = ''
-
-    itemSpecifications = ''
-
-    itemConditionDetails = ''
-    itemBrand = ''
-    itemMaterial = ''
+    details = None
 
     description = ''
 
     images = []
 
-    price = ''
-    details = ''
+    price = None
 
     date = ''
 
     ratingsTotal = 0
     ratings = []
 
-    deliverySummary = ''
-    shipping = ''
+    shipping = None
 
-    returnPolicy = ''
-
-    quantityAvailable = 0
-    quantitySold = 0
 
     reviews = []  # reviews array of Review
 
     lastUpdate = 0
 
-    def __init__(self, url, type, originalId, id, sellerUsername, categories, title, timeLeft, itemCondition, itemSpecifications, itemConditionDetails, itemBrand, itemMaterial, description, images, price, details, date, ratingsTotal, ratings, deliverySummary, shipping, returnPolicy, quantityAvailable, quantitySold, reviews, lastUpdate ):
+    def __init__(self, url, type, originalId, id, sellerUsername, categories, title,  description, images,
+                 timeLeft, price, details, date, ratingsTotal, ratings, shipping, reviews, lastUpdate ):
 
         self.url = url
         self.url = LinksHelper.fix_url(self.url)
@@ -61,25 +50,16 @@ class ObjectProduct:
         self.title = title
         self.timeLeft = timeLeft
 
-        self.itemCondition = itemCondition
-        self.itemSpecifications = itemSpecifications
-        self.itemConditionDetails = itemConditionDetails
-        self.itemBrand = itemBrand
-        self.itemMaterial = itemMaterial
+        self.details = details
 
         self.description = description
         self.images = images
 
         self.price = price
-        self.details = details
+
         self.date = date
         self.ratingsTotal = ratingsTotal
         self.ratings = ratings
-        self.returnPolicy = returnPolicy
-
-
-        self.quantityAvailable = quantityAvailable
-        self.quantitySold = quantitySold
 
         self.reviews = reviews
         self.lastUpdate = lastUpdate

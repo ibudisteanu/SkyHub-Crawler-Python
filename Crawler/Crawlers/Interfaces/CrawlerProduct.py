@@ -41,6 +41,8 @@ class CrawlerProduct(CrawlerProcess):
     cssShippingItemLocation = "#itemLocation div div div.iti-eu-bld-gry span::text"
     cssShippingTo = "#sh-gsp-wrap div.sh-sLoc:nth-child(1)::text"
     cssShippingExcludes = "#sh-gsp-wrap div.sh-sLoc:last-child::text"
+    cssShippingReturnsPolicy = "#vi-ret-accrd-txt::text"
+    cssShippingDeliverySummary = "#sh-inline-div::text"
 
     cssQuantityAvailable = "#qtySubTxt span::text"
     cssQuantitySold = "span.vi-qtyS-hot-red.vi-qty-vert-algn.vi-qty-pur-lnk a::text"
@@ -107,8 +109,6 @@ class CrawlerProduct(CrawlerProcess):
     authorFeedbackOverall = 0
 
     itemId = ''
-    quantityAvailable = 0
-    quantitySold = 0
 
     price = None
 
@@ -131,49 +131,35 @@ class CrawlerProduct(CrawlerProcess):
         if self.cssTimeLeft != '':
             self.timeLeft = self.extractText(response.css(self.cssTimeLeft))
 
-        if self.cssQuantityAvailable != '':
-            self.quantityAvailable = self.extractText(response.css(self.cssQuantityAvailable))
 
-        if self.cssQuantitySold != '':
-            self.quantitySold = self.extractText(response.css(self.cssQuantitySold))
-
-        if self.cssShippingSummary != '' or self.cssShippingText != '':
+        if self.cssShippingSummary != '' or self.cssShippingText != '' or self.cssShippingReturnsPolicy != '' or self.cssShippingDeliverySummary != '':
 
             self.shipping = ObjectProductShipping()
 
-            if self.cssShippingSummary != '':
-                self.shipping.shippingSummary = self.extractText(response.css(self.cssShippingSummary))
+            if self.cssShippingSummary != '': self.shipping.summary = self.extractText(response.css(self.cssShippingSummary))
 
-            if self.cssShippingText != '':
-                self.shipping.text = self.extractText(response.css(self.cssShippingText))
+            if self.cssShippingText != '': self.shipping.text = self.extractText(response.css(self.cssShippingText))
 
-            if self.cssShippingItemLocation != '':
-                self.shipping.itemLocation = self.extractText(response.css(self.cssShippingItemLocation))
+            if self.cssShippingItemLocation != '': self.shipping.itemLocation = self.extractText(response.css(self.cssShippingItemLocation))
 
-            if self.cssShippingTo != '':
-                self.shipping.shippingTo = self.extractText(response.css(self.cssShippingTo))
+            if self.cssShippingTo != '': self.shipping.shippingTo = self.extractText(response.css(self.cssShippingTo))
+            if self.cssShippingExcludes != '': self.shipping.shippingExcludes = self.extractText(response.css(self.cssShippingExcludes))
 
-            if self.cssShippingExcludes != '':
-                self.shipping.shippingExcludes = self.extractText(response.css(self.cssShippingExcludes))
+            if self.cssShippingReturnsPolicy != '': self.shipping.returnPolicy = self.extractText(response.css(self.cssShippingReturnsPolicy))
+            if self.cssShippingDeliverySummary != '': self.shipping.deliverySummary = self.extractText(response.css(self.cssShippingDeliverySummary))
+
 
         self.details = ObjectProductDetails()
 
         if self.cssItemCondition != '' or self.cssItemSpecifications != '' or self.cssItemConditionDetails != '' or self.cssItemBrand != '' or self.cssItemMaterial != '':
 
-            if self.cssItemCondition != '':
-                self.details.itemCondition = self.extractText(response.css(self.cssItemCondition))
+            if self.cssItemCondition != '': self.details.itemCondition = self.extractText(response.css(self.cssItemCondition))
+            if self.cssItemSpecifications != '': self.details.itemSpecifications = self.extractText(response.css(self.cssItemSpecifications))
+            if self.cssItemConditionDetails != '': self.details.itemConditionDetails = self.extractText(response.css(self.cssItemConditionDetails))
 
-            if self.cssItemSpecifications != '':
-                self.details.itemSpecifications = self.extractText(response.css(self.cssItemSpecifications))
+            if self.cssItemBrand != '': self.details.itemBrand = self.extractText(response.css(self.cssItemBrand))
 
-            if self.cssItemConditionDetails != '':
-                self.details.itemConditionDetails = self.extractText(response.css(self.cssItemConditionDetails))
-
-            if self.cssItemBrand != '':
-                self.details.itemBrand = self.extractText(response.css(self.cssItemBrand))
-
-            if self.cssItemMaterial != '':
-                self.details.itemMaterial = self.extractText(response.css(self.cssItemMaterial))
+            if self.cssItemMaterial != '': self.details.itemMaterial = self.extractText(response.css(self.cssItemMaterial))
 
         self.fullDescription = self.extractText(response.css(self.cssFullDescription))
 
@@ -210,7 +196,9 @@ class CrawlerProduct(CrawlerProcess):
 
                 self.images.append({'src': imageSrc, 'alt': imageAlt})
 
-        if self.cssListPrice != '' or self.cssPrice != '' or self.cssYouSave != '' or self.cssWatching != '':
+
+
+        if self.cssListPrice != '' or self.cssPrice != '' or self.cssYouSave != '' or self.cssWatching != '' or self.cssQuantitySold != '' or self.cssQuantityAvailable != '' :
 
             self.price = ObjectProductPrice()
 
@@ -218,6 +206,9 @@ class CrawlerProduct(CrawlerProcess):
             if self.cssYouSave != '': self.price.youSave = self.extractText(response.css(self.cssYouSave))
             if self.cssPrice != '': self.price.price = self.extractText(response.css(self.cssPrice))
             if self.cssWatching != '': self.price.watching = self.extractText(response.css(self.cssWatching))
+
+            if self.cssQuantityAvailable != '': self.price.quantityAvailable = self.extractText(response.css(self.cssQuantityAvailable))
+            if self.cssQuantitySold != '': self.price.quantitySold = self.extractText(response.css(self.cssQuantitySold))
 
 
         if self.cssAvailableToBuy != '':
@@ -381,7 +372,7 @@ class CrawlerProduct(CrawlerProcess):
                                                          self.websiteLanguage or self.language, -666, -666,
                                                          self.author, self.authorAvatar)
 
-                    productObject = ObjectProduct(self.currentPageURL, 'product', self.itemId, productId, self.author, self.parents, self.title, self.timeLeft, self.itemCondition, self.itemSpecifications, self.itemConditionDetails, self.itemBrand, self.itemMaterial,
-                                                  self.fullDescription, self.images, self.price, self.details, self.date, self.ratingsTotal, self.ratingScoresList, self.shipping , self.quantityAvailable, self.quantitySold,  self.reviewsList, self.lastUpdate)
+                    productObject = ObjectProduct(self.currentPageURL, 'product', self.itemId, productId, self.author, self.parents, self.title, self.fullDescription, self.images,
+                                                  self.timeLeft, self.details, self.price, self.details, self.date, self.ratingsTotal, self.ratingScoresList, self.shipping, self.reviewsList, self.lastUpdate)
 
                     LinksDB.addLinkObject(self.domain, productObject)
