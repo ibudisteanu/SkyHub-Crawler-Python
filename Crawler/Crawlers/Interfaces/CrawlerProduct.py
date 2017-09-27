@@ -11,6 +11,8 @@ from Crawler.Objects.Products.ObjectReviewsScore import ObjectReviewScore
 from Crawler.Objects.Products.ObjectReview import ObjectReview
 from Crawler.Objects.Products.ObjectProductPrice import ObjectProductPrice
 
+from Crawler.Objects.Products.ObjectProductDetails import ObjectProductDetails
+
 from Server.ServerAPI import ServerAPI
 
 
@@ -96,11 +98,7 @@ class CrawlerProduct(CrawlerProcess):
 
     # variables
 
-    itemCondition = ''
-    itemSpecifications = ''
-    itemConditionDetails = ''
-    itemBrand = ''
-    itemMaterial = ''
+    details = None
 
     timeLeft = ''
     shipping = None
@@ -130,9 +128,6 @@ class CrawlerProduct(CrawlerProcess):
         if self.cssTitle != '':
             self.title = self.extractText(response.css(self.cssTitle))
 
-        if self.cssItemCondition != '':
-            self.itemCondition = self.extractText(response.css(self.cssItemCondition))
-
         if self.cssTimeLeft != '':
             self.timeLeft = self.extractText(response.css(self.cssTimeLeft))
 
@@ -161,18 +156,24 @@ class CrawlerProduct(CrawlerProcess):
             if self.cssShippingExcludes != '':
                 self.shipping.shippingExcludes = self.extractText(response.css(self.cssShippingExcludes))
 
+        self.details = ObjectProductDetails()
 
-        if self.cssItemSpecifications != '':
-            self.itemSpecifications = self.extractText(response.css(self.cssItemSpecifications))
+        if self.cssItemCondition != '' or self.cssItemSpecifications != '' or self.cssItemConditionDetails != '' or self.cssItemBrand != '' or self.cssItemMaterial != '':
 
-        if self.cssItemConditionDetails != '':
-            self.itemConditionDetails = self.extractText(response.css(self.cssItemConditionDetails))
+            if self.cssItemCondition != '':
+                self.details.itemCondition = self.extractText(response.css(self.cssItemCondition))
 
-        if self.cssItemBrand != '':
-            self.itemBrand = self.extractText(response.css(self.cssItemBrand))
+            if self.cssItemSpecifications != '':
+                self.details.itemSpecifications = self.extractText(response.css(self.cssItemSpecifications))
 
-        if self.cssItemMaterial != '':
-            self.itemMaterial = self.extractText(response.css(self.cssItemMaterial))
+            if self.cssItemConditionDetails != '':
+                self.details.itemConditionDetails = self.extractText(response.css(self.cssItemConditionDetails))
+
+            if self.cssItemBrand != '':
+                self.details.itemBrand = self.extractText(response.css(self.cssItemBrand))
+
+            if self.cssItemMaterial != '':
+                self.details.itemMaterial = self.extractText(response.css(self.cssItemMaterial))
 
         self.fullDescription = self.extractText(response.css(self.cssFullDescription))
 
@@ -314,12 +315,10 @@ class CrawlerProduct(CrawlerProcess):
 
         super().toString()
 
+        if self.details is not None:
+            print("Details")
+            self.details.toString()
 
-        if len(self.itemCondition) > 0: print("Item Condition", self.itemCondition)
-        if len(self.itemSpecifications) > 0: print("Item Specs", self.itemSpecifications)
-        if len(self.itemConditionDetails) > 0: print("Item Condition Details", self.itemConditionDetails)
-        if len(self.itemBrand) > 0: print("Item Brand", self.itemBrand)
-        if len(self.itemMaterial) > 0: print("Item Material", self.itemMaterial)
         if len(self.timeLeft) > 0: print("Time Left", self.timeLeft)
         if len(self.authorScore) > 0: print("Author Score", self.authorScore)
         if len(self.authorFeedbackOverall) > 0: print("Author Feedback Overall", self.authorFeedbackOverall)
