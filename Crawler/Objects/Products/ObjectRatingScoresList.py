@@ -26,3 +26,19 @@ class ObjectRatingScoresList:
         print("   ratings total", self.ratingsTotal)
 
         if len(self.lastUpdate) > 0: print("   lastUpdate", self.lastUpdate)
+
+
+    def getJSON(self):
+
+        data = {
+            'ratingsTotal': self.ratingsTotal,
+        }
+
+        if len(self.ratingsList) > 0:
+            list = []
+            for i, rating in enumerate(self.ratingsList):
+                list.append(rating.getJSON())
+
+            data['shippingCosts'] = list
+
+        return data

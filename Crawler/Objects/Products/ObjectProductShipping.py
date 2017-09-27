@@ -50,3 +50,26 @@ class ObjectProductShipping:
         if len(self.summary) > 0: print("   summary ", self.summary)
         if len(self.deliverySummary) > 0: print("   delivery summary ", self.deliverySummary)
         if len(self.lastUpdate) > 0: print("   ", self.lastUpdate)
+
+
+    def getJSON(self):
+
+        data = {
+            'itemLocation': self.itemLocation,
+            'shippingTo':self.shippingTo,
+            'shippingExcludes': self.shippingExcludes,
+
+            'returnPolicy': self.returnPolicy,
+            'summary': self.summary,
+            'details': self.details,
+            'text': self.text,
+        }
+
+        if len(self.shippingCosts) > 0:
+            list = []
+            for i, shippingCost in enumerate(self.shippingCosts):
+                list.append(shippingCost.getJSON())
+
+            data['shippingCosts'] = list
+
+        return data

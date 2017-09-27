@@ -6,7 +6,6 @@ class ObjectReview:
 
     authorUsername = ''
 
-
     date = ''
     score = 5
     title = ''
@@ -52,3 +51,18 @@ class ObjectReview:
         if self.thumbsDown > 0: print("   thumbsDown", self.thumbsDown)
 
         if len(self.lastUpdate) > 0: print("   lastUpdate", self.lastUpdate)
+
+
+    def getJSON(self):
+
+        return {
+            'url': self.url,
+            'authorUsername': self.authorUsername,
+            'date': self.date,
+            'score': self.score,
+            'title': self.title,
+            'body': self.body,
+            'purchased': self.purchased,
+            'thumbsUp': self.thumbsUp,
+            'thumbsDown': self.thumbsDown,
+        }

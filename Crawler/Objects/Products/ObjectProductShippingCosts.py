@@ -2,10 +2,13 @@ from Crawler.Helpers.LinksHelper import LinksHelper
 
 class ObjectProductShippingCosts:
 
-    url = ''
-
-    itemLocation = ''
     shippingTo = ''
+    shippingQuantity = ''
+    shippingPrice = ''
+    shippingService = ''
+    shippingDelivery = ''
+    returnPolicy = ''
+    shippingText = ''
 
     lastUpdate = 0
 
@@ -31,3 +34,17 @@ class ObjectProductShippingCosts:
         if len(self.returnPolicy) > 0: print("   ", self.returnPolicy)
         if len(self.shippingText) > 0: print("   ", self.shippingText)
         if len(self.lastUpdate) > 0: print("   ", self.lastUpdate)
+
+
+    def getJSON(self):
+
+        return {
+            'shippingTo': self.shippingTo,
+            'shippingQuantity':self.shippingQuantity,
+            'shippingPrice': self.shippingPrice,
+
+            'shippingService': self.shippingService,
+            'shippingDelivery': self.shippingDelivery,
+            'returnPolicy': self.returnPolicy,
+            'shippingText': self.shippingText,
+        }

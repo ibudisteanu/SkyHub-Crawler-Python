@@ -169,7 +169,8 @@ class ServerAPI:
     @staticmethod
     def postAddProduct(rootURL, user, parentId, title, description, shortDescription='', arrKeywords=[], arrAttachments=[],
                        dtOriginalDate=None, country='', city='', language='', latitude=-666, longitude=-666,
-                       authorName='', authorAvatar=''):
+                       authorName='', authorAvatar='', itemId='', timeLeft=0, price=None, date='', ratingScoresList=None, shipping=None, reviewsList=None, lastUpdate=''):
+
         user = ServerAPI.loginUser(user)
 
         if user is None: return False
@@ -214,7 +215,15 @@ class ServerAPI:
             'language': language,
             'latitude': latitude,
             'longitude': longitude,
-            'additionalInfo': ujson.dumps(arrAdditionalInfo)
+            'additionalInfo': ujson.dumps(arrAdditionalInfo),
+            'itemId':itemId,
+            'timeLeft':timeLeft,
+            'price':ujson.dumps(price.getJSON()),
+            'date': date,
+            'ratingScoresList':ujson.dumps(ratingScoresList.getJSON()),
+            'shipping':ujson.dumps(shipping.getJSON()),
+            'reviewsList':ujson.dumps(reviewsList.getJSON()),
+            'lastUpdate':lastUpdate
         }
 
         headers = {}

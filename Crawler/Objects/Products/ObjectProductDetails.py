@@ -2,7 +2,6 @@ from Crawler.Helpers.LinksHelper import LinksHelper
 
 class ObjectProductDetails:
 
-
     itemCondition = ''
     itemSpecifications = ''
     itemConditionDetails = ''
@@ -28,3 +27,13 @@ class ObjectProductDetails:
         if len(self.itemConditionDetails) > 0: print("   Item Condition Details", self.itemConditionDetails)
         if len(self.itemBrand) > 0: print("   Item Brand", self.itemBrand)
         if len(self.itemMaterial) > 0: print("   Item Material", self.itemMaterial)
+
+    def getJSON(self):
+
+        return {
+            'itemCondition': self.itemCondition,
+            'itemSpecifications': self.itemSpecifications,
+            'itemConditionDetails': self.itemConditionDetails,
+            'itemBrand': self.itemBrand,
+            'itemMaterial': self.itemMaterial,
+        }

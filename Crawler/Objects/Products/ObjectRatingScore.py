@@ -17,3 +17,10 @@ class ObjectRatingScore:
         if self.score > 0: print("   score", self.score)
         if self.value > 0: print("   value", self.value)
         if len(self.lastUpdate) > 0: print("   lastUpdate", self.lastUpdate)
+
+    def getJSON(self):
+
+        return {
+            'score': self.score,
+            'value': self.value,
+        }

@@ -37,3 +37,16 @@ class ObjectProductPrice:
 
         print("   Quantity Sold", self.quantitySold)
         print("   Quantity Available", self.quantityAvailable)
+
+
+    def getJSON(self):
+
+        return {
+            'listPrice':self.listPrice,
+            'youSave': self.youSave,
+            'watching': self.watching,
+            'price': self.price,
+            'currency': self.currency,
+            'quantityAvailable': self.quantityAvailable,
+            'quantitySold': self.quantitySold,
+        }

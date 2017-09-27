@@ -10,6 +10,7 @@ from Crawler.Objects.Products.ObjectProductShippingCosts import ObjectProductShi
 from Crawler.Objects.Products.ObjectRatingScore import ObjectRatingScore
 from Crawler.Objects.Products.ObjectRatingScoresList import ObjectRatingScoresList
 from Crawler.Objects.Products.ObjectReview import ObjectReview
+from Crawler.Objects.Products.ObjectReviewsList import ObjectReviewsList
 from Crawler.Objects.Products.ObjectProductPrice import ObjectProductPrice
 
 from Crawler.Objects.Products.ObjectProductDetails import ObjectProductDetails
@@ -113,9 +114,8 @@ class CrawlerProduct(CrawlerProcess):
 
     price = None
 
-    ratingScores = None
-
-    reviewsList = []
+    ratingScoresList = None
+    reviewsList = None
 
     def crawlerProcess(self, response, url):
 
@@ -219,7 +219,7 @@ class CrawlerProduct(CrawlerProcess):
         # raiting scores
         if self.cssRatingScoresList != '' and len(self.title) > 0:
 
-            self.ratingScores = ObjectRatingScoresList([],0)
+            self.ratingScoresList = ObjectRatingScoresList([],0)
 
             ratingScoreList = response.css(self.cssRatingScoresList)
 
@@ -239,19 +239,19 @@ class CrawlerProduct(CrawlerProcess):
                     ratingScore = int(ratingScore)
                     ratingValue = int(ratingValue)
 
-                    self.ratingScores.ratingsList.append( ObjectRatingScore(ratingScore, ratingValue) )
+                    self.ratingScoresList.ratingsList.append( ObjectRatingScore(ratingScore, ratingValue) )
 
-                    self.ratingScores.ratingsTotal += ratingScore * ratingValue
+                    self.ratingScoresList.ratingsTotal += ratingScore * ratingValue
                     count += ratingScore
 
             if count > 0:
-                self.ratingScores.ratingsTotal /= count
+                self.ratingScoresList.ratingsTotal /= count
 
 
         # reviews
         if self.cssReviewsList != '' and len(self.title) > 0:
 
-            self.reviewsList = []
+            self.reviewsList = ObjectReviewsList([])
 
             reviewList = response.css( self.cssReviewsList )
 
@@ -267,6 +267,7 @@ class CrawlerProduct(CrawlerProcess):
                 reviewTitle = self.extractText(reviewObject.css(self.cssReviewsListElementTitle))
                 reviewBody = self.extractText(reviewObject.css(self.cssReviewsListElementBody))
 
+                reviewScore = 0
                 if self.cssReviewsListElementRatingScore != '':
                     reviewScore = self.extractText(reviewObject.css(self.cssReviewsListElementRatingScore))
 
@@ -292,7 +293,7 @@ class CrawlerProduct(CrawlerProcess):
                 # print("review thumbs down ", reviewThumbsDown)
 
                 if (reviewBody != '' or reviewTitle != '') and reviewScore != '':
-                    self.reviewsList.append(ObjectReview('', reviewUsername, reviewFullName, reviewDate, reviewScore, reviewTitle, reviewBody, reviewPurchased, reviewThumbsUp, reviewThumbsDown, ))
+                    self.reviewsList.reviewsList.append(ObjectReview('', reviewUsername, reviewFullName, reviewDate, reviewScore, reviewTitle, reviewBody, reviewPurchased, reviewThumbsUp, reviewThumbsDown, ))
 
 
     def validate(self):
@@ -324,14 +325,9 @@ class CrawlerProduct(CrawlerProcess):
             print("Price")
             self.price.toString()
 
-        if self.ratingScores is not None:
-            self.ratingScores.toString()
+        if self.ratingScoresList is not None: self.ratingScoresList.toString()
 
-        print("ReviewList",len(self.reviewsList))
-        if len(self.reviewsList) > 0:
-            for i, review in enumerate(self.reviewsList):
-                print("ReviewList")
-                review.toString()
+        if self.reviewsList is not None: self.reviewsList.toString()
 
         print("Available To Buy", self.availableToBuy)
 
@@ -364,9 +360,9 @@ class CrawlerProduct(CrawlerProcess):
                                                          self.websiteCountry or self.language, self.websiteCity,
                                                          self.websiteLanguage or self.language, -666, -666,
                                                          self.author, self.authorAvatar,
-                                                         self.itemId, self.timeLeft, self.price.toJSON(), self.date, self.ratingScores)
+                                                         self.itemId, self.timeLeft, self.price, self.date, self.ratingScoresList, self.shipping, self.reviewsList, self.lastUpdate)
 
                     productObject = ObjectProduct(self.currentPageURL, 'product', self.itemId, productId, self.author, self.parents, title, description, self.images,
-                                                  self.timeLeft, self.price, self.details, self.date, self.ratingScores, elf.shipping, self.reviewsList, self.lastUpdate)
+                                                  self.timeLeft, self.price, self.details, self.date, self.ratingScoresList, self.shipping, self.reviewsList, self.lastUpdate)
 
                     LinksDB.addLinkObject(self.domain, productObject)
