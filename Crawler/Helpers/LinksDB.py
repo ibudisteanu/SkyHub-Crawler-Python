@@ -49,7 +49,7 @@ class LinksDB():
 
         global arrLinksObjects
 
-        if hasattr(arrLinksObjects, website) == False:
+        if (website in arrLinksObjects) == False:
             return None
 
         list = arrLinksObjects[website]
@@ -57,7 +57,9 @@ class LinksDB():
         if list is not None:
             for object in enumerate(list):
 
-                if (url == object.url) or ((title != '')and(title == object.title)) or ((description != '') and (description == object.description)):
+                if ((hasattr(object, 'url'))and(url == object.url)) or \
+                   ((title != '') and (hasattr(object,'title')) and (title == object.title)) or \
+                   ((description != '') and (hasattr(object,'description')) and (description == object.description)):
                     return object
 
                 if allowTitleIncluded and (title in object.title or object.title in title):
@@ -71,7 +73,7 @@ class LinksDB():
 
         global arrLinksVisited
 
-        if hasattr(arrLinksVisited, website) == False:
+        if (website in arrLinksVisited) == False:
             return False
 
         list = arrLinksVisited[website]
@@ -91,7 +93,7 @@ class LinksDB():
         global arrLinksVisited
         global fileLinksVisited
 
-        if hasattr(arrLinksVisited, website) == False:
+        if (website in arrLinksVisited) == False:
             arrLinksVisited[website] = []
 
         arrLinksVisited[website].append(url)
@@ -107,7 +109,7 @@ class LinksDB():
         global arrLinksObjects
         global fileLinksObjects
 
-        if hasattr(arrLinksObjects, website) == False:
+        if (website in arrLinksObjects) == False:
             arrLinksObjects[website] = []
 
         arrLinksObjects[website].append(object)

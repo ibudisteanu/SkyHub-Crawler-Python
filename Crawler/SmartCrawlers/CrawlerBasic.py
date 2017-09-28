@@ -101,6 +101,8 @@ class CrawlerBasic(scrapy.Spider):
         if self.ogImage != '':
             self.images = AttrDict(img=self.ogImage, title=self.title, description=self.shortDescription)
 
+        print("keywords_META", self.keywords)
+
         self.lastUpdate = time.time()
 
 

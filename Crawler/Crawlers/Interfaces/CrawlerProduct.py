@@ -295,6 +295,8 @@ class CrawlerProduct(CrawlerProcess):
                 if (reviewBody != '' or reviewTitle != '') and reviewScore != '':
                     self.reviewsList.reviewsList.append(ObjectReview('', reviewUsername, reviewFullName, reviewDate, reviewScore, reviewTitle, reviewBody, reviewPurchased, reviewThumbsUp, reviewThumbsDown, ))
 
+        print("keywords=",self.keywords)
+
 
     def validate(self):
         if (len(self.title) > 3) and (len(self.fullDescription) > 40) and self.availableToBuy:
@@ -346,7 +348,9 @@ class CrawlerProduct(CrawlerProcess):
             title = self.title or self.ogTitle
             description = self.fullDescription or self.ogDescription or self.shortDescription
 
-            productObject = LinksDB.findLinkObjectAlready(self.domain, self.currentPageURL, title='', description=description, allowTitleIncluded=False)
+            titleSearch = title+self.author
+
+            productObject = LinksDB.findLinkObjectAlready(self.domain, self.currentPageURL, title=titleSearch, description=description, allowTitleIncluded=False)
 
             if productObject is None:  # we have to add the topic
 
@@ -361,7 +365,7 @@ class CrawlerProduct(CrawlerProcess):
                                                          self.author, self.authorAvatar,
                                                          self.itemId, self.timeLeft, self.price, self.ratingScoresList, self.shipping, self.reviewsList, self.lastUpdate)
 
-                    productObject = ObjectProduct(self.currentPageURL, 'product', self.itemId, productId, self.author, self.parents, title, description, self.images,
+                    productObject = ObjectProduct(self.currentPageURL, 'product', self.itemId, productId, self.author, self.parents, titleSearch, description, self.images,
                                                   self.timeLeft, self.price, self.details, self.date, self.ratingScoresList, self.shipping, self.reviewsList, self.lastUpdate)
 
                     LinksDB.addLinkObject(self.domain, productObject)
