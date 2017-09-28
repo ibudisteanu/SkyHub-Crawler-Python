@@ -73,7 +73,9 @@ class CrawlerProcess(CrawlerBasic):
         for parent in self.parents:
 
             parentName = self.websiteName+' '+parent['name']
-            parentObject = LinksDB.findLinkObjectAlready(self.domain, parent['url'], parentName)
+            parentObject = LinksDB.findLinkObjectAlready(self.domain, parent['url'], title=parentName, description='')
+
+            print("@@@@@@@@@@@@@", parentObject)
 
             if parentObject is None:
 

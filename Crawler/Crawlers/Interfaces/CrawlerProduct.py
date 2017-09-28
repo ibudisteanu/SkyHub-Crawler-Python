@@ -343,24 +343,23 @@ class CrawlerProduct(CrawlerProcess):
         # product
         if validation in ['product']:
 
-            productObject = LinksDB.findLinkObjectAlready(self.domain, self.currentPageURL,
-                                                          self.title or self.ogTitle, True)
+            title = self.title or self.ogTitle
+            description = self.fullDescription or self.ogDescription or self.shortDescription
+
+            productObject = LinksDB.findLinkObjectAlready(self.domain, self.currentPageURL, title='', description=description, allowTitleIncluded=False)
 
             if productObject is None:  # we have to add the topic
-
-                title = self.title or self.ogTitle
-                description = self.fullDescription or self.ogDescription or self.shortDescription
 
                 if len(title) > 5 and len(description) > 30:
                     productId = ServerAPI.postAddProduct(self.url, self.user, self.parentId,
                                                          title,
                                                          description,
-                                                         self.ogDescription or self.shortDescription,
+                                                         self.shortDescription or self.ogDescription,
                                                          self.keywords, self.images, self.date,
                                                          self.websiteCountry or self.language, self.websiteCity,
                                                          self.websiteLanguage or self.language, -666, -666,
                                                          self.author, self.authorAvatar,
-                                                         self.itemId, self.timeLeft, self.price, self.date, self.ratingScoresList, self.shipping, self.reviewsList, self.lastUpdate)
+                                                         self.itemId, self.timeLeft, self.price, self.ratingScoresList, self.shipping, self.reviewsList, self.lastUpdate)
 
                     productObject = ObjectProduct(self.currentPageURL, 'product', self.itemId, productId, self.author, self.parents, title, description, self.images,
                                                   self.timeLeft, self.price, self.details, self.date, self.ratingScoresList, self.shipping, self.reviewsList, self.lastUpdate)

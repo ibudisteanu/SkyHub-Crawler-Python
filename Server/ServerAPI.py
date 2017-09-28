@@ -169,7 +169,7 @@ class ServerAPI:
     @staticmethod
     def postAddProduct(rootURL, user, parentId, title, description, shortDescription='', arrKeywords=[], arrAttachments=[],
                        dtOriginalDate=None, country='', city='', language='', latitude=-666, longitude=-666,
-                       authorName='', authorAvatar='', itemId='', timeLeft=0, price=None, date='', ratingScoresList=None, shipping=None, reviewsList=None, lastUpdate=''):
+                       authorName='', authorAvatar='', itemId='', timeLeft=0, price=None, ratingScoresList=None, shipping=None, reviewsList=None, lastUpdate=''):
 
         user = ServerAPI.loginUser(user)
 
@@ -189,6 +189,8 @@ class ServerAPI:
 
         arrAdditionalInfo = {
             'scraped': True,
+            'itemId': itemId,
+            'timeLeft': timeLeft,
         }
 
         if dtOriginalDate is not None: arrAdditionalInfo['dtOriginal'] = dtOriginalDate
@@ -216,10 +218,8 @@ class ServerAPI:
             'latitude': latitude,
             'longitude': longitude,
             'additionalInfo': ujson.dumps(arrAdditionalInfo),
-            'itemId':itemId,
-            'timeLeft':timeLeft,
+
             'price':ujson.dumps(price.getJSON()),
-            'date': date,
             'ratingScoresList':ujson.dumps(ratingScoresList.getJSON()),
             'shipping':ujson.dumps(shipping.getJSON()),
             'reviewsList':ujson.dumps(reviewsList.getJSON()),

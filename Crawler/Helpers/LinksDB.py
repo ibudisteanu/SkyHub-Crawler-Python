@@ -44,19 +44,20 @@ class LinksDB():
             arrLinksVisited[website] = list
 
     @staticmethod
-    def findLinkObjectAlready(website, url='', title='', allowTitleIncluded=False):
+    def findLinkObjectAlready(website, url='', title='', description='', allowTitleIncluded=False):
         url = LinksHelper.fix_url(url)
 
         global arrLinksObjects
 
         if hasattr(arrLinksObjects, website) == False:
-            return False
+            return None
 
         list = arrLinksObjects[website]
 
         if list is not None:
-            for object in list:
-                if (url == object.url) or (title == object.title):
+            for object in enumerate(list):
+
+                if (url == object.url) or ((title != '')and(title == object.title)) or ((description != '') and (description == object.description)):
                     return object
 
                 if allowTitleIncluded and (title in object.title or object.title in title):
