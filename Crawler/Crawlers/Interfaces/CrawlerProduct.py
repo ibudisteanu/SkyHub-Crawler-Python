@@ -25,7 +25,7 @@ class CrawlerProduct(CrawlerProcess):
     url = 'http://ebay.com'
     domain = 'ebay.com'
 
-    testingURL =  "http://www.ebay.com/itm/50g-mechanic-soldering-solder-welding-paste-flux-mcn-300-smd-smt-sn63-pb37-new/171150278650"
+    #testingURL =  "http://www.ebay.com/itm/50g-mechanic-soldering-solder-welding-paste-flux-mcn-300-smd-smt-sn63-pb37-new/171150278650"
 
     start_urls = (url,)
     allowed_domains = [domain]
@@ -190,11 +190,16 @@ class CrawlerProduct(CrawlerProcess):
             self.images = []
 
             images = response.css(self.cssImages)
-            for i, image in enumerate(images):
-                imageSrc = image.css('::attr(src)').extract_first()
-                imageAlt = image.css('::attr(alt)').extract_first()
 
-                self.images.append({'src': imageSrc, 'alt': imageAlt})
+            for i, image in enumerate(images):
+
+                imageSrc = self.extractText(image.css('::attr(src)'))
+                imageAlt = self.extractText(image.css('::attr(alt)'))
+
+                print("imageSrc", imageSrc, imageAlt)
+
+                if imageSrc != '' :
+                    self.images.append({'type': 'file', 'typeFile':'image', 'url': imageSrc, 'img': imageSrc, 'title': imageAlt})
 
 
 
