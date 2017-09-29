@@ -19,12 +19,12 @@ class LinksDB():
         pass
 
     @staticmethod
-    def readLinksFiles(website):
+    def readLinkObjectsFiles(website):
 
         print("READING LINKS FILES for: ", website)
 
-        global fileLinksObjects, fileLinksVisited
-        global arrLinksObjects, arrLinksVisited
+        global fileLinksObjects
+        global arrLinksObjects
 
         filename = "data//link-objects//"+website+".xyz"
         if Path(filename).is_file():
@@ -33,15 +33,33 @@ class LinksDB():
             list = pickle.load(fileLinksObjects)
 
             arrLinksObjects[website] = list
+            return True
+
+        return False
+
+
+    @staticmethod
+    def readLinksVisitedFiles(website):
+
+        print("READING LINKS FILES for: ", website)
+
+        global fileLinksVisited
+        global arrLinksVisited
 
         filename = "data//urls-visited//" + website + ".xyz"
         if Path(filename).is_file():
             fileLinksVisited = open(filename, "r")
 
             content = fileLinksVisited.readlines()
-            list = [x.strip() for x in content] # you may also want to remove whitespace characters like `\n` at the end of each line
+            list = [x.strip() for x in
+                    content]  # you may also want to remove whitespace characters like `\n` at the end of each line
 
             arrLinksVisited[website] = list
+            return True
+
+        return False
+
+
 
     @staticmethod
     def findLinkObjectAlready(website, url='', title='', description='', allowTitleIncluded=False):
@@ -50,7 +68,9 @@ class LinksDB():
         global arrLinksObjects
 
         if (website in arrLinksObjects) == False:
-            return None
+            if LinksDB.readLinkObjectsFiles(website) == False:
+                print("IT DOESNT WORK....")
+                return None
 
         list = arrLinksObjects[website]
 
@@ -58,8 +78,8 @@ class LinksDB():
             for object in enumerate(list):
 
                 if ((hasattr(object, 'url'))and(url == object.url)) or \
-                   ((title != '') and (hasattr(object,'title')) and (title == object.title)) or \
-                   ((description != '') and (hasattr(object,'description')) and (description == object.description)):
+                   ((title != '') and (hasattr(object, 'title')) and (title == object.title)) or \
+                   ((description != '') and (hasattr(object, 'description')) and (description == object.description)):
                     return object
 
                 if allowTitleIncluded and (title in object.title or object.title in title):
@@ -74,7 +94,8 @@ class LinksDB():
         global arrLinksVisited
 
         if (website in arrLinksVisited) == False:
-            return False
+            if LinksDB.readLinksVisitedFiles(website) == False:
+                return False
 
         list = arrLinksVisited[website]
         if list is not None:
@@ -94,7 +115,8 @@ class LinksDB():
         global fileLinksVisited
 
         if (website in arrLinksVisited) == False:
-            arrLinksVisited[website] = []
+            if LinksDB.readLinksVisitedFiles(website) == False:
+                arrLinksVisited[website] = []
 
         arrLinksVisited[website].append(url)
 
@@ -110,7 +132,8 @@ class LinksDB():
         global fileLinksObjects
 
         if (website in arrLinksObjects) == False:
-            arrLinksObjects[website] = []
+            if LinksDB.readLinkObjectsFiles(website) == False:
+                arrLinksObjects[website] = []
 
         arrLinksObjects[website].append(object)
 

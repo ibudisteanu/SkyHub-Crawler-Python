@@ -295,6 +295,10 @@ class CrawlerProduct(CrawlerProcess):
                 if (reviewBody != '' or reviewTitle != '') and reviewScore != '':
                     self.reviewsList.reviewsList.append(ObjectReview('', reviewUsername, reviewFullName, reviewDate, reviewScore, reviewTitle, reviewBody, reviewPurchased, reviewThumbsUp, reviewThumbsDown, ))
 
+        keywords = [int(e) if e.isdigit() else e for e in self.keywords.split(',')]
+        if len(keywords) < 3:
+            self.keywords += self.domain+",product,buy"
+
         print("keywords=",self.keywords)
 
 
@@ -351,6 +355,8 @@ class CrawlerProduct(CrawlerProcess):
             titleSearch = title+self.author
 
             productObject = LinksDB.findLinkObjectAlready(self.domain, self.currentPageURL, title=titleSearch, description=description, allowTitleIncluded=False)
+
+            print("################ search", titleSearch, productObject)
 
             if productObject is None:  # we have to add the topic
 

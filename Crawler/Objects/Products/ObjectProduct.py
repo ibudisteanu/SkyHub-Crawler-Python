@@ -46,6 +46,7 @@ class ObjectProduct:
         self.id = id
         self.sellerUsername = sellerUsername
         self.categories = categories
+
         self.title = title
         self.timeLeft = timeLeft
 
