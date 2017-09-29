@@ -196,6 +196,10 @@ class CrawlerProduct(CrawlerProcess):
                 imageSrc = self.extractText(image.css('::attr(src)'))
                 imageAlt = self.extractText(image.css('::attr(alt)'))
 
+                imageSrc = imageSrc.replace("s-l300.","s-l600.")
+                imageSrc = imageSrc.replace("s-l64.","s-l600.")
+
+
                 print("imageSrc", imageSrc, imageAlt)
 
                 if imageSrc != '' :
