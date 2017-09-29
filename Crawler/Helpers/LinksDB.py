@@ -23,16 +23,18 @@ class LinksDB():
 
         print("READING LINKS FILES for: ", website)
 
-        global fileLinksObjects
-        global arrLinksObjects
+        global fileLinksObjects, arrLinksObjects
 
-        filename = "data//link-objects//"+website+".xyz"
+        filename = "data//link_objects//"+website+".xyz"
+        print("filename", filename)
         if Path(filename).is_file():
             fileLinksObjects = open(filename, "rb")
 
             list = pickle.load(fileLinksObjects)
 
             arrLinksObjects[website] = list
+
+            print("FILE READ IT WORKS", list)
             return True
 
         return False
@@ -43,14 +45,14 @@ class LinksDB():
 
         print("READING LINKS FILES for: ", website)
 
-        global fileLinksVisited
-        global arrLinksVisited
+        global fileLinksVisited, arrLinksVisited
 
-        filename = "data//urls-visited//" + website + ".xyz"
+        filename = "data//urls_visited//" + website + ".xyz"
         if Path(filename).is_file():
-            fileLinksVisited = open(filename, "r")
+            fileLinksVisited = open(filename, "rb")
 
             content = fileLinksVisited.readlines()
+            #content = fileLinksVisited.read()
             list = [x.strip() for x in
                     content]  # you may also want to remove whitespace characters like `\n` at the end of each line
 
@@ -75,7 +77,11 @@ class LinksDB():
         list = arrLinksObjects[website]
 
         if list is not None:
-            for object in enumerate(list):
+            for object in list:
+
+                print(list)
+                print("findObject", object, hasattr(object, 'title'))
+                print( object.title, title, title == object.title)
 
                 if ((hasattr(object, 'url'))and(url == object.url)) or \
                    ((title != '') and (hasattr(object, 'title')) and (title == object.title)) or \
@@ -112,7 +118,6 @@ class LinksDB():
             return False
 
         global arrLinksVisited
-        global fileLinksVisited
 
         if (website in arrLinksVisited) == False:
             if LinksDB.readLinksVisitedFiles(website) == False:
@@ -120,16 +125,11 @@ class LinksDB():
 
         arrLinksVisited[website].append(url)
 
-        fileLinksVisited = open("data//urls_visited//"+website+".xyz", "wb")
-        pickle.dump(arrLinksVisited[website], fileLinksVisited, -1)
-        fileLinksVisited.close()
-
 
     @staticmethod
     def addLinkObject(website, object):
 
-        global arrLinksObjects
-        global fileLinksObjects
+        global arrLinksObjects, fileLinksObjects
 
         if (website in arrLinksObjects) == False:
             if LinksDB.readLinkObjectsFiles(website) == False:
@@ -137,8 +137,32 @@ class LinksDB():
 
         arrLinksObjects[website].append(object)
 
-        fileLinksObjects = open("data//link_objects//"+website+".xyz", "wb")
-        pickle.dump(arrLinksObjects[website], fileLinksObjects, -1)
-        fileLinksObjects.close()
 
 
+    @staticmethod
+    def saveLinkObjects():
+
+        global arrLinksObjects
+
+        for domain in arrLinksObjects:
+            file = open("data//link_objects//"+domain+".xyz", "wb")
+            pickle.dump(arrLinksObjects[domain], file, -1)
+            file.close()
+
+    @staticmethod
+    def saveLinkVisited():
+
+        global arrLinksVisited
+
+        for domain in arrLinksVisited:
+            file = open("data//urls_visited//"+domain+".xyz", "wb")
+            pickle.dump(arrLinksObjects[domain], file, -1)
+            file.close()
+
+def closeFiles():
+    print("S-a TERMINAT!!!")
+    LinksDB.saveLinkObjects()
+    LinksDB.saveLinkVisited()
+
+import atexit
+atexit.register(closeFiles)
