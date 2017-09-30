@@ -38,6 +38,14 @@ class ObjectProductPrice:
         print("   Quantity Sold", self.quantitySold)
         print("   Quantity Available", self.quantityAvailable)
 
+    def calculateCurrency(self):
+
+        if self.price is string
+        string = self.price
+        results = currencyconverter.parseString(string)
+
+        self.price.replace("EUR", "€")
+        self.price.replace("GBP", "€")
 
     def getJSON(self):
 

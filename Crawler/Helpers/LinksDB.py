@@ -156,7 +156,7 @@ class LinksDB():
 
         for domain in arrLinksVisited:
             file = open("data//urls_visited//"+domain+".xyz", "wb")
-            pickle.dump(arrLinksObjects[domain], file, -1)
+            pickle.dump(arrLinksVisited[domain], file, -1)
             file.close()
 
 def closeFiles():
