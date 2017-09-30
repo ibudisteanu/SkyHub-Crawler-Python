@@ -59,9 +59,13 @@ class LinksHelper():
 
     @staticmethod
     def getRequestTrials(session, url,  data={}, headers={}, maxTrials = 5):
+
+        if session is None:
+            session = requests.Session()
+
         error = True
         trials = 0
-        while error == True and trials < maxTrials:
+        while (error == True) and (trials < maxTrials):
             error = False
             trials += 1
             try:

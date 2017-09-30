@@ -2,6 +2,7 @@ import dateparser
 
 from Crawler.Crawlers.CrawlerProcess import CrawlerProcess
 from Crawler.Helpers.LinksDB import LinksDB
+from Crawler.Helpers.LinksHelper import LinksHelper
 
 from Crawler.Objects.Products.ObjectProduct import ObjectProduct
 from Crawler.Objects.Products.ObjectProductShipping import ObjectProductShipping
@@ -25,6 +26,7 @@ class CrawlerProduct(CrawlerProcess):
     url = 'http://ebay.com'
     domain = 'ebay.com'
 
+    testingURL = "http://www.ebay.com/itm/GAMER-KOMPLETT-PC-AMD-FX-8300-8x-4-2GHz-8GB-DDR3-1TB-HDD-GTX1050-TI-Gaming-/222507904014?hash=item33ce812c0e:g:-FEAAOSww9xZCvle"
     #testingURL =  "http://www.ebay.com/itm/50g-mechanic-soldering-solder-welding-paste-flux-mcn-300-smd-smt-sn63-pb37-new/171150278650"
 
     start_urls = (url,)
@@ -58,6 +60,7 @@ class CrawlerProduct(CrawlerProcess):
     cssItemMaterial = ""
 
     cssFullDescription = "#desc_div"
+    cssFullDescriptionIFrame = "#desc_ifr::attr(src)"
 
     cssAuthor = "span.mbg-nw::text"
     cssAuthorLink = "#mbgLink::attr(href)"
@@ -161,7 +164,17 @@ class CrawlerProduct(CrawlerProcess):
 
             if self.cssItemMaterial != '': self.details.itemMaterial = self.extractText(response.css(self.cssItemMaterial))
 
-        self.fullDescription = self.extractText(response.css(self.cssFullDescription))
+        descriptionFound = False
+        if self.cssFullDescriptionIFrame != '':
+
+            fullDescriptionSrc = self.extractText(response.css(self.cssFullDescriptionIFrame))
+            if len(fullDescriptionSrc) > 5:
+                responseRequest = LinksHelper.getRequestTrials(None, fullDescriptionSrc)
+                self.fullDescription = responseRequest.text
+                descriptionFound = True
+
+        if self.cssFullDescription != '' and descriptionFound == False:
+            self.fullDescription = self.extractText(response.css(self.cssFullDescription))
 
         if self.cssAuthor != '':
             self.author = self.extractText(response.css(self.cssAuthor))
@@ -378,7 +391,7 @@ class CrawlerProduct(CrawlerProcess):
                                                          self.websiteCountry or self.language, self.websiteCity,
                                                          self.websiteLanguage or self.language, -666, -666,
                                                          self.author, self.authorAvatar,
-                                                         self.itemId, self.timeLeft, self.price, self.ratingScoresList, self.shipping, self.reviewsList, self.lastUpdate)
+                                                         self.itemId, self.timeLeft, self.details, self.price, self.ratingScoresList, self.shipping, self.reviewsList, self.lastUpdate)
 
                     productObject = ObjectProduct(self.currentPageURL, 'product', self.itemId, productId, self.author, self.parents, titleSearch, description, self.images,
                                                   self.timeLeft, self.price, self.details, self.date, self.ratingScoresList, self.shipping, self.reviewsList, self.lastUpdate)
