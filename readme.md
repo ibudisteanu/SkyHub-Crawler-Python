@@ -5,7 +5,14 @@
 1. https://conda.io/miniconda.html
 2. `wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh`
 3. `bash Miniconda3-latest-Linux-x86_64.sh`
-4. Restart terminal
+
+In case you encounter problems with conda:
+   1. Restart terminal
+   2. rm -r miniconda3
+   3. bash Miniconda3-latest-Linux-x86_64.sh
+   
+   and follow the instructions
+    
 
 ### install other libraries
 ```

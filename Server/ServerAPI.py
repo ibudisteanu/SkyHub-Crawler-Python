@@ -223,10 +223,10 @@ class ServerAPI:
 
             'details': ujson.dumps(details.getJSON()),
             'price': ujson.dumps(price.getJSON()),
-            'ratingScoresList':ujson.dumps(ratingScoresList.getJSON()),
-            'shipping':ujson.dumps(shipping.getJSON()),
-            'reviewsList':ujson.dumps(reviewsList.getJSON()),
-            'lastUpdate':lastUpdate
+            'ratingScoresList': ujson.dumps(ratingScoresList.getJSON()),
+            'shipping': ujson.dumps(shipping.getJSON()),
+            'reviewsList': ujson.dumps(reviewsList.getJSON()),
+            'lastUpdate': lastUpdate
         }
 
         headers = {}
@@ -236,10 +236,11 @@ class ServerAPI:
 
         # print(result)
         if result['result'] == True:
+
             print('topic new ', result['topic']['URL'])
             return result['topic']['id']
         else:
-            print("ERROR adding new topic ",result)
+            print("ERROR adding new topic ", result)
             return None
 
     @staticmethod
