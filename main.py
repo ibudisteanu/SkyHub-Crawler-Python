@@ -39,7 +39,11 @@ def testServerAPI():
     #reply = ServerAPI.postAddReply("admin",topic,"","Reply5","DESCRIERE",["misto","coool","awesome"],[],"2017-08-27T13:55:54+00:00","Romania","City","Romanian",-666,-666)
 
 
+def testProductPriceCurrency():
 
+    from Crawler.Objects.Products.ObjectProductPrice import ObjectProductPrice
+    price = ObjectProductPrice()
+    price.testCurrencyConvertor()
 
 
 def CrawlerScrapy():
@@ -67,4 +71,8 @@ def CrawlerScrapy():
 
 
 #CrawlerWayBackMachine()
-CrawlerScrapy()
+
+
+#CrawlerScrapy()
+
+testProductPriceCurrency()

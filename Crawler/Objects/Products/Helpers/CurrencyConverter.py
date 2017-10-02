@@ -3,15 +3,19 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 import json
-import urllib2
+import urllib3
 import re
 
 
 def convert(base, val):
     val = float(val)
     # Make API call to fixer.io, load JSON data for exchange rates
-    url = urllib2.urlopen('http://api.fixer.io/latest?symbols=USD,GBP')
-    data = json.load(url)
+
+    http = urllib3.PoolManager()
+    r = http.request('GET', 'http://api.fixer.io/latest?symbols=USD,GBP')
+
+    data = r.data
+
     USD_rate = data['rates']['USD']
     GBP_rate = data['rates']['GBP']
     EUR_rate = base_rate = 1.00
@@ -38,6 +42,32 @@ def convert(base, val):
 
     return output
 
+currencies = [
+    ["USD", "US","$"],
+    ["EUR","EURO", "EU","€"],
+    ['GBP', '£'],
+    ['CAD','Can$','C$'],
+    ['CNY','yuan'],
+    ['JPY','yen'],
+]
+
+# it will return ['USD','US','$', 'EUR', 'EURO', 'EU', '€',
+def getAllCurrencyList:
+    allCurrencyList = []
+
+    for currency in currencies:
+        for symbol in currency:
+            allCurrencyList.append(symbol)
+
+    return allCurrencyList
+
+def parseStringCurrency(string):
+
+    allCurrencyList = getAllCurrencyList()
+    for currency in allCurrencyList:
+        string.replace(currency, currency+" ")
+
+    words = string.split()
 
 def parseString(string):
     # REGEX PARAMETERS

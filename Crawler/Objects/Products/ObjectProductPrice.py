@@ -1,4 +1,6 @@
 from Crawler.Helpers.LinksHelper import LinksHelper
+from Crawler.Objects.Products.Helpers.CurrencyConverter import parseString
+#import Crawler.Objects.Products.Helpers.CurrencyConverter
 
 class ObjectProductPrice:
 
@@ -38,14 +40,40 @@ class ObjectProductPrice:
         print("   Quantity Sold", self.quantitySold)
         print("   Quantity Available", self.quantityAvailable)
 
+    def setPrice(self, newPrice, newCurrency = ''):
+
+        self.price = newPrice
+        self.currency = newCurrency
+
+        if newCurrency == '':
+            self.calculateCurrency()
+
+        return [self.price, self.currency]
+
     def calculateCurrency(self):
 
-        if self.price is string
-        string = self.price
-        results = currencyconverter.parseString(string)
+        if isinstance(self.price, str):
 
-        self.price.replace("EUR", "€")
-        self.price.replace("GBP", "€")
+            self.price.replace("EUR", "€")
+            self.price.replace("GBP", "£")
+            self.price.replace("Can$", "CAD")
+            self.price.replace("C$", "CAD")
+
+
+            string = self.price
+            results = parseString(string)
+
+            print("DEBUG",string, results)
+
+            # sample of results
+            # [['USD',4430000],['GBP',400000]]
+
+            if len(results) > 0:
+                self.price = results[0][1]
+                self.currency = results[0][0]
+
+                if len(results) > 1:
+                    print("WARNING!!! MORE THAN ONE PRICE FOUND", string)
 
     def getJSON(self):
 
@@ -58,3 +86,9 @@ class ObjectProductPrice:
             'quantityAvailable': self.quantityAvailable,
             'quantitySold': self.quantitySold,
         }
+
+    def testCurrencyConvertor(self):
+
+        print(self.setPrice("$50"))
+        print(self.setPrice("EUR 645.00"))
+        print(self.setPrice(" US $762.52"))

@@ -16,6 +16,7 @@ pip install dateparser
 pip install parsel
 pip install requests
 pip install ujson
+pip install urllib3
 ```
 
 Optionals
