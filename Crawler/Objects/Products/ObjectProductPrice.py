@@ -1,6 +1,5 @@
 from Crawler.Helpers.LinksHelper import LinksHelper
-from Crawler.Objects.Products.Helpers.CurrencyConverter import parseString
-#import Crawler.Objects.Products.Helpers.CurrencyConverter
+from Crawler.Objects.Products.Helpers.CurrencyConverter import CurrencyConverter
 
 class ObjectProductPrice:
 
@@ -54,14 +53,8 @@ class ObjectProductPrice:
 
         if isinstance(self.price, str):
 
-            self.price.replace("EUR", "€")
-            self.price.replace("GBP", "£")
-            self.price.replace("Can$", "CAD")
-            self.price.replace("C$", "CAD")
-
-
             string = self.price
-            results = parseString(string)
+            results = CurrencyConverter.parseStringCurrency(string)
 
             print("DEBUG",string, results)
 
