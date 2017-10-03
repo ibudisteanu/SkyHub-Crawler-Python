@@ -34,6 +34,7 @@ class ObjectProductPrice:
         if len(self.listPrice) > 0: print("   List Price", self.listPrice)
         if len(self.youSave) > 0: print("   You Save", self.youSave)
         print("   Price", self.price)
+        if len(self.currency) > 0: print("   Currency", self.currency)
         if len(self.watching) > 0: print("   Watching", self.watching)
 
         print("   Quantity Sold", self.quantitySold)

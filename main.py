@@ -73,6 +73,6 @@ def CrawlerScrapy():
 #CrawlerWayBackMachine()
 
 
-#CrawlerScrapy()
+CrawlerScrapy()
 
-testProductPriceCurrency()
+#testProductPriceCurrency()

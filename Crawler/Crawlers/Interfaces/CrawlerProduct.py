@@ -26,7 +26,7 @@ class CrawlerProduct(CrawlerProcess):
     url = 'http://ebay.com'
     domain = 'ebay.com'
 
-    testingURL = "http://www.ebay.com/itm/GAMER-KOMPLETT-PC-AMD-FX-8300-8x-4-2GHz-8GB-DDR3-1TB-HDD-GTX1050-TI-Gaming-/222507904014?hash=item33ce812c0e:g:-FEAAOSww9xZCvle"
+    # testingURL = "http://www.ebay.com/itm/GAMER-KOMPLETT-PC-AMD-FX-8300-8x-4-2GHz-8GB-DDR3-1TB-HDD-GTX1050-TI-Gaming-/222507904014?hash=item33ce812c0e:g:-FEAAOSww9xZCvle"
     #testingURL =  "http://www.ebay.com/itm/50g-mechanic-soldering-solder-welding-paste-flux-mcn-300-smd-smt-sn63-pb37-new/171150278650"
 
     start_urls = (url,)
@@ -173,8 +173,20 @@ class CrawlerProduct(CrawlerProcess):
                 self.fullDescription = responseRequest.text
                 descriptionFound = True
 
+                self.shortDescription = self.ogDescription + '    '
+
         if self.cssFullDescription != '' and descriptionFound == False:
             self.fullDescription = self.extractText(response.css(self.cssFullDescription))
+
+        try:
+            while 1==1:
+                indexScript = self.fullDescription.index("<script")
+                indexScriptEnd = self.fullDescription.index("</script>")
+
+                self.fullDescription = self.fullDescription[0:indexScript] + self.fullDescription[indexScriptEnd+len("</script>"):]
+
+        except ValueError:
+            pass
 
         if self.cssAuthor != '':
             self.author = self.extractText(response.css(self.cssAuthor))
