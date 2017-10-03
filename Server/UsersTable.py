@@ -1,15 +1,9 @@
 users = [
     {
         'username':'admin',
-        'password': '',
+        'password': '+',
         'id': '',
         'sessionId':'',
-    },
-    {
-        'username': 'muflonel2000',
-        'password': 'dsadas23123XXSD',
-        'id': '',
-        'sessionId': '',
     }
 ]
 
