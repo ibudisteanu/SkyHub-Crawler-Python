@@ -211,7 +211,7 @@ class ServerAPI:
             'description': description,
             'shortDescription': shortDescription,
             'keywords': keywords,
-            'attachments': arrAttachments,
+            'attachments': ujson.dumps(arrAttachments),
             'country': country,
             'city': city,
             'language': language,
@@ -219,8 +219,8 @@ class ServerAPI:
             'longitude': longitude,
             'additionalInfo': ujson.dumps(arrAdditionalInfo),
 
-             # additional product information
 
+             # additional product information
             'details': ujson.dumps(details.getJSON()),
             'price': ujson.dumps(price.getJSON()),
             'ratingScoresList': ujson.dumps(ratingScoresList.getJSON()),
