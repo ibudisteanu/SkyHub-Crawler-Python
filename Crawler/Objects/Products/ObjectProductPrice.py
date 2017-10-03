@@ -56,7 +56,7 @@ class ObjectProductPrice:
             string = self.price
             results = CurrencyConverter.parseStringCurrency(string)
 
-            print("DEBUG",string, results)
+            #print("DEBUG",string, results)
 
             # sample of results
             # [['USD',4430000],['GBP',400000]]
@@ -80,8 +80,10 @@ class ObjectProductPrice:
             'quantitySold': self.quantitySold,
         }
 
-    def testCurrencyConvertor(self):
+    def testCurrencyConverter(self):
 
         print(self.setPrice("$50"))
         print(self.setPrice("EUR 645.00"))
         print(self.setPrice(" US $762.52"))
+
+        print("testCurrencyConverter done")

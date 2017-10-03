@@ -7,12 +7,12 @@ import urllib3
 import re
 
 currencies = [
-    ["USD", "US", "$"],
-    ["EUR", "EURO", "EU", "€"],
-    ['GBP', '£'],
-    ['CAD', 'Can$', 'C$'],
-    ['CNY', 'yuan'],
-    ['JPY', 'yen'],
+    ["USD",    "USD", "US", "$"],
+    ["EUR",    "EURO", "EUR", "EU", "€"],
+    ['GBP',    'GBP', '£'],
+    ['CAD',    'CAD', 'Can$', 'C$'],
+    ['CNY',    'CNY', 'yuan', 'yan', 'YUAN', 'YAN'],
+    ['JPY',    'JPY', 'yen', 'YEN'],
 ]
 
 class CurrencyConverter():
@@ -65,8 +65,9 @@ class CurrencyConverter():
         allCurrencyList = []
 
         for currency in currencies:
-            for symbol in currency:
-                allCurrencyList.append(symbol)
+            for i, symbol in enumerate(currency):
+                if i>0:
+                    allCurrencyList.append(symbol)
 
         return allCurrencyList
 
@@ -103,14 +104,31 @@ class CurrencyConverter():
         results = []
 
         allCurrencyList = CurrencyConverter.getAllCurrencyList()
+
         for currency in allCurrencyList:
-            string.replace(currency, currency+" ")
+
+            index = -1
+            try:
+
+                index = string.index(currency, index+1)
+
+                while 1==1:
+
+                    if CurrencyConverter.is_number( string[index+1] ):
+                        string = string.replace(currency, currency + " ")
+
+                    index = string.index(currency, index + 1)
+
+            except ValueError:
+                pass
 
         words = string.split()
         wordsCurrencies = []
         wordsIsCurrencies = []
         wordsNumbers = []
         wordsIsNumbers = []
+
+        print(string)
 
         for word in words:
             wordsCurrencies.append(CurrencyConverter.get_currency_symbol(word))
@@ -124,14 +142,18 @@ class CurrencyConverter():
         while i < len(words):
 
             # USD 5533.2
-            if i+1 < len(words) and wordsIsCurrencies[i] and wordsIsNumbers[i+1]:
+            if (i+1 < len(words)) and wordsIsCurrencies[i] and wordsIsNumbers[i+1]:
                 results.append([wordsCurrencies[i], wordsNumbers[i+1]])
             # USD $333
-            elif i+2 < len(words) and wordsIsCurrencies[i] and wordsIsCurrencies[i+1] and wordsIsNumbers[i+2]:
-                results.append([wordsCurrencies[i], wordsNumbers[i+1]])
+            elif (i+2 < len(words)) and wordsIsCurrencies[i] and wordsIsCurrencies[i+1] and wordsIsNumbers[i+2]:
+                results.append([wordsCurrencies[i], wordsNumbers[i+2]])
+                i +=1
             # 333.2 EUR
-            elif i+1 < len(words) and wordsIsNumbers[i] and wordsIsCurrencies[i+1]:
+            elif (i+1 < len(words)) and wordsIsNumbers[i] and wordsIsCurrencies[i+1]:
+
                 results.append([wordsCurrencies[i+1], wordsNumbers[i]])
+
+            i +=1
 
         return results
 
@@ -157,16 +179,6 @@ class CurrencyConverter():
 
         return detected_currency
 
-    @staticmethod
-    def __checkValid(val):
-        val = val.replace(",", "")
-        try:
-            val = float(val)
-            return True
-        except:
-            return False
-
-
     def __checkMagnitude(val, string):
         val = val.replace(",", "")
         val = float(val)
@@ -179,12 +191,3 @@ class CurrencyConverter():
             val *= 1000
         return val
 
-    @staticmethod
-    # check ordinal value of character to get type of currency
-    def __getType(char):
-        if ord(char) == 36:
-            return "USD"
-        if ord(char) == 172:
-            return "EUR"
-        if ord(char) == 163:
-            return "GBP"

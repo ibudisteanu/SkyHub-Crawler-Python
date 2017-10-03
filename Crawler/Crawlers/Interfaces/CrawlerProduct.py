@@ -226,7 +226,11 @@ class CrawlerProduct(CrawlerProcess):
 
             if self.cssListPrice != '': self.price.listPrice = self.extractText(response.css(self.cssListPrice))
             if self.cssYouSave != '': self.price.youSave = self.extractText(response.css(self.cssYouSave))
-            if self.cssPrice != '': self.price.price = self.extractText(response.css(self.cssPrice))
+
+            if self.cssPrice != '':
+                self.price.setPrice(self.extractText(response.css(self.cssPrice)))
+
+
             if self.cssWatching != '': self.price.watching = self.extractText(response.css(self.cssWatching))
 
             if self.cssQuantityAvailable != '': self.price.quantityAvailable = self.extractText(response.css(self.cssQuantityAvailable))

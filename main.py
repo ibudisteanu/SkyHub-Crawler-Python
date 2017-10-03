@@ -43,7 +43,7 @@ def testProductPriceCurrency():
 
     from Crawler.Objects.Products.ObjectProductPrice import ObjectProductPrice
     price = ObjectProductPrice()
-    price.testCurrencyConvertor()
+    price.testCurrencyConverter()
 
 
 def CrawlerScrapy():
