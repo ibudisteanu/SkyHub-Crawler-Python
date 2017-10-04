@@ -169,7 +169,7 @@ class ServerAPI:
     @staticmethod
     def postAddProduct(rootURL, user, parentId, title, description, shortDescription='', arrKeywords=[], arrAttachments=[],
                        dtOriginalDate=None, country='', city='', language='', latitude=-666, longitude=-666,
-                       authorName='', authorAvatar='', itemId='', timeLeft=0, details=None, price=None, ratingScoresList=None, shipping=None, reviewsList=None, lastUpdate=''):
+                       itemId='', author=None, timeLeft=0, details=None, price=None, ratingScoresList=None, shipping=None, reviewsList=None, lastUpdate=''):
 
         user = ServerAPI.loginUser(user)
 
@@ -178,8 +178,8 @@ class ServerAPI:
         title = LinksHelper.fixArchiveStrings(title)
         description = LinksHelper.fixArchiveStrings(description)
         shortDescription = LinksHelper.fixArchiveStrings(shortDescription)
-        authorAvatar = LinksHelper.fixArchiveStrings(authorAvatar)
-        authorName = LinksHelper.fixArchiveStrings(authorName)
+        authorAvatar = LinksHelper.fixArchiveStrings(author.avatar)
+        authorName = LinksHelper.fixArchiveStrings(author.username)
 
         description = LinksHelper.fix_relative_urls(description, rootURL)
 
@@ -221,6 +221,7 @@ class ServerAPI:
 
              # additional product information
 
+            'author': ujson.dumps(author.getJSON()),
             'details': ujson.dumps(details.getJSON()),
             'price': ujson.dumps(price.getJSON()),
             'ratingScoresList': ujson.dumps(ratingScoresList.getJSON()),

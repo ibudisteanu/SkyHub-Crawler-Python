@@ -9,6 +9,7 @@ from Crawler.Objects.Products.ObjectProductShipping import ObjectProductShipping
 from Crawler.Objects.Products.ObjectProductShippingCosts import ObjectProductShippingCosts
 
 from Crawler.Objects.Products.ObjectRatingScore import ObjectRatingScore
+from Crawler.Objects.Products.ObjectAuthor import ObjectAuthor
 from Crawler.Objects.Products.ObjectRatingScoresList import ObjectRatingScoresList
 from Crawler.Objects.Products.ObjectReview import ObjectReview
 from Crawler.Objects.Products.ObjectReviewsList import ObjectReviewsList
@@ -64,9 +65,11 @@ class CrawlerProduct(CrawlerProcess):
 
     cssAuthor = "span.mbg-nw::text"
     cssAuthorLink = "#mbgLink::attr(href)"
-
     cssAuthorScore = "span.mbg-l a::text"
     cssAuthorFeedbackOverall = "#si-fb::text"
+
+    cssAuthorFeedbackSummaryListElement = "div.si-inner div.si-trs ul li"
+    cssAuthorFeedbackSummaryListElementText = "::text"
 
     cssItemId = "#descItemNumber::text"
 
@@ -110,8 +113,7 @@ class CrawlerProduct(CrawlerProcess):
     timeLeft = ''
     shipping = None
 
-    authorScore = 0
-    authorFeedbackOverall = 0
+    author = None
 
     itemId = ''
 
@@ -188,17 +190,32 @@ class CrawlerProduct(CrawlerProcess):
         except ValueError:
             pass
 
-        if self.cssAuthor != '':
-            self.author = self.extractText(response.css(self.cssAuthor))
+        if self.cssAuthor != '' or self.cssAuthorLink != '' or self.cssAuthorScore != '' or self.cssAuthorFeedbackOverall != '':
 
-        if self.cssAuthorLink != '':
-            self.authorLink = self.extractText(response.css(self.cssAuthorLink))
+            self.author = ObjectAuthor()
 
-        if self.cssAuthorScore != '':
-            self.authorScore = self.extractText(response.css(self.cssAuthorScore))
+            if self.cssAuthor != '':
+                self.author.username = self.extractText(response.css(self.cssAuthor))
 
-        if self.cssAuthorFeedbackOverall != '':
-            self.authorFeedbackOverall = self.extractText(response.css(self.cssAuthorFeedbackOverall))
+            if self.cssAuthorLink != '':
+                self.author.link = self.extractText(response.css(self.cssAuthorLink))
+
+            if self.cssAuthorScore != '':
+                self.author.score = self.extractText(response.css(self.cssAuthorScore))
+
+            if self.cssAuthorFeedbackOverall != '':
+                self.author.feedbackOverall = self.extractText(response.css(self.cssAuthorFeedbackOverall))
+
+            if self.cssAuthorFeedbackSummaryListElement != '':
+                self.author.feedbackSummaryList = []
+
+                feedbackSummaryList = response.css(self.cssAuthorFeedbackSummaryListElement)
+                for i, feedbackSummaryElement in enumerate(feedbackSummaryList):
+
+                    element = self.extractText(feedbackSummaryElement.css(self.cssAuthorFeedbackSummaryListElementText))
+                    if len(element) > 0:
+                        self.author.feedbackSummaryList.append(element)
+
 
         if self.cssItemId != '':
             self.itemId = self.extractText(response.css(self.cssItemId))
@@ -307,10 +324,10 @@ class CrawlerProduct(CrawlerProcess):
 
                 reviewScore = 0
                 if self.cssReviewsListElementRatingScore != '':
-                    reviewScore = self.extractText(reviewObject.css(self.cssReviewsListElementRatingScore))
+                    reviewScore = int(self.extractText(reviewObject.css(self.cssReviewsListElementRatingScore)))
 
                 if self.cssReviewsListElementRatingScoreStars != '': #with stars
-                    reviewScore = len(reviewObject.css(self.cssReviewsListElementRatingScoreStars))
+                    reviewScore = int(len(reviewObject.css(self.cssReviewsListElementRatingScoreStars)))
 
                 reviewPurchased = self.extractText(reviewObject.css(self.cssReviewsListElementPurchased))
                 reviewThumbsUp = self.extractText(reviewObject.css(self.cssReviewsListElementThumbsUp))
@@ -355,8 +372,6 @@ class CrawlerProduct(CrawlerProcess):
             self.details.toString()
 
         if len(self.timeLeft) > 0: print("Time Left", self.timeLeft)
-        if len(self.authorScore) > 0: print("Author Score", self.authorScore)
-        if len(self.authorFeedbackOverall) > 0: print("Author Feedback Overall", self.authorFeedbackOverall)
         if len(self.itemId) > 0: print("Item ID", self.itemId)
 
         if len(self.images) > 0: print("Images", self.images)
@@ -390,7 +405,7 @@ class CrawlerProduct(CrawlerProcess):
             title = self.title or self.ogTitle
             description = self.fullDescription or self.ogDescription or self.shortDescription
 
-            titleSearch = title+self.author
+            titleSearch = title+self.author.username
 
             productObject = LinksDB.findLinkObjectAlready(self.domain, self.currentPageURL, title=titleSearch, description=description, allowTitleIncluded=False)
 
@@ -406,8 +421,8 @@ class CrawlerProduct(CrawlerProcess):
                                                          self.keywords, self.images, self.date,
                                                          self.websiteCountry or self.language, self.websiteCity,
                                                          self.websiteLanguage or self.language, -666, -666,
-                                                         self.author, self.authorAvatar,
-                                                         self.itemId, self.timeLeft, self.details, self.price, self.ratingScoresList, self.shipping, self.reviewsList, self.lastUpdate)
+                                                         self.itemId, self.author,
+                                                         self.timeLeft, self.details, self.price, self.ratingScoresList, self.shipping, self.reviewsList, self.lastUpdate)
 
                     productObject = ObjectProduct(self.currentPageURL, 'product', self.itemId, productId, self.author, self.parents, titleSearch, description, self.images,
                                                   self.timeLeft, self.price, self.details, self.date, self.ratingScoresList, self.shipping, self.reviewsList, self.lastUpdate)

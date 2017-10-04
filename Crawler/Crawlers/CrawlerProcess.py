@@ -104,5 +104,9 @@ class CrawlerProcess(CrawlerBasic):
 
         if len(self.parents) > 0: print("parents", self.parents)
 
-        if len(self.author) > 0: print("author:", self.author, self.authorLink)
-        if len(self.authorAvatar) > 0: print("authorAvatar", self.authorAvatar)
+        if isinstance(self.author, str):
+            if len(self.author) > 0: print("author:", self.author, self.authorLink)
+            if len(self.authorAvatar) > 0: print("authorAvatar", self.authorAvatar)
+        else:
+            print("Author")
+            self.author.toString()

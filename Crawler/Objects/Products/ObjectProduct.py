@@ -9,7 +9,7 @@ class ObjectProduct:
     # objectId from SkyHub
     id = ''
 
-    sellerUsername = '',
+    author = None,
 
     categories = []
 
@@ -35,7 +35,7 @@ class ObjectProduct:
 
     lastUpdate = 0
 
-    def __init__(self, url, type, originalId, id, sellerUsername, categories, title,  description, images,
+    def __init__(self, url, type, originalId, id, author, categories, title,  description, images,
                  timeLeft, price, details, date, ratings, shipping, reviews, lastUpdate ):
 
         self.url = url
@@ -44,7 +44,8 @@ class ObjectProduct:
         self.type = type
         self.originalId = originalId
         self.id = id
-        self.sellerUsername = sellerUsername
+
+        self.author = author
         self.categories = categories
 
         self.title = title
