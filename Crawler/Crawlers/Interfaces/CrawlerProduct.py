@@ -65,7 +65,7 @@ class CrawlerProduct(CrawlerProcess):
 
     cssAuthor = "span.mbg-nw::text"
     cssAuthorLink = "#mbgLink::attr(href)"
-    cssAuthorScore = "span.mbg-l a::text"
+    cssAuthorScore = "div.mbg span.mbg-l a::text"
     cssAuthorFeedbackOverall = "#si-fb::text"
 
     cssAuthorFeedbackSummaryListElement = "div.si-inner div.si-trs ul li"
@@ -195,13 +195,18 @@ class CrawlerProduct(CrawlerProcess):
             self.author = ObjectAuthor()
 
             if self.cssAuthor != '':
-                self.author.username = self.extractText(response.css(self.cssAuthor))
+                self.author.username = self.extractFirstElement(response.css(self.cssAuthor))
 
             if self.cssAuthorLink != '':
                 self.author.link = self.extractText(response.css(self.cssAuthorLink))
 
             if self.cssAuthorScore != '':
-                self.author.score = self.extractText(response.css(self.cssAuthorScore))
+                self.author.score = self.extractFirstElement(response.css(self.cssAuthorScore))
+
+                try:
+                    self.author.score = int(self.author.score)
+                except ValueError:
+                    pass
 
             if self.cssAuthorFeedbackOverall != '':
                 self.author.feedbackOverall = self.extractText(response.css(self.cssAuthorFeedbackOverall))
@@ -324,10 +329,10 @@ class CrawlerProduct(CrawlerProcess):
 
                 reviewScore = 0
                 if self.cssReviewsListElementRatingScore != '':
-                    reviewScore = int(self.extractText(reviewObject.css(self.cssReviewsListElementRatingScore)))
+                    reviewScore = self.extractText(reviewObject.css(self.cssReviewsListElementRatingScore))
 
-                if self.cssReviewsListElementRatingScoreStars != '': #with stars
-                    reviewScore = int(len(reviewObject.css(self.cssReviewsListElementRatingScoreStars)))
+                elif self.cssReviewsListElementRatingScoreStars != '': #with stars
+                    reviewScore = len(reviewObject.css(self.cssReviewsListElementRatingScoreStars))
 
                 reviewPurchased = self.extractText(reviewObject.css(self.cssReviewsListElementPurchased))
                 reviewThumbsUp = self.extractText(reviewObject.css(self.cssReviewsListElementThumbsUp))
