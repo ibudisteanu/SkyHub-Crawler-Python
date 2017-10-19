@@ -10,10 +10,11 @@ class CrawlerAntena3Category(CrawlerNews):
     start_urls = (url,)
     allowed_domains = [domain]
 
+    cssTitle = 'div.header-categorie h1::text'
+
     def crawlerProcess(self, response, url):
         super().crawlerProcess(response, url)
 
-        self.title = self.extractFirstElement(response.css('div.header-categorie h1::text'))
 
     def validate(self):
         if len(self.title) > 0:

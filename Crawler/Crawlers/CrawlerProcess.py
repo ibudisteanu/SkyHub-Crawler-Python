@@ -10,6 +10,16 @@ class CrawlerProcess(CrawlerBasic):
     cssBreadcrumbsChildrenListElementHref = ''
     cssBreadcrumbsChildrenListElement = ''
 
+    cssTitle = ""
+    cssAuthor = ""
+    cssAuthorLink = ""
+    cssFullDescription = ""
+
+    cssDateText = ""
+    cssDate = ""
+
+    cssParent = ''
+
     #variables
 
     author = ''
@@ -18,6 +28,10 @@ class CrawlerProcess(CrawlerBasic):
 
     parents = []
     parentId = ''
+
+    removeShortDescription = False
+
+
 
     # Process Data and Create new Objects
     def processScrapedData(self, url):
@@ -37,17 +51,55 @@ class CrawlerProcess(CrawlerBasic):
 
         self.parents = []
 
-        if len(self.title) > 0:
+        if self.removeShortDescription:
+            self.shortDescription = ''
+            self.ogDescription = ''
+
+        if self.cssAuthor != '':
+            self.author = self.extractFirstElement(response.css(self.cssAuthor))
+
+        if self.cssAuthorLink != '':
+            self.authorLink = self.extractFirstElement(response.css(self.cssAuthorLink))
+
+        self.fullDescription = ''.join(response.css(self.cssFullDescription).extract()).strip()
+
+        if self.cssTitle != '':
+            self.title = self.extractFirstElement(response.css(self.cssTitle))
+
+        if len(self.cssParent) > 0:
+
+            self.parents = []
+
+            parent = response.css(self.cssParent)
+            parentText = self.extractFirstElement(parent.css('::text'))
+            parentURL = ' '.join((parent.css('::attr(href)').extract()))
+
+            if parentText != '' and parentURL != '':
+                self.parents.append({'name': parentText, 'url': parentURL, 'index': 1})
+
+        if self.cssDateText != '':  # text format like 22 Jul 2017
+            date = ' '.join(response.css(self.cssDate).extract()).strip()
+            print("DATEEE", date)
+            self.date = dateparser.parse(date)
+        else:  # timestamp format
+            if self.extractFirstElement(response.css(self.cssDate)) == '':
+                self.fullDescription = ''
+            else:
+                self.date = self.extractFirstElement(response.css(self.cssDate))
+
+        if len(self.title) > 0 and len(self.cssBreadcrumbsChildrenList) > 0:
+
+            self.parents = []
             for i in reversed(range(1, 100)):
                 parent = response.css(self.cssBreadcrumbsChildrenList+':nth-child('+str(i)+')')
                 parentText = self.extractFirstElement(parent.css(self.cssBreadcrumbsChildrenListElement+'::text'))
                 parentURL = self.extractFirstElement(parent.css(self.cssBreadcrumbsChildrenListElementHref+'::attr(href)'))
 
                 if parentText != '':
-                    self.parents.append({'name':parentText, 'url':parentURL, 'index': i})
+                    self.parents.append({'name':parentText, 'url': parentURL, 'index': i})
 
 
-        self.parents = list(reversed(self.parents)) #changing the order
+            self.parents = list(reversed(self.parents)) #changing the order
 
     # ---------------------
     # ---------------------

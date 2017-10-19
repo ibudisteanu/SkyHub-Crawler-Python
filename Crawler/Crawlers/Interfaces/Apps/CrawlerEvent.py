@@ -3,7 +3,7 @@ import dateparser
 from Crawler.Crawlers.Interfaces.CrawlerNews import CrawlerNews
 
 
-class CrawlerBlog(CrawlerNews):
+class CrawlerEvent(CrawlerNews):
 
     name = 'CrawlerBlog'
 
@@ -17,9 +17,6 @@ class CrawlerBlog(CrawlerNews):
     cssAuthor = "div.postbody"
     cssAuthorLink = "div.postauthor"
     cssFullDescription = "section p"
-
-    cssDateText = ""
-    cssDate = "time::attr(datetime)"
 
     cssParent = "dd.category-name a"
 

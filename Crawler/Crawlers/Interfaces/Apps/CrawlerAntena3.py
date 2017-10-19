@@ -13,13 +13,13 @@ class CrawlerAntena3(CrawlerNews):
     start_urls = (url,)
     allowed_domains = [domain]
 
+    cssAuthor = 'div.autor-ora-comentarii span.fl a::text'
+    cssAuthorLink = 'div.autor-ora-comentarii span.fl a::attr(href)'
+
+    cssFullDescription = 'div.text'
+
     def crawlerProcess(self, response, url):
         super().crawlerProcess(response, url)
-
-        self.author = self.extractFirstElement(response.css('div.autor-ora-comentarii span.fl a::text'))
-        self.authorLink = self.extractFirstElement(response.css('div.autor-ora-comentarii span.fl a::attr(href)'))
-
-        self.fullDescription = ''.join(response.xpath("//div[@class='text']").extract())
 
         text = ''.join(response.xpath("//div[@class='autor-ora-comentarii']//text()").extract()).strip()
         self.date = dateparser.parse(text)

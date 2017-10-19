@@ -28,15 +28,13 @@ class CrawlerPHPBB(CrawlerNews):
     cssBreadcrumbsChildrenListElement = ''
 
     rejectReplyTitle = True
+    removeShortDescription = True
 
     def crawlerProcess(self, response, url):
 
         super().crawlerProcess(response, url)
 
-        self.title = self.extractFirstElement(response.css(self.cssTitle))
         self.fullDescription = ''
-        self.shortDescription = ''
-
 
         self.replies = []
 

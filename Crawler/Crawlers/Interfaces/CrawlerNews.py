@@ -15,12 +15,14 @@ class CrawlerNews(CrawlerProcess):
     start_urls = (url,)
     allowed_domains = [domain]
 
-
     replies = []
 
     def crawlerProcess(self, response, url):
 
         super().crawlerProcess(response, url)
+
+
+
 
     def validate(self):
         if (len(self.title) > 3) and (len(self.fullDescription) > 40):
