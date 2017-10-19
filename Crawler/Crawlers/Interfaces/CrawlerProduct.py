@@ -433,3 +433,7 @@ class CrawlerProduct(CrawlerProcess):
                                                   self.timeLeft, self.price, self.details, self.date, self.ratingScoresList, self.shipping, self.reviewsList, self.lastUpdate)
 
                     LinksDB.addLinkObject(self.domain, productObject)
+
+    def toJSON(self):
+
+        json = super().toJSON()

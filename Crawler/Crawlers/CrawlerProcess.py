@@ -1,4 +1,5 @@
 from Crawler.Helpers.LinksDB import LinksDB
+from Crawler.Helpers.JSONDB import JSONDB
 from Crawler.Objects.ObjectLink import ObjectLink
 from Crawler.SmartCrawlers.CrawlerBasic import CrawlerBasic
 from Server.ServerAPI import ServerAPI
@@ -31,7 +32,7 @@ class CrawlerProcess(CrawlerBasic):
 
     removeShortDescription = False
 
-
+    saveJSONFile = False
 
     # Process Data and Create new Objects
     def processScrapedData(self, url):
@@ -42,6 +43,9 @@ class CrawlerProcess(CrawlerBasic):
         self.author = self.cleanText(self.author)
 
         self.parentId = self.createParents()
+
+        if self.saveJSONFile:
+            JSONDB.addJSONObject(self.domain, self.toJSON())
 
         return None
 
@@ -82,10 +86,11 @@ class CrawlerProcess(CrawlerBasic):
             print("DATEEE", date)
             self.date = dateparser.parse(date)
         else:  # timestamp format
-            if self.extractFirstElement(response.css(self.cssDate)) == '':
-                self.fullDescription = ''
-            else:
-                self.date = self.extractFirstElement(response.css(self.cssDate))
+            if self.cssDate != '':
+                if self.extractFirstElement(response.css(self.cssDate)) == '':
+                    self.fullDescription = ''
+                else:
+                    self.date = self.extractFirstElement(response.css(self.cssDate))
 
         if len(self.title) > 0 and len(self.cssBreadcrumbsChildrenList) > 0:
 
@@ -157,8 +162,21 @@ class CrawlerProcess(CrawlerBasic):
         if len(self.parents) > 0: print("parents", self.parents)
 
         if isinstance(self.author, str):
-            if len(self.author) > 0: print("author:", self.author, self.authorLink)
-            if len(self.authorAvatar) > 0: print("authorAvatar", self.authorAvatar)
+            if self.author != '': print("author:", self.author, self.authorLink)
+            if self.authorAvatar != '': print("authorAvatar", self.authorAvatar)
         else:
             print("Author")
             self.author.toString()
+
+    def toJSON(self):
+
+        json = super().toJSON()
+
+        if isinstance(self.author, str):
+            if self.author != '' :  json["author"] =  self.author
+            if self.authorLink != '':  json["authorLink"] =  self.authorLink
+            if self.authorAvatar != '':  json["authorAvatar"] =  self.authorAvatar
+        else:
+            json.author = self.author.toJSON()
+
+        return json

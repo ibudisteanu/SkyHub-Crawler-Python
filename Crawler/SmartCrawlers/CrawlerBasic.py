@@ -40,6 +40,7 @@ class CrawlerBasic(scrapy.Spider):
     currentPageURL=''
 
     ogTitle = ''
+    ogSite = ''
     ogDescription = ''
     ogImage = ''
     ogSiteName = ''
@@ -89,6 +90,7 @@ class CrawlerBasic(scrapy.Spider):
         self.language = self.extractFirstElement(response.xpath("//meta[@http-equiv='content-language']/@content")) #format: "ro"
 
         self.ogTitle = self.extractFirstElement(response.xpath('//meta[@property="og:title"]/@content'))
+        self.ogSiteName = self.extractFirstElement(response.xpath('//meta[@property="og:site_name"]/@content'))
         self.ogDescription = self.extractFirstElement(response.xpath('//meta[@property="og:description"]/@content'))
         self.ogImage = self.extractFirstElement(response.xpath('//meta[@property="og:image"]/@content'))
         self.ogSiteName = self.extractFirstElement(response.xpath('//meta[@property="og:site_name"]/@content'))
@@ -100,6 +102,8 @@ class CrawlerBasic(scrapy.Spider):
         if self.ogDescription != '': self.shortDescription = self.ogDescription
         if self.ogImage != '':
             self.images = AttrDict(img=self.ogImage, title=self.title, description=self.shortDescription)
+
+        if self.websiteName == '' and self.ogSiteName != '': self.websiteName = self.ogSiteName
 
         print("keywords_META", self.keywords)
 
@@ -205,6 +209,18 @@ class CrawlerBasic(scrapy.Spider):
         print("url:", self.currentPageURL)
         print("validate", self.validate())
 
+    def toJSON(self):
+        return {
+            "title": self.title,
+            "shortDescription": self.shortDescription,
+            "fullDescription": self.fullDescription,
+            "language": self.language,
+            "images": self.images,
+            "keywords": self.keywords,
+            "date": self.date,
+            "url": self.currentPageURL,
+            "validate": self.validate()
+        }
 
     def cleanText(self, text):
         return text

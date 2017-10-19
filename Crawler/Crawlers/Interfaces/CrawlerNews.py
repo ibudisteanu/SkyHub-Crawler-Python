@@ -2,7 +2,7 @@ import dateparser
 
 from Crawler.Crawlers.CrawlerProcess import CrawlerProcess
 from Crawler.Helpers.LinksDB import LinksDB
-from Crawler.Objects.Products.ObjectRatingScore import ObjectReviewScore
+from Crawler.Objects.Products.ObjectRatingScore import ObjectRatingScore
 from Crawler.Objects.Products.ObjectReview import ObjectReview
 
 class CrawlerNews(CrawlerProcess):
@@ -30,9 +30,6 @@ class CrawlerNews(CrawlerProcess):
 
         return ''
 
-    # to string
-    def toString(self):
-        super().toString()
 
     # Process Data and Create new Objects
     def processScrapedData(self, url):
@@ -101,3 +98,10 @@ class CrawlerNews(CrawlerProcess):
         super().toString()
 
         if len(self.replies) > 0: print("replies", self.replies)
+
+    def toJSON(self):
+
+        json = super().toJSON()
+        if len(self.replies) > 0: json.replies = self.replies
+
+        return json

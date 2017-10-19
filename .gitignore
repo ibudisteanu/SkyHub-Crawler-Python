@@ -5,3 +5,7 @@ Server/UsersTable.py
 data/urls_visited\.xyz
 
 data/link_objects\.xyz
+
+data/urls_visited/
+
+data/JSON/

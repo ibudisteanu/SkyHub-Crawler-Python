@@ -1,14 +1,7 @@
 from Crawler.Helpers.LinksHelper import LinksHelper
 
-#import urllib.parse
-#import os.path
-
 from pathlib import Path
 import pickle
-import requests  # Tutorial based on http://docs.python-requests.org/en/master/user/advanced/
-
-fileLinksObjects = None
-fileLinksVisited = None
 
 arrLinksObjects = {}
 arrLinksVisited = {}
@@ -23,14 +16,14 @@ class LinksDB():
 
         print("READING LINKS FILES for: ", website)
 
-        global fileLinksObjects, arrLinksObjects
+        global arrLinksObjects
 
         filename = "data//link_objects//"+website+".xyz"
         print("filename", filename)
         if Path(filename).is_file():
-            fileLinksObjects = open(filename, "rb")
+            file = open(filename, "rb")
 
-            list = pickle.load(fileLinksObjects)
+            list = pickle.load(file)
 
             arrLinksObjects[website] = list
 
@@ -45,7 +38,7 @@ class LinksDB():
 
         print("READING LINKS FILES for: ", website)
 
-        global fileLinksVisited, arrLinksVisited
+        global arrLinksVisited
 
         filename = "data//urls_visited//" + website + ".xyz"
         if Path(filename).is_file():
@@ -129,7 +122,7 @@ class LinksDB():
     @staticmethod
     def addLinkObject(website, object):
 
-        global arrLinksObjects, fileLinksObjects
+        global arrLinksObjects;
 
         if (website in arrLinksObjects) == False:
             if LinksDB.readLinkObjectsFiles(website) == False:
