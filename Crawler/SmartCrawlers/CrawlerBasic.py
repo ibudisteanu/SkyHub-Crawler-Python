@@ -82,32 +82,38 @@ class CrawlerBasic(scrapy.Spider):
 
     def crawlerProcess(self, response, url):
 
-        self.title = self.extractFirstElement(response.xpath('//title/text()'))
-        self.keywords = self.extractFirstElement(response.xpath("//meta[@name='keywords']/@content"))
-        self.shortDescription = self.extractFirstElement(response.xpath("//meta[@name='description']/@content"))
+        try:
+            self.title = self.extractFirstElement(response.xpath('//title/text()'))
+            self.keywords = self.extractFirstElement(response.xpath("//meta[@name='keywords']/@content"))
+            self.shortDescription = self.extractFirstElement(response.xpath("//meta[@name='description']/@content"))
 
-        self.language = self.extractFirstElement(response.xpath("//meta[@name='language']/@content")) #format: "Romanian"
-        self.language = self.extractFirstElement(response.xpath("//meta[@http-equiv='content-language']/@content")) #format: "ro"
+            self.language = self.extractFirstElement(response.xpath("//meta[@name='language']/@content")) #format: "Romanian"
+            self.language = self.extractFirstElement(response.xpath("//meta[@http-equiv='content-language']/@content")) #format: "ro"
 
-        self.ogTitle = self.extractFirstElement(response.xpath('//meta[@property="og:title"]/@content'))
-        self.ogSiteName = self.extractFirstElement(response.xpath('//meta[@property="og:site_name"]/@content'))
-        self.ogDescription = self.extractFirstElement(response.xpath('//meta[@property="og:description"]/@content'))
-        self.ogImage = self.extractFirstElement(response.xpath('//meta[@property="og:image"]/@content'))
-        self.ogSiteName = self.extractFirstElement(response.xpath('//meta[@property="og:site_name"]/@content'))
-        self.ogType = self.extractFirstElement(response.xpath('//meta[@property="og:type"]/@content'))
+            self.ogTitle = self.extractFirstElement(response.xpath('//meta[@property="og:title"]/@content'))
+            self.ogSiteName = self.extractFirstElement(response.xpath('//meta[@property="og:site_name"]/@content'))
+            self.ogDescription = self.extractFirstElement(response.xpath('//meta[@property="og:description"]/@content'))
+            self.ogImage = self.extractFirstElement(response.xpath('//meta[@property="og:image"]/@content'))
+            self.ogSiteName = self.extractFirstElement(response.xpath('//meta[@property="og:site_name"]/@content'))
+            self.ogType = self.extractFirstElement(response.xpath('//meta[@property="og:type"]/@content'))
 
-        self.currentPageURL = url
+            self.currentPageURL = url
 
-        if self.ogTitle != '': self.title = self.ogTitle
-        if self.ogDescription != '': self.shortDescription = self.ogDescription
-        if self.ogImage != '':
-            self.images = AttrDict(img=self.ogImage, title=self.title, description=self.shortDescription)
+            if self.ogTitle != '': self.title = self.ogTitle
+            if self.ogDescription != '': self.shortDescription = self.ogDescription
+            if self.ogImage != '':
+                self.images = AttrDict(img=self.ogImage, title=self.title, description=self.shortDescription)
 
-        if self.websiteName == '' and self.ogSiteName != '': self.websiteName = self.ogSiteName
+            if self.websiteName == '' and self.ogSiteName != '': self.websiteName = self.ogSiteName
 
-        print("keywords_META", self.keywords)
+            print("keywords_META", self.keywords)
 
-        self.lastUpdate = time.time()
+            self.lastUpdate = time.time()
+        except ValueError:
+            print("ERRRO!!!! processing url")
+            self.title = ""
+            self.ogTitle = ""
+            pass
 
 
     def test(self, response):

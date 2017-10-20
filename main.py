@@ -65,8 +65,11 @@ def CrawlerScrapy():
     #from Crawler.Crawlers.Interfaces.Apps.Products.CrawlerEbay import  CrawlerEbay
     #scrapyProcess.crawl(CrawlerEbay)
 
-    from Crawler.Crawlers.Interfaces.Apps.Events.CrawlerNewAmericaOrg import CrawlerNewAmericaOrg
-    scrapyProcess.crawl(CrawlerNewAmericaOrg)
+    #from Crawler.Crawlers.Interfaces.Apps.Events.CrawlerNewAmericaOrg import CrawlerNewAmericaOrg
+    #scrapyProcess.crawl(CrawlerNewAmericaOrg)
+
+    from Crawler.Crawlers.Interfaces.Apps.Events.CrawlerCatoOrg import CrawlerCatoOrg
+    scrapyProcess.crawl(CrawlerCatoOrg)
 
     scrapyProcess.start() # the script will block here until the crawling is finished
 
