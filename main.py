@@ -34,9 +34,9 @@ def testServerAPI():
     ServerAPI.loginUser("muflonel2000")
     ServerAPI.loginUser("muflonel2000")
     ServerAPI.loginUser("muflonel2000")
-    topic = ServerAPI.postAddTopic("muflonel2000","","TITLU TEST77","DESCRIERE","",["misto","coool","awesome"],[],"2017-08-27T13:55:54+00:00","Romania","City","Romanian",-666,-666)
-    #forum = ServerAPI.postAddForum("admin","","NAME - FORUM","NAME - FORUM TITLE","DESCRIERE","https://cdn4.iconfinder.com/data/icons/ionicons/512/icon-image-128.png","http://colorfully.eu/wp-content/uploads/2012/10/empty-road-highway-with-fog-facebook-cover.jpg",["misto","coool","awesome"]."2017-08-27T13:55:54+00:00","Romania","City","Romanian",-666,-666)
-    #reply = ServerAPI.postAddReply("admin",topic,"","Reply5","DESCRIERE",["misto","coool","awesome"],[],"2017-08-27T13:55:54+00:00","Romania","City","Romanian",-666,-666)
+    topic = ServerAPI.postAddTopic("","","muflonel2000","","TITLU TEST77","DESCRIERE","",["misto","coool","awesome"],[],"2017-08-27T13:55:54+00:00","Romania","City","Romanian",-666,-666)
+    #forum = ServerAPI.postAddForum("","","admin","","NAME - FORUM","NAME - FORUM TITLE","DESCRIERE","https://cdn4.iconfinder.com/data/icons/ionicons/512/icon-image-128.png","http://colorfully.eu/wp-content/uploads/2012/10/empty-road-highway-with-fog-facebook-cover.jpg",["misto","coool","awesome"]."2017-08-27T13:55:54+00:00","Romania","City","Romanian",-666,-666)
+    #reply = ServerAPI.postAddReply("","", "admin",topic,"","Reply5","DESCRIERE",["misto","coool","awesome"],[],"2017-08-27T13:55:54+00:00","Romania","City","Romanian",-666,-666)
 
 
 def testProductPriceCurrency():
@@ -53,9 +53,9 @@ def CrawlerScrapy():
         'USER_AGENT': 'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)'
     })
 
-    # from Crawler.Crawlers.CrawlerAntena3 import CrawlerAntena3
-    # scrapyProcess.crawl(CrawlerAntena3)
-    #
+    from Crawler.Crawlers.Interfaces.Apps.News.CrawlerAntena3 import CrawlerAntena3
+    scrapyProcess.crawl(CrawlerAntena3)
+
     # from Crawler.Crawlers.CrawlerAntena3Category import CrawlerAntena3Category
     # scrapyProcess.crawl(CrawlerAntena3Category)
 
@@ -65,16 +65,17 @@ def CrawlerScrapy():
     #from Crawler.Crawlers.Interfaces.Apps.Products.CrawlerEbay import  CrawlerEbay
     #scrapyProcess.crawl(CrawlerEbay)
 
-    #from Crawler.Crawlers.Interfaces.Apps.Events.CrawlerNewAmericaOrg import CrawlerNewAmericaOrg
-    #scrapyProcess.crawl(CrawlerNewAmericaOrg)
-
-    from Crawler.Crawlers.Interfaces.Apps.Events.CrawlerCatoOrg import CrawlerCatoOrg
-    scrapyProcess.crawl(CrawlerCatoOrg)
+    # from Crawler.Crawlers.Interfaces.Apps.Events.CrawlerNewAmericaOrg import CrawlerNewAmericaOrg
+    # scrapyProcess.crawl(CrawlerNewAmericaOrg)
+    #
+    # from Crawler.Crawlers.Interfaces.Apps.Events.CrawlerCatoOrg import CrawlerCatoOrg
+    # scrapyProcess.crawl(CrawlerCatoOrg)
 
     scrapyProcess.start() # the script will block here until the crawling is finished
 
 #init main
 
+testServerAPI()
 
 #CrawlerWayBackMachine()
 

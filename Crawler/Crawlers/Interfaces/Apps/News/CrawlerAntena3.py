@@ -16,7 +16,7 @@ class CrawlerAntena3(CrawlerNews):
     cssAuthor = 'div.autor-ora-comentarii span.fl a::text'
     cssAuthorLink = 'div.autor-ora-comentarii span.fl a::attr(href)'
 
-    cssFullDescription = 'div.text'
+    cssFullDescription = 'div.articol div.text'
 
     def crawlerProcess(self, response, url):
         super().crawlerProcess(response, url)

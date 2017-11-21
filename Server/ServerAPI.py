@@ -14,16 +14,38 @@ class ServerAPI:
         pass
 
     @staticmethod
+    def logoutUser():
+
+        print("Loggout user")
+
+        data = {}
+        headers = {}
+
+        result = session.get(url+"auth/logout", data=data, headers=headers)
+        result = result.json()
+        print(result)
+        if result['result'] == True:
+            print("User Logged Out successfully ", result['result'])
+            return True
+
+        return False
+
+    @staticmethod
     def loginUser(user):
 
         user = getUser(user)
         if user is None:
-            return False
+            return None
 
         global userLoggedIn
-        if (userLoggedIn is not None) and ((userLoggedIn['username'] == user['username'])or(userLoggedIn['id'] == user['id'])):
-            print("User Already logged in")
-            return userLoggedIn
+        if (userLoggedIn is not None):
+
+            if (userLoggedIn['username'] == user['username'])or(userLoggedIn['id'] == user['id']):
+                print("User Already logged in")
+                return user
+            else:
+                ServerAPI.logoutUser()
+
         print("Loggin user")
 
         data = {
@@ -103,12 +125,14 @@ class ServerAPI:
             return None
 
     @staticmethod
-    def postAddTopic(rootURL, user, parentId, title, description, shortDescription='', arrKeywords=[], arrAttachments=[],
+    def postAddTopic(rootURL, url, user, parentId, title, description, shortDescription='', arrKeywords=[], arrAttachments=[],
                      dtOriginalDate=None, country='', city='', language='', latitude=-666, longitude=-666,
                      authorName='', authorAvatar=''):
         user = ServerAPI.loginUser(user)
 
         if user is None: return False
+
+        #print("######### DESCRIPTION ##############", description)
 
         title = LinksHelper.fixArchiveStrings(title)
         description = LinksHelper.fixArchiveStrings(description)
@@ -116,14 +140,20 @@ class ServerAPI:
         authorAvatar = LinksHelper.fixArchiveStrings(authorAvatar)
         authorName = LinksHelper.fixArchiveStrings(authorName)
 
+        #print("######### DESCRIPTION 2 ##############", description)
         description = LinksHelper.fix_relative_urls(description, rootURL)
 
+        #print("######### DESCRIPTION 3##############", description)
         rez = ServerAPI.processLocation(country, city, language, latitude, longitude)
         latitude = rez[0]
         longitude = rez[1]
 
         arrAdditionalInfo = {
             'scraped': True,
+            'source': {
+                'page': url,
+                'website': rootURL,
+            }
         }
 
         if dtOriginalDate is not None: arrAdditionalInfo['dtOriginal'] = dtOriginalDate
@@ -134,6 +164,8 @@ class ServerAPI:
             keywords = arrKeywords
         else:
             keywords = ','.join(str(e) for e in arrKeywords)
+
+        print("useR", user)
 
         data = {
             'id': user['id'],
@@ -167,7 +199,7 @@ class ServerAPI:
             return None
 
     @staticmethod
-    def postAddProduct(rootURL, user, parentId, title, description, shortDescription='', arrKeywords=[], arrAttachments=[],
+    def postAddProduct(rootURL, url, user, parentId, title, description, shortDescription='', arrKeywords=[], arrAttachments=[],
                        dtOriginalDate=None, country='', city='', language='', latitude=-666, longitude=-666,
                        itemId='', author=None, timeLeft=0, details=None, price=None, ratingScoresList=None, shipping=None, reviewsList=None, lastUpdate=''):
 
@@ -189,6 +221,11 @@ class ServerAPI:
 
         arrAdditionalInfo = {
             'scraped': True,
+            'source': {
+                'page': url,
+                'website': rootURL,
+            },
+
             'itemId': itemId,
             'timeLeft': timeLeft,
         }

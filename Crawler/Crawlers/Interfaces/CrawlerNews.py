@@ -5,6 +5,9 @@ from Crawler.Helpers.LinksDB import LinksDB
 from Crawler.Objects.Products.ObjectRatingScore import ObjectRatingScore
 from Crawler.Objects.Products.ObjectReview import ObjectReview
 
+from Crawler.Objects.ObjectLink import ObjectLink
+from Server.ServerAPI import ServerAPI
+
 class CrawlerNews(CrawlerProcess):
 
     name = 'CrawlerNews'
@@ -50,7 +53,7 @@ class CrawlerNews(CrawlerProcess):
             if topicObject is None:  # we have to add the topic
 
                 if len(title) > 5 and len(description) > 30:
-                    topicId = ServerAPI.postAddTopic(self.url, self.user, self.parentId,
+                    topicId = ServerAPI.postAddTopic(self.url, url, self.user, self.parentId,
                                                      title,
                                                      description,
                                                      self.ogDescription or self.shortDescription,

@@ -419,7 +419,7 @@ class CrawlerProduct(CrawlerProcess):
             if productObject is None:  # we have to add the topic
 
                 if len(title) > 5 and len(description) > 30:
-                    productId = ServerAPI.postAddProduct(self.url, self.user, self.parentId,
+                    productId = ServerAPI.postAddProduct(self.url, url, self.user, self.parentId,
                                                          title,
                                                          description,
                                                          self.shortDescription or self.ogDescription,

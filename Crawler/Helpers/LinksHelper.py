@@ -44,18 +44,21 @@ class LinksHelper():
     def fixArchiveStrings(text):
 
         # https://web.archive.org/web/20130502222444/
+        if "https://web.archive.org/web/" in text:
+            positionStart = text.index("https://web.archive.org/web/")
+            text = text[positionStart + len("https://web.archive.org/web/20130502222444/"):10000]
+
+        # http://web.archive.org/web/20130502222444/
+        if "http://web.archive.org/web/" in text:
+            positionStart = text.index("http://web.archive.org/web/")
+            text = text[positionStart + len("http://web.archive.org/web/20130502222444/"):10000]
+
+        # web.archive.org/web/20130502222444/
         if "web.archive.org/web/" in text:
             positionStart = text.index("web.archive.org/web/")
             text = text[positionStart + len("web.archive.org/web/20130502222444/"):10000]
 
-        if "http" in text:
-            positionStart = text.index("http")
-            if positionStart != 0:
-                text = text[positionStart:10000]
-
         return text
-
-
 
     @staticmethod
     def getRequestTrials(session, url,  data={}, headers={}, maxTrials = 5):
@@ -65,6 +68,8 @@ class LinksHelper():
 
         error = True
         trials = 0
+        response = None
+
         while (error == True) and (trials < maxTrials):
             error = False
             trials += 1

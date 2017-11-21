@@ -102,7 +102,7 @@ class CrawlerBasic(scrapy.Spider):
             if self.ogTitle != '': self.title = self.ogTitle
             if self.ogDescription != '': self.shortDescription = self.ogDescription
             if self.ogImage != '':
-                self.images = AttrDict(img=self.ogImage, title=self.title, description=self.shortDescription)
+                self.images = [AttrDict(type='file', typeFile='image', url=self.ogImage, img=self.ogImage, title=self.title, description=self.shortDescription)]
 
             if self.websiteName == '' and self.ogSiteName != '': self.websiteName = self.ogSiteName
 

@@ -65,7 +65,8 @@ class CrawlerProcess(CrawlerBasic):
         if self.cssAuthorLink != '':
             self.authorLink = self.extractFirstElement(response.css(self.cssAuthorLink))
 
-        self.fullDescription = ''.join(response.css(self.cssFullDescription).extract()).strip()
+        if self.cssFullDescription != '':
+            self.fullDescription = ''.join(response.css(self.cssFullDescription).extract()).strip()
 
         if self.cssTitle != '':
             self.title = self.extractFirstElement(response.css(self.cssTitle))
