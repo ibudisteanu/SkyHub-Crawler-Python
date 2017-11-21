@@ -6,8 +6,8 @@ import ujson
 
 session = requests.Session()
 userLoggedIn = None
-#url = "http://skyhub.me:4000/api/"
-url = "http://127.0.0.1:4000/api/"
+#SERVER_URL = "http://skyhub.me:4000/api/"
+SERVER_URL = "http://127.0.0.1:4000/api/"
 
 class ServerAPI:
     def __init__(self):
@@ -21,7 +21,7 @@ class ServerAPI:
         data = {}
         headers = {}
 
-        result = session.get(url+"auth/logout", data=data, headers=headers)
+        result = session.get(SERVER_URL+"auth/logout", data=data, headers=headers)
         result = result.json()
         print(result)
         if result['result'] == True:
@@ -55,7 +55,7 @@ class ServerAPI:
 
         headers = {}
 
-        result = session.get(url+"auth/login", data=data, headers=headers)
+        result = session.get(SERVER_URL+"auth/login", data=data, headers=headers)
         result = result.json()
         print(result)
         if result['result'] == True:
@@ -67,7 +67,7 @@ class ServerAPI:
         return None
 
     @staticmethod
-    def postAddForum(rootURL, user, parentId, name, title, description, iconPic, coverPic, arrKeywords = [],  dtOriginalDate = None, country='', city='', language='',  latitude=-666, longitude=-666):
+    def postAddForum(rootURL, url, user, parentId, name, title, description, iconPic, coverPic, arrKeywords = [],  dtOriginalDate = None, country='', city='', language='',  latitude=-666, longitude=-666):
 
         user = ServerAPI.loginUser(user)
 
@@ -86,6 +86,10 @@ class ServerAPI:
 
         arrAdditionalInfo = {
             'scraped':True,
+            'source': {
+                'page': url,
+                'website': rootURL,
+            }
         }
 
         if dtOriginalDate is not None: arrAdditionalInfo['dtOriginal'] = dtOriginalDate
@@ -114,7 +118,7 @@ class ServerAPI:
 
         headers = {}
 
-        result = LinksHelper.getRequestTrials(session, url + "forums/add-forum", data, headers, maxTrials = 5)
+        result = LinksHelper.getRequestTrials(session, SERVER_URL + "forums/add-forum", data, headers, maxTrials = 5)
         result = result.json()
         #print(result)
         if result['result'] == True:
@@ -187,7 +191,7 @@ class ServerAPI:
 
         headers = {}
 
-        result = LinksHelper.getRequestTrials(session, url + "topics/add-topic", data, headers, maxTrials = 5)
+        result = LinksHelper.getRequestTrials(session, SERVER_URL + "topics/add-topic", data, headers, maxTrials = 5)
         result = result.json()
 
         # print(result)
@@ -269,7 +273,7 @@ class ServerAPI:
 
         headers = {}
 
-        result = LinksHelper.getRequestTrials(session, url + "topics/add-topic", data, headers, maxTrials = 5)
+        result = LinksHelper.getRequestTrials(session, SERVER_URL + "topics/add-topic", data, headers, maxTrials = 5)
         result = result.json()
 
         # print(result)
@@ -332,7 +336,7 @@ class ServerAPI:
 
         headers = {}
 
-        result = LinksHelper.getRequestTrials(session, url + "replies/add-reply", data, headers, maxTrials = 5)
+        result = LinksHelper.getRequestTrials(session, SERVER_URL + "replies/add-reply", data, headers, maxTrials = 5)
         result = result.json()
 
         #print(result)

@@ -107,6 +107,7 @@ class CrawlerProcess(CrawlerBasic):
 
             self.parents = list(reversed(self.parents)) #changing the order
 
+
     # ---------------------
     # ---------------------
     # ---------------------- GRAND PARENTS
@@ -116,8 +117,8 @@ class CrawlerProcess(CrawlerBasic):
 
         grandparentId = self.forumGrandParentId
 
-        # if len(self.parents) == 0:
-        #     self.parents.append({'name': '', 'url': self.url})
+        if len(self.parents) == 0:
+            self.parents.append({'name': '', 'url': self.url})
 
         if len(self.parents) > 0:
             ok = False
@@ -128,19 +129,21 @@ class CrawlerProcess(CrawlerBasic):
             if ok == False:
                 self.parents = [{'name': '', 'url': self.url}] + self.parents
 
+        print("PARENTS ###########", self.parents)
+
         for parent in self.parents:
 
             parentName = self.websiteName+' '+parent['name']
             parentObject = LinksDB.findLinkObjectAlready(self.domain, parent['url'], title=parentName, description='')
 
-            print("@@@@@@@@@@@@@", parentObject)
+            print("@@@@@@@@@@@@@", parentName, parentObject)
 
             if parentObject is None:
 
                 image = self.websiteImage or self.ogImage
                 if (image == '') and (len(self.images) > 0): image = self.images[0]
 
-                forumId = ServerAPI.postAddForum(self.url, self.user, grandparentId, self.websiteName +" "+ parent['name'],
+                forumId = ServerAPI.postAddForum(self.url, '', self.user, grandparentId, self.websiteName +" "+ parent['name'],
                                                  self.websiteName + " " + parent['name'], self.websiteName +" "+ parent['name'],
                                                  image,
                                                  self.websiteCover,

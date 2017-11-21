@@ -109,7 +109,16 @@ class CrawlerBasic(scrapy.Spider):
             print("keywords_META", self.keywords)
 
             self.lastUpdate = time.time()
+
+            #if url == self.url:
+
+            if self.websiteName == '': self.websiteName = self.title or self.ogTitle
+            if self.websiteImage == '': self.websiteImage = self.ogImage
+            if self.websiteCountry == '': self.websiteCountry = self.language
+
+
         except ValueError:
+
             print("ERRRO!!!! processing url")
             self.title = ""
             self.ogTitle = ""

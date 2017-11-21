@@ -72,8 +72,8 @@ class LinksDB():
         if list is not None:
             for object in list:
 
-                print(list)
-                print("findObject", object, hasattr(object, 'title'))
+                # rint(list)
+                # print("findObject", object, hasattr(object, 'title'))
                 print( object.title, title, title == object.title)
 
                 if ((hasattr(object, 'url'))and(url == object.url)) or \
