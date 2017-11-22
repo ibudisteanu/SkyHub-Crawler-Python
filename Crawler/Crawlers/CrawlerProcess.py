@@ -89,6 +89,7 @@ class CrawlerProcess(CrawlerBasic):
 
             date = date.lower()
             date = date.replace("noi","nov")
+            date = date.replace("ian","jan")
             date = date.replace("mai","may")
             date = date.replace("mart","mar")
             date = date.replace("iun","jun")
