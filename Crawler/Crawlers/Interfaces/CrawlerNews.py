@@ -1,4 +1,5 @@
 import dateparser
+import datetime
 
 from Crawler.Crawlers.CrawlerProcess import CrawlerProcess
 from Crawler.Helpers.LinksDB import LinksDB
@@ -22,17 +23,27 @@ class CrawlerNews(CrawlerProcess):
 
     def crawlerProcess(self, response, url):
 
+        self.date = None
         super().crawlerProcess(response, url)
 
 
 
 
     def validate(self):
-        if (len(self.title) > 3) and (len(self.fullDescription) > 40):
+        if len(self.title) > 3 and len(self.fullDescription) > 40 and (self.date is not None and self.date != ''):
             return 'news'
 
         return ''
 
+    def checkDateLastDays(self, date, days):
+
+        if date is None or self.date == '': return False
+
+        today = datetime.datetime.now()
+        diff = today - date
+
+        if diff.days <= days: return True
+        else: return False
 
     # Process Data and Create new Objects
     def processScrapedData(self, url):
@@ -52,7 +63,7 @@ class CrawlerNews(CrawlerProcess):
 
             if topicObject is None:  # we have to add the topic
 
-                if len(title) > 5 and len(description) > 30:
+                if len(title) > 5 and len(description) > 30 and self.checkDateLastDays(self.date, 5) :
                     topicId = ServerAPI.postAddTopic(self.url, url, self.user, self.parentId,
                                                      title,
                                                      description,

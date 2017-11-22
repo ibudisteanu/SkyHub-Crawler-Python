@@ -36,7 +36,7 @@ class CrawlerBasic(scrapy.Spider):
     keywords = []
 
     language = ''
-    date = ''
+    date = None
     currentPageURL=''
 
     ogTitle = ''
@@ -213,7 +213,7 @@ class CrawlerBasic(scrapy.Spider):
         if len(self.images) > 0: print("images:", self.images)
         if len(self.keywords) > 0: print("keywords:", self.keywords)
 
-        if self.date is not None : print("date:", self.date)
+        if self.date is not None and self.date != '': print("date:", self.date)
 
         # print("og:title", self.ogTitle)
         # print("og:description", self.ogDescription)

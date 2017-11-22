@@ -74,7 +74,7 @@ class LinksDB():
 
                 # rint(list)
                 # print("findObject", object, hasattr(object, 'title'))
-                print( object.title, title, title == object.title)
+                # print( object.title, title, title == object.title)
 
                 if ((hasattr(object, 'url'))and(url == object.url)) or \
                    ((title != '') and (hasattr(object, 'title')) and (title == object.title)) or \

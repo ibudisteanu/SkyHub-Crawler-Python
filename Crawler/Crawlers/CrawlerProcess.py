@@ -1,3 +1,5 @@
+import dateparser
+
 from Crawler.Helpers.LinksDB import LinksDB
 from Crawler.Helpers.JSONDB import JSONDB
 from Crawler.Objects.ObjectLink import ObjectLink
@@ -83,15 +85,28 @@ class CrawlerProcess(CrawlerBasic):
                 self.parents.append({'name': parentText, 'url': parentURL, 'index': 1})
 
         if self.cssDateText != '':  # text format like 22 Jul 2017
-            date = ' '.join(response.css(self.cssDate).extract()).strip()
+            date = self.extractText(response.css(self.cssDateText))
+
+            date = date.lower()
+            date = date.replace("noi","nov")
+            date = date.replace("mai","may")
+            date = date.replace("mart","mar")
+            date = date.replace("iun","jun")
+            date = date.replace("sept","sep")
+            date = date.replace("iul","jul")
+            date = date.replace("febr","feb")
+
             print("DATEEE", date)
-            self.date = dateparser.parse(date)
+            try:
+                self.date = dateparser.parse(date)
+
+            except ValueError:
+                pass
+
+            print("DATEE222", self.date)
         else:  # timestamp format
             if self.cssDate != '':
-                if self.extractFirstElement(response.css(self.cssDate)) == '':
-                    self.fullDescription = ''
-                else:
-                    self.date = self.extractFirstElement(response.css(self.cssDate))
+                self.date = self.extractText(response.css(self.cssDate))
 
         if len(self.title) > 0 and len(self.cssBreadcrumbsChildrenList) > 0:
 

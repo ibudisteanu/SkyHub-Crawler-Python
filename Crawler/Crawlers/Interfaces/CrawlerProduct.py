@@ -225,14 +225,6 @@ class CrawlerProduct(CrawlerProcess):
         if self.cssItemId != '':
             self.itemId = self.extractText(response.css(self.cssItemId))
 
-        if self.cssDateText != '':  #text format like 22 Jul 2017
-            date = self.extractText(response.css(self.cssDate))
-            print("DATEEE",date)
-            self.date = dateparser.parse(date)
-        else: #timestamp format
-            if self.cssDate != '':
-                self.date = self.extractText(response.css(self.cssDate))
-
         if self.cssImages != '':
             self.images = []
 
