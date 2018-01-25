@@ -1,4 +1,6 @@
 from Crawler.Helpers.LinksHelper import LinksHelper
+from difflib import SequenceMatcher
+
 
 from pathlib import Path
 import pickle
@@ -57,7 +59,7 @@ class LinksDB():
 
 
     @staticmethod
-    def findLinkObjectAlready(website, url='', title='', description='', allowTitleIncluded=False):
+    def findLinkObjectAlready(website, url='', title='', description='', allowTitleIncluded=False, similarity=False):
         url = LinksHelper.fix_url(url)
 
         global arrLinksObjects
@@ -80,6 +82,16 @@ class LinksDB():
                    ((title != '') and (hasattr(object, 'title')) and (title == object.title)) or \
                    ((description != '') and (hasattr(object, 'description')) and (description == object.description)):
                     return object
+
+                if similarity:
+                    if title != '' and hasattr(object, 'title'):
+                        if SequenceMatcher(None, title, object.title).ratio() >= 0.7:
+                            return object
+
+                    if description != '' and hasattr(object, 'description'):
+                        if SequenceMatcher(None, description, object.description).ratio() >= 0.7:
+                            return object
+
 
                 if allowTitleIncluded and (title in object.title or object.title in title):
                     return object

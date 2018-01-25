@@ -59,7 +59,7 @@ class CrawlerNews(CrawlerProcess):
             title = self.title or self.ogTitle
             description = self.fullDescription or self.ogDescription or self.shortDescription
 
-            topicObject = LinksDB.findLinkObjectAlready(self.domain, self.currentPageURL, title=title, description='', allowTitleIncluded=True)
+            topicObject = LinksDB.findLinkObjectAlready(self.domain, self.currentPageURL, title=title, description='', allowTitleIncluded=True, similarity=True)
 
             if topicObject is None:  # we have to add the topic
 

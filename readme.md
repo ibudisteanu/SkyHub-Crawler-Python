@@ -13,6 +13,7 @@ In case you encounter problems with conda:
    
    and follow the instructions
     
+       
 
 ### install other libraries
 ```
@@ -24,6 +25,7 @@ pip install parsel
 pip install requests
 pip install ujson
 pip install urllib3
+pip install fuzzywuzzy
 ```
 
 Optionals

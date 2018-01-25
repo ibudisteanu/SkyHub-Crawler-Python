@@ -61,12 +61,12 @@ def CrawlerScrapy():
         })
 
     from Crawler.Crawlers.Interfaces.Apps.News.CrawlerAntena3 import CrawlerAntena3
-    CrawlerAntena3.MAXIMUM_NUMBER_PAGES = 1
+    CrawlerAntena3.MAXIMUM_NUMBER_PAGES = 1000
     CrawlerAntena3.INFINITE_LOOP = True
     scrapyProcess.crawl(CrawlerAntena3)
 
     from Crawler.Crawlers.Interfaces.Apps.News.CrawlerFonduriUeRo import CrawlerFonduriUeRo
-    CrawlerFonduriUeRo.MAXIMUM_NUMBER_PAGES = 1
+    CrawlerFonduriUeRo.MAXIMUM_NUMBER_PAGES = 1000
     CrawlerFonduriUeRo.INFINITE_LOOP = 1
     scrapyProcess.crawl(CrawlerFonduriUeRo)
 
