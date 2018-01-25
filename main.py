@@ -2,6 +2,8 @@
 print("Hello World!!")
 
 import sys
+from multiprocessing import Process
+
 sys.path.insert(0, 'Crawler')
 sys.path.insert(0, 'Crawler/Crawlers')
 sys.path.insert(0, 'Crawler/Crawlers/Apps')
@@ -45,24 +47,31 @@ def testProductPriceCurrency():
     price = ObjectProductPrice()
     price.testCurrencyConverter()
 
+def run_spider(crawl):
+    if __name__ == '__main__':
+        p = Process(target=crawl.start_requests)
+        p.start()
+        p.join()
 
 def CrawlerScrapy():
     from scrapy.crawler import CrawlerProcess
 
     scrapyProcess = CrawlerProcess({
-        'USER_AGENT': 'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)'
-    })
+            'USER_AGENT': 'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)'
+        })
 
     from Crawler.Crawlers.Interfaces.Apps.News.CrawlerAntena3 import CrawlerAntena3
-    CrawlerAntena3.MAXIMUM_NUMBER_PAGES = 1000
+    CrawlerAntena3.MAXIMUM_NUMBER_PAGES = 1
+    CrawlerAntena3.INFINITE_LOOP = True
     scrapyProcess.crawl(CrawlerAntena3)
 
     from Crawler.Crawlers.Interfaces.Apps.News.CrawlerFonduriUeRo import CrawlerFonduriUeRo
-    CrawlerFonduriUeRo.MAXIMUM_NUMBER_PAGES = 1000
+    CrawlerFonduriUeRo.MAXIMUM_NUMBER_PAGES = 1
+    CrawlerFonduriUeRo.INFINITE_LOOP = 1
     scrapyProcess.crawl(CrawlerFonduriUeRo)
 
-    #from Crawler.Crawlers.Interfaces.Apps.Products.CrawlerEbay import  CrawlerEbay
-    #scrapyProcess.crawl(CrawlerEbay)
+    # from Crawler.Crawlers.Interfaces.Apps.Products.CrawlerEbay import  CrawlerEbay
+    # scrapyProcess.crawl(CrawlerEbay)
 
     # from Crawler.Crawlers.Interfaces.Apps.Events.CrawlerNewAmericaOrg import CrawlerNewAmericaOrg
     # scrapyProcess.crawl(CrawlerNewAmericaOrg)
@@ -70,10 +79,8 @@ def CrawlerScrapy():
     # from Crawler.Crawlers.Interfaces.Apps.Events.CrawlerCatoOrg import CrawlerCatoOrg
     # scrapyProcess.crawl(CrawlerCatoOrg)
 
-    scrapyProcess.start() # the script will block here until the crawling is finished
+    scrapyProcess.start()  # the script will block here until the crawling is finished
 
-
-    print ("dooone")
 
 #init main
 

@@ -30,6 +30,7 @@ class CrawlerBasic(scrapy.Spider):
 
     ONLY_ONE_PAGE = False
     MAXIMUM_NUMBER_PAGES = 0
+    INFINITE_LOOP = False
 
     rejectionSubstr = []
 
@@ -52,7 +53,7 @@ class CrawlerBasic(scrapy.Spider):
 
     lastUpdate = ''
 
-    def __init__(self, user='', url='', forumGrandParentId = '', websiteName='', websiteImage='', websiteCover = '',  websiteCountry = '', websiteCity = '', websiteLanguage = ''):
+    def __init__(self,  user='', url='', forumGrandParentId = '', websiteName='', websiteImage='', websiteCover = '',  websiteCountry = '', websiteCity = '', websiteLanguage = ''):
 
         if user != '': self.user = user
         if forumGrandParentId != '': self.forumGrandParentId = forumGrandParentId
@@ -63,9 +64,26 @@ class CrawlerBasic(scrapy.Spider):
         if websiteCity != '': self.websiteCity = websiteCity
         if websiteLanguage != '': self.websiteLanguage = websiteLanguage
 
+        self.restarts = 0
+
         if url != '': self.url = url
 
         self.session = requests.Session()
+
+    @classmethod
+    def from_crawler(cls, crawler, *args, **kwargs):
+        spider = super(CrawlerBasic, cls).from_crawler(crawler, *args, **kwargs)
+        crawler.signals.connect(spider.idle, signal=scrapy.signals.spider_idle)
+        return spider
+
+    # tutorial based on https://stackoverflow.com/questions/37291412/call-parse-method-in-spider-closed-method/37318392#37318392
+    def idle(self):
+
+        if self.INFINITE_LOOP == False: return False
+
+        print("Spider is restarting")
+        self.restarts += 1
+        self.crawler.engine.crawl(scrapy.Request(self.start_urls[0],dont_filter=True),self)
 
     def extractFirstElement(self, list, returnValue='', index=0):
         if len(list) > index: return list[index].extract()
@@ -191,14 +209,15 @@ class CrawlerBasic(scrapy.Spider):
 
                 print(next_page)
 
-                self.linksQueue.append(next_page)
-                try:
+                if self.MAXIMUM_NUMBER_PAGES == 0 or self.linksQueueIndex < self.MAXIMUM_NUMBER_PAGES:
+                    self.linksQueue.append(next_page)
+                    try:
 
-                    yield scrapy.Request(url=self.linksQueue[self.linksQueueIndex], callback=self.parse)
-                    self.linksQueueIndex += 1
+                        yield scrapy.Request(url=self.linksQueue[self.linksQueueIndex], callback=self.parse)
+                        self.linksQueueIndex += 1
 
-                except ValueError:
-                    pass
+                    except ValueError:
+                        pass
 
 
 

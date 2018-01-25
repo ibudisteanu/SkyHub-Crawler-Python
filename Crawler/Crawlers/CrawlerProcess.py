@@ -36,6 +36,7 @@ class CrawlerProcess(CrawlerBasic):
 
     saveJSONFile = False
 
+
     # Process Data and Create new Objects
     def processScrapedData(self, url):
 
