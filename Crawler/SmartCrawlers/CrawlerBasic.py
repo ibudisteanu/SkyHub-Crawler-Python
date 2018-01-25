@@ -72,7 +72,11 @@ class CrawlerBasic(scrapy.Spider):
 
     @classmethod
     def from_crawler(cls, crawler, *args, **kwargs):
+
         spider = super(CrawlerBasic, cls).from_crawler(crawler, *args, **kwargs)
+        spider.MAXIMUM_NUMBER_PAGES = cls.MAXIMUM_NUMBER_PAGES
+        spider.INFINITE_LOOP = cls.INFINITE_LOOP
+
         crawler.signals.connect(spider.idle, signal=scrapy.signals.spider_idle)
         return spider
 
