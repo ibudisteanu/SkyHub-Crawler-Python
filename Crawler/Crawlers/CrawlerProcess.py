@@ -45,8 +45,6 @@ class CrawlerProcess(CrawlerBasic):
         self.shortDescription = self.cleanText(self.shortDescription)
         self.author = self.cleanText(self.author)
 
-        self.parentId = self.createParents()
-
         if self.saveJSONFile and self.validate() != '':
             JSONDB.addJSONObject(self.domain, self.toJSON())
 

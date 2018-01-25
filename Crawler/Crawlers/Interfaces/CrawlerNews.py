@@ -71,6 +71,7 @@ class CrawlerNews(CrawlerProcess):
                 if len(title) < 5 or len(description) < 30 : print("title or description are not good")
                 elif self.checkDateLastDays(self.date, days=1) == False: print("last days")
                 else:
+                    self.parentId = self.createParents()
                     topicId = ServerAPI.postAddTopic(self.url, url, self.user, self.parentId,
                                                      title,
                                                      description,

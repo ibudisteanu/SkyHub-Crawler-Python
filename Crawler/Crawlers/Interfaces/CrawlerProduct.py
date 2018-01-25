@@ -411,6 +411,8 @@ class CrawlerProduct(CrawlerProcess):
             if productObject is None:  # we have to add the topic
 
                 if len(title) > 5 and len(description) > 30:
+
+                    self.parentId = self.createParents()
                     productId = ServerAPI.postAddProduct(self.url, url, self.user, self.parentId,
                                                          title,
                                                          description,
