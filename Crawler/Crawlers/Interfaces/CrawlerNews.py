@@ -26,6 +26,11 @@ class CrawlerNews(CrawlerProcess):
         self.date = None
         super().crawlerProcess(response, url)
 
+        keywordsArray =  self.keywords.split(',')
+
+        if self.cssParent == '' and len(keywordsArray) > 1:
+            self.parents.append({'name': '', 'url': self.url}) # parent and last keyword
+            self.parents.append({'name': keywordsArray[0], 'url': url, 'index': 1})
 
 
 
@@ -63,7 +68,9 @@ class CrawlerNews(CrawlerProcess):
 
             if topicObject is None:  # we have to add the topic
 
-                if len(title) > 5 and len(description) > 30 and self.checkDateLastDays(self.date, days=1) :
+                if len(title) < 5 or len(description) < 30 : print("title or description are not good")
+                elif self.checkDateLastDays(self.date, days=1) == False: print("last days")
+                else:
                     topicId = ServerAPI.postAddTopic(self.url, url, self.user, self.parentId,
                                                      title,
                                                      description,
@@ -75,6 +82,8 @@ class CrawlerNews(CrawlerProcess):
 
                     topicObject = ObjectLink(self.currentPageURL, 'topic', topicId, self.title, self.parentId)
                     LinksDB.addLinkObject(self.domain, topicObject)
+
+            else: print("News Already found")
 
             if topicObject is not None:
 

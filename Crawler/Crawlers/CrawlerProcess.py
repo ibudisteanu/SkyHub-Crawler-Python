@@ -89,6 +89,16 @@ class CrawlerProcess(CrawlerBasic):
             date = self.extractText(response.css(self.cssDateText))
 
             date = date.lower()
+
+            date = date.replace("noiembrie","nov")
+            date = date.replace("ianuarie","jan")
+            date = date.replace("mai","may")
+            date = date.replace("martie","mar")
+            date = date.replace("iunie","jun")
+            date = date.replace("septembrie","sep")
+            date = date.replace("iulie","jul")
+            date = date.replace("februarie","feb")
+
             date = date.replace("noi","nov")
             date = date.replace("ian","jan")
             date = date.replace("mai","may")
@@ -97,6 +107,19 @@ class CrawlerProcess(CrawlerBasic):
             date = date.replace("sept","sep")
             date = date.replace("iul","jul")
             date = date.replace("febr","feb")
+
+            date = date.replace("luni","monday")
+            date = date.replace("marti","tuesday")
+            date = date.replace("marţi","tuesday")
+            date = date.replace("miercuri","thursday")
+            date = date.replace("joi","wednesday")
+            date = date.replace("vineri","friday")
+            date = date.replace("sambata","saturday")
+            date = date.replace("sambătă","saturday")
+            date = date.replace("duminica","sunday")
+            date = date.replace("duminică","sunday")
+
+            date = date.replace(","," ")+ "  "
 
             print("DATEEE", date)
             try:

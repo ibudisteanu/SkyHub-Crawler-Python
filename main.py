@@ -70,6 +70,11 @@ def CrawlerScrapy():
     CrawlerFonduriUeRo.INFINITE_LOOP = 1
     scrapyProcess.crawl(CrawlerFonduriUeRo)
 
+    from Crawler.Crawlers.Interfaces.Apps.News.CrawlerHotnews import CrawlerHotnews
+    CrawlerHotnews.MAXIMUM_NUMBER_PAGES = 1000
+    CrawlerHotnews.INFINITE_LOOP = 1
+    scrapyProcess.crawl(CrawlerHotnews)
+
     # from Crawler.Crawlers.Interfaces.Apps.Products.CrawlerEbay import  CrawlerEbay
     # scrapyProcess.crawl(CrawlerEbay)
 

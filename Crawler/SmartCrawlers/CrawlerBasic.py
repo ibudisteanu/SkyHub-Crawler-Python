@@ -109,8 +109,10 @@ class CrawlerBasic(scrapy.Spider):
             self.keywords = self.extractFirstElement(response.xpath("//meta[@name='keywords']/@content"))
             self.shortDescription = self.extractFirstElement(response.xpath("//meta[@name='description']/@content"))
 
-            self.language = self.extractFirstElement(response.xpath("//meta[@name='language']/@content")) #format: "Romanian"
-            self.language = self.extractFirstElement(response.xpath("//meta[@http-equiv='content-language']/@content")) #format: "ro"
+            self.language = self.extractFirstElement(response.xpath("//meta[@name='language']/@content"), self.language) #format: "Romanian"
+            self.language = self.extractFirstElement(response.xpath("//meta[@http-equiv='content-language']/@content"), self.language) #format: "ro"
+            self.language = self.extractFirstElement(response.css("html::attr(lang)"), self.language) #format: "ro"
+            self.language = self.extractFirstElement(response.xpath("//meta[@name='description']/@ro"), self.language) #format: "ro"
 
             self.ogTitle = self.extractFirstElement(response.xpath('//meta[@property="og:title"]/@content'))
             self.ogSiteName = self.extractFirstElement(response.xpath('//meta[@property="og:site_name"]/@content'))
@@ -207,7 +209,7 @@ class CrawlerBasic(scrapy.Spider):
                     if newUrl[:-1] == '/': newUrl = newUrl + '/'
                     next_page = newUrl + next_page
 
-                print(next_page)
+                # print(next_page)
 
                 if self.MAXIMUM_NUMBER_PAGES == 0 or self.linksQueueIndex < self.MAXIMUM_NUMBER_PAGES:
                     self.linksQueue.append(next_page)
