@@ -7,7 +7,7 @@ class CrawlerAntena3(CrawlerNews):
 
     name = 'CrawlerAntena3'
 
-    url = 'http://antena3.ro'
+    url = 'https://antena3.ro'
     domain = 'antena3.ro'
 
     start_urls = (url,)

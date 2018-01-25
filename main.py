@@ -54,13 +54,12 @@ def CrawlerScrapy():
     })
 
     from Crawler.Crawlers.Interfaces.Apps.News.CrawlerAntena3 import CrawlerAntena3
+    CrawlerAntena3.MAXIMUM_NUMBER_PAGES = 1000
     scrapyProcess.crawl(CrawlerAntena3)
 
-    # from Crawler.Crawlers.CrawlerAntena3Category import CrawlerAntena3Category
-    # scrapyProcess.crawl(CrawlerAntena3Category)
-
-    # from Crawler.Crawlers.Apps.CrawlerFonduriUeRo import CrawlerFonduriUeRo
-    # scrapyProcess.crawl(CrawlerFonduriUeRo)
+    from Crawler.Crawlers.Interfaces.Apps.News.CrawlerFonduriUeRo import CrawlerFonduriUeRo
+    CrawlerFonduriUeRo.MAXIMUM_NUMBER_PAGES = 1000
+    scrapyProcess.crawl(CrawlerFonduriUeRo)
 
     #from Crawler.Crawlers.Interfaces.Apps.Products.CrawlerEbay import  CrawlerEbay
     #scrapyProcess.crawl(CrawlerEbay)
@@ -72,6 +71,9 @@ def CrawlerScrapy():
     # scrapyProcess.crawl(CrawlerCatoOrg)
 
     scrapyProcess.start() # the script will block here until the crawling is finished
+
+
+    print ("dooone")
 
 #init main
 

@@ -63,7 +63,7 @@ class CrawlerNews(CrawlerProcess):
 
             if topicObject is None:  # we have to add the topic
 
-                if len(title) > 5 and len(description) > 30 and self.checkDateLastDays(self.date, 10) :
+                if len(title) > 5 and len(description) > 30 and self.checkDateLastDays(self.date, days=1) :
                     topicId = ServerAPI.postAddTopic(self.url, url, self.user, self.parentId,
                                                      title,
                                                      description,

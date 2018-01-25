@@ -25,7 +25,11 @@ class CrawlerBasic(scrapy.Spider):
 
     forumGrandParentId = ''
 
-    onlyOnePage = False
+    linksQueue = []
+    linksQueueIndex = 0
+
+    ONLY_ONE_PAGE = False
+    MAXIMUM_NUMBER_PAGES = 0
 
     rejectionSubstr = []
 
@@ -131,9 +135,28 @@ class CrawlerBasic(scrapy.Spider):
     def start_requests(self):
         print("URL TO BE PROCESSED", self.start_urls)
 
+        self.linksQueue = []
+
         for url in self.start_urls:
             print("processing url",url)
-            yield scrapy.Request(url=url, callback=self.parse)
+            self.linksQueue.append(url)
+
+        self.linksQueueIndex = 0
+        while self.linksQueueIndex < len(self.linksQueue):
+
+            try:
+
+                yield scrapy.Request(url=self.linksQueue[self.linksQueueIndex], callback=self.parse)
+
+            except ValueError:
+                pass
+
+            self.linksQueueIndex += 1
+
+            # if self.MAXIMUM_NUMBER_PAGES != 0 and index == self.MAXIMUM_NUMBER_PAGES:
+            #     index = 0
+            #
+            # print(index, len(self.linksQueue))
 
     def parse(self, response):
 
@@ -147,8 +170,10 @@ class CrawlerBasic(scrapy.Spider):
 
         self.parseResponse(response, url)
 
+        print(url, "data", response, self.ONLY_ONE_PAGE)
 
-        if self.onlyOnePage == False:
+        if self.ONLY_ONE_PAGE == False:
+
             for next_page in response.css('a'):
 
                 next_page = self.extractFirstElement(next_page.xpath('@href'))
@@ -164,14 +189,17 @@ class CrawlerBasic(scrapy.Spider):
                     if newUrl[:-1] == '/': newUrl = newUrl + '/'
                     next_page = newUrl + next_page
 
-                #print(next_page)
+                print(next_page)
 
+                self.linksQueue.append(next_page)
                 try:
 
-                    yield scrapy.Request(url = next_page, callback=self.parse)
+                    yield scrapy.Request(url=self.linksQueue[self.linksQueueIndex], callback=self.parse)
+                    self.linksQueueIndex += 1
 
                 except ValueError:
                     pass
+
 
 
 

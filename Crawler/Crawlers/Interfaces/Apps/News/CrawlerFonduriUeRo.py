@@ -4,7 +4,7 @@ class CrawlerFonduriUeRo(CrawlerBlog):
 
     name = 'CrawlerFonduriUeRo'
 
-    url = 'http://www.fonduri-ue.ro'
+    url = 'https://www.fonduri-ue.ro'
     domain = 'fonduri-ue.ro'
 
     start_urls = (url,)

@@ -21,7 +21,7 @@ class CrawlerWayBackMachine:
 
     def start(self, crawler):
 
-        crawler.onlyOnePage = True
+        crawler.ONLY_ONE_PAGE = True
         self.crawler = crawler
 
         self.getAllLinks(crawler.url)
