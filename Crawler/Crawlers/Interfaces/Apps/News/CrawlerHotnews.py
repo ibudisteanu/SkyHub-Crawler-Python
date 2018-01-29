@@ -7,7 +7,7 @@ class CrawlerHotnews(CrawlerNews):
 
     name = 'CrawlerHotnews'
 
-    url = 'https://hotnews.ro'
+    url = 'https://hotnews.ro/'
     domain = 'hotnews.ro'
 
     start_urls = (url,)

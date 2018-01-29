@@ -76,6 +76,10 @@ class CrawlerBasic(scrapy.Spider):
         spider = super(CrawlerBasic, cls).from_crawler(crawler, *args, **kwargs)
         spider.MAXIMUM_NUMBER_PAGES = cls.MAXIMUM_NUMBER_PAGES
         spider.INFINITE_LOOP = cls.INFINITE_LOOP
+        spider.linksQueueIndex = 0
+        spider.linksQueue = []
+
+        print("spider.MAXIMUM_NUMBER_PAGES", spider.MAXIMUM_NUMBER_PAGES);
 
         crawler.signals.connect(spider.idle, signal=scrapy.signals.spider_idle)
         return spider
@@ -85,9 +89,14 @@ class CrawlerBasic(scrapy.Spider):
 
         if self.INFINITE_LOOP == False: return False
 
-        print("Spider is restarting")
-        self.restarts += 1
-        self.crawler.engine.crawl(scrapy.Request(self.start_urls[0],dont_filter=True),self)
+        print("Spider is restarting - max pages", self.MAXIMUM_NUMBER_PAGES, self.linksQueueIndex)
+        if self.linksQueueIndex != 0 and self.linksQueueIndex >= len(self.linksQueue):
+            self.restarts += 1
+            self.linksQueueIndex = 0
+            self.linksQueue = []
+            scrapy.linksQueueIndex = 0
+            scrapy.linksQueue = []
+            self.crawler.engine.crawl( scrapy.Request(self.start_urls[0],dont_filter=True), self)
 
     def extractFirstElement(self, list, returnValue='', index=0):
         if len(list) > index: return list[index].extract()
@@ -156,26 +165,33 @@ class CrawlerBasic(scrapy.Spider):
     def test(self, response):
         print("CRAWLER BASIC IS WORKING")
 
+    def addLink(self, next_page, checkPrefix=False):
+
+        linkFound = False
+
+        for link in self.linksQueue:
+            if link.rstrip('/') == next_page.rstrip('/') or (checkPrefix and (link.find(next_page) >=0 or next_page.find(link) )):
+                linkFound = True
+                break
+
+        if linkFound == False:
+            self.linksQueue.append(next_page)
+
     def start_requests(self):
         print("URL TO BE PROCESSED", self.start_urls)
 
         self.linksQueue = []
 
-        for url in self.start_urls:
-            print("processing url",url)
-            self.linksQueue.append(url)
+        # for url in self.start_urls:
+        #     print("processing url",url)
+        #     self.addLink(url, True)
+        #
+        # for url in self.start_urls:
+        #     self.linksQueueIndex += 1
 
-        self.linksQueueIndex = 0
-        while self.linksQueueIndex < len(self.linksQueue):
+        self.addLink(self.start_urls[0], True)
+        yield scrapy.Request(url=self.linksQueue[self.linksQueueIndex - 1], callback=self.parse)
 
-            try:
-
-                yield scrapy.Request(url=self.linksQueue[self.linksQueueIndex], callback=self.parse)
-
-            except ValueError:
-                pass
-
-            self.linksQueueIndex += 1
 
             # if self.MAXIMUM_NUMBER_PAGES != 0 and index == self.MAXIMUM_NUMBER_PAGES:
             #     index = 0
@@ -209,21 +225,28 @@ class CrawlerBasic(scrapy.Spider):
                 parsed_url = urlparse(next_page)
 
                 if bool(parsed_url.scheme) == False:
-                    newUrl = self.url
-                    if newUrl[:-1] == '/': newUrl = newUrl + '/'
+                    newUrl = self.url.rstrip('/')
+                    newUrl = newUrl.rstrip('/')
                     next_page = newUrl + next_page
 
                 # print(next_page)
 
-                if self.MAXIMUM_NUMBER_PAGES == 0 or self.linksQueueIndex < self.MAXIMUM_NUMBER_PAGES:
-                    self.linksQueue.append(next_page)
-                    try:
+                if self.MAXIMUM_NUMBER_PAGES == 0 or len(self.linksQueue) < self.MAXIMUM_NUMBER_PAGES:
+                    self.addLink(next_page)
 
-                        yield scrapy.Request(url=self.linksQueue[self.linksQueueIndex], callback=self.parse)
-                        self.linksQueueIndex += 1
+            try:
 
-                    except ValueError:
-                        pass
+                while self.linksQueueIndex < len(self.linksQueue):
+
+                    self.linksQueueIndex += 1
+
+                    # print("self.linksQueue", len(self.linksQueue) )
+                    # print("self.linksQueue[self.linksQueueIndex]", self.linksQueue[self.linksQueueIndex])
+
+                    yield scrapy.Request(url=self.linksQueue[self.linksQueueIndex-1], callback=self.parse)
+
+            except ValueError:
+                pass
 
 
 
