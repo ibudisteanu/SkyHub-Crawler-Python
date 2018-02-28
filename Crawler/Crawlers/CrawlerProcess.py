@@ -79,7 +79,8 @@ class CrawlerProcess(CrawlerBasic):
             print('Result date #1', date)
 
             try:
-                self.date = dateparser.parse(date)
+                if isinstance(date, str) and len(date) > 5:
+                    self.date = dateparser.parse(date)
             except (RuntimeError, TypeError, NameError):
                 print("Error dataparser.parse(", date, " )")
 
