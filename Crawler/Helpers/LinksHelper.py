@@ -42,13 +42,13 @@ class LinksHelper():
 
     @staticmethod
     def fixArchiveStrings(text):
-		hypertext_transfer_protocol = ['https://', 'http://', '']
+        hypertext_transfer_protocol = ['https://', 'http://', '']
 
-		for item in hypertext_transfer_protocol:
-			result = '{}web.archive.org/web/'.format(item)
-			if result in text:
-				start, end = text.index(result) + len('{}20130502222444/'.format(result)), 10000
-				text = text[start:end]
+        for item in hypertext_transfer_protocol:
+            result = '{}web.archive.org/web/'.format(item)
+            if result in text:
+                start, end = text.index(result) + len('{}20130502222444/'.format(result)), 10000
+                text = text[start:end]
 
         return text
 
