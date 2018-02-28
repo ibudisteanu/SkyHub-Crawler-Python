@@ -80,7 +80,7 @@ class CrawlerProcess(CrawlerBasic):
             try:
                 self.date = dateparser.parse(date)
             except ValueError:
-                print("Error dataparser.parse(", date, " )");
+                print("Error dataparser.parse(", date, " )")
 
             print('Result date #2', self.date)
         else:  
