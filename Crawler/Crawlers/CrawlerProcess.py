@@ -72,7 +72,7 @@ class CrawlerProcess(CrawlerBasic):
 
         if self.cssDateText:  # Text format like 22 Jul 2017
             date = self.extractText(response.css(self.cssDateText)).lower()
-            date = FormatDate(date, {'noiembrie':'nov', 'ianuarie':'jan', 'mai':'may', 'martie':'mar', 'iunie':'jun', 'septembrie':'sep', 'iulie':'jul', 'februarie':'feb'})
+            date = FormatDate(date, {'ianuarie':'jan', 'februarie':'feb', 'martie':'mar', 'mai':'may', 'iunie':'jun', 'iulie':'jul', 'septembrie':'sep', 'octombrie':'oct', 'noiembrie':'nov', "decembrie":"dec"})
             date = FormatDate(date, {'luni':'monday', 'marti':'tuesday', 'marţi':'tuesday', 'miercuri':'thursday', 'joi':'wednesday', 'vineri':'friday', 'sambata':'saturday', 'sambătă':'saturday', 'sâmbătă':'saturday', 'duminica':'sunday', 'duminică':'sunday'})
             date = '%s ' % date.replace(',', ' ')
 
